@@ -1,0 +1,10 @@
+1) Install LibreOffice
+2) go into /home/pi/.config/ create folder /lxsession/
+3) enter said folder and create folder /LXDE/
+4) enter said folder and create a file called autostart
+5) open with Leafpad and write inside: "sudo rm -f ~/.lock.filename.odp# soffice -show ~/filename.odp --norestore" REPLACE filename WITH YOUR OWN FILE NAME (!!!!)
+6) your file is going to be on your user's folder thus in /home/pi/
+7) go into your terminal and write: "sudo chmod 755 /home/pi/.config/lxsession/LXDE/autostart"
+THIS MAKES YOUR FILE EXECUTABLE
+8) now, your file unlocks every time you re-boot and it never tries to recover it
+9) plug, play, abuse :) ﻿

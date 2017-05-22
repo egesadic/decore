@@ -1,0 +1,50 @@
+#1)To turn off screen blanking open up the lightdm.conf file.
+sudo nano /etc/lightdm/lightdm.conf
+
+#2)Now in here add the following line anywhere beneath the [SeatsDefaults] line.
+xserver-command=X -s 0 dpms
+
+#3)Save & exit by pressing ctrl+x and then y.
+
+#4)Now reboot the pi and the screen should no longer switch off after 10 minutes of inactivity. To reboot simply run the following:
+sudo reboot
+
+#If you want to be able drag and drop your images onto the Pi you may want to look at setting up a network attached storage.
+#Will allow you to setup a folder that is available on your local network. If you’re in doing such a thing, then my guide on a Raspberry Pi Samba server will take you through all the necessary steps.
+#I also highly recommend that you setup SSH so you will have remote access when the slideshow is in action. There is no easy way to exit the slideshow unless you turn the device on and off and don’t have it automatically starting.
+#To setup our slideshow we’re going to use the feh package.  Feh is image viewer and cataloguer. It is a fast image viewer that doesn’t get bogged down with huge GUI dependencies. I chose this as it was the most lightweight package that worked without any huge complications.
+
+#1)To install the package, use the following line:
+sudo apt-get install feh
+
+#2)Now to test that it works enter the following line. Replace /media/NASHDD1/test with the directory that contains all your image.
+DISPLAY=:0.0 XAUTHORITY=/home/pi/.Xauthority /usr/bin/feh --quiet --preload --randomize --full-screen --reload 60 -Y --slideshow-delay 15.0 /media/NASHDD1/test
+
+#3)Now we can use short tags to make this command a lot shorter. You can read more about all the flags you can use over at the feh manual page.
+DISPLAY=:0.0 XAUTHORITY=/home/pi/.Xauthority /usr/bin/feh -q -p -Z -F -R  60 -Y -D 15.0 /media/NASHDD1/test
+
+#4)Now as you will notice this locks up the command line bar. To fix this just add the & after the command and the script/process will launch in the background.
+
+#5)So now let’s store this in a simple script file. This way you can add or change it later. To make the file enter the following command:
+sudo nano /home/pi/start-picture-frame.sh
+
+#6)In here enter the following lines:
+#!/bin/bash
+DISPLAY=:0.0 XAUTHORITY=/home/pi/.Xauthority /usr/bin/feh -q -p -Z -F -R  60 -Y -D 15.0 /media/NASHDD1/test
+
+#7)Now that’s done you can test it by running the following command(Ctrl+X):
+bash /home/pi/start-picture-frame.sh
+
+#8)Finally let’s have it start at boot. Now it is important that you have SSH enabled so you can access the PI remotely as you will lose access to the GUI/Screen. So make sure you have done this before setting it to launch at boot up.
+
+#9)To do this open up the rc.local file by entering the following command.
+sudo nano /etc/rc.local
+
+#10)Add the following before the exit 0 line in this folder.
+sleep 10
+bash /home/start-picture-frame.sh &
+
+#11)If you ever need to kill the process as you want to be able to access the screen again enter the following line.
+sudo pkill feh
+
+``#You should now have your very own slideshow of pictures going. If you end up with any troubles, then double check all the steps and look for any errors. If you’re still having trouble drop a comment below!
