@@ -1,0 +1,20 @@
+#!/bin/sh
+setterm -cursor off
+VIDEOPATH="/home/pi/Public/DeCore/media"
+SERVICE="omxplayer"
+
+if [ -t 0 ]; then stty -echo -icanon raw time 0 min 0; fi
+IFS=''
+
+while [ -z "$key"] ; do
+	read key
+	for entry in $VIDEOPATH/*
+	do
+		clear
+		omxplayer $entry
+		sleep 5
+	done
+done
+
+if [ -t 0 ]; then stty sane; fi
+exit 0

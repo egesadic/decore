@@ -1,0 +1,2 @@
+#!/bin/bash
+DISPLAY=:0.0 XAUTHORITY=/home/pi/.Xauthority /usr/bin/feh --quiet --preload --reload 60 -Y --slideshow-delay 5.0  --full-screen /home/pi/Public/DeCore/photos

@@ -12,12 +12,12 @@ root.resizable(0,0)
 root.wm_title("DeCORE")
 #root.attributes("-fullscreen", True) -------FULLSCREEN
 
-img = ImageTk.PhotoImage(Image.open("decore.png"))
+cwd = "/home/pi/Public/DeCore/"
+
+img = ImageTk.PhotoImage(Image.open(cwd+"decore.png"))
 background = Tkinter.Label(root, image = img)
 background.grid(row=0, column=1, columnspan=2)
 #background.place(x=0, y=0, relwidth=1, relheight=1) -----BACKGROUND CODE
-
-cwd = os.getcwd()
 
 optionsNormal = {}
 optionsNormal ['defaultextension'] = '.dpa'
@@ -46,7 +46,7 @@ def startShow():
             print(filename)
             enableButtons()
         else:
-            call("bash "+filename, shell=True)
+            call(filename, shell=True)
             print(filename)
             enableButtons()
     except Exception as e:
@@ -54,18 +54,18 @@ def startShow():
 
 def createShow():
     disableButtons()
-    os.system('python createSlide.py')
+    #os.system("python "+cwd+"createSlide.py")
+    call("python "+ cwd+ "createSlide.py", shell=True)
     enableButtons()
 
 def createMov():
     disableButtons()
-    os.system('python createMovie.py')
-    enableButtons()    
-
+    call("python "+ cwd+ "createMovie.py", shell=True)
+    enableButtons()
+    
 def pptShow():
     disableButtons()
     filename = askopenfilename(**optionsPPT)
-    #filename.replace(" ", "\ ")
     print(filename)
     if not filename:
         enableButtons()
