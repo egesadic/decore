@@ -1,0 +1,8 @@
+#!/bin/bash
+cd C:\Users\ege.sadic\Source\Repos\decore/media
+DISPLAY=:0.0 XAUTHORITY=/home/pi/.Xauthority /usr/bin/feh --quiet --preload --reload 60 -Y --slideshow-delay 5.0 --full-screen --cycle-once img1.jpeg img10.jpg img11.jpeg img12.jpeg img13.jpeg img14.jpeg img2.jpeg img3.jpeg img5.jpeg img6.jpeg img7.jpeg img8.jpeg img9.jpeg 
+omxplayer C:\Users\ege.sadic\Source\Repos\decore/media/l.mp4
+DISPLAY=:0.0 XAUTHORITY=/home/pi/.Xauthority /usr/bin/feh --quiet --preload --reload 60 -Y --slideshow-delay 5.0 --full-screen --cycle-once lol.jpeg 
+omxplayer C:\Users\ege.sadic\Source\Repos\decore/media/spark.mp4
+DISPLAY=:0.0 XAUTHORITY=/home/pi/.Xauthority /usr/bin/feh --quiet --preload --reload 60 -Y --slideshow-delay 5.0 --full-screen --cycle-once lol.jpeg 
+exit 0

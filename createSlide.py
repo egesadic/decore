@@ -46,10 +46,9 @@ def newSlideshow():
     try:
         name = entryName.get()
         cwd = os.getcwd()
-        mediapath = cwd+"/media"
+        mediapath = cwd + "/media"
         imgCount = 0
         vidCount = 0
-        index = 0
         temp = ""
         init = False
         filelist = [f for f in listdir(mediapath) if isfile(join(mediapath, f))]
@@ -59,7 +58,7 @@ def newSlideshow():
             print("nothing here man")
         else:
             print ("Found " + str(len(filelist)) + " items: " + lol + " ")
-        fullscript = "#!/bin/bash\n"
+        fullscript = "#!/bin/bash\ncd " + mediapath + "\n"
         imgScript = "DISPLAY=:0.0 XAUTHORITY=/home/pi/.Xauthority /usr/bin/feh --quiet --preload --reload 60 -Y --slideshow-delay " + str(delay) + ".0 --full-screen --cycle-once "	
         vidScript = "omxplayer " + mediapath + "/"
         if name is "":
@@ -87,16 +86,13 @@ def newSlideshow():
                         print("first media is an image, combo started...\n")
                         imgList.append(str(file + " "))
                         imgCount += 1
-                        filelist.pop(index)
-                        index += 1
-                        #print("img's appended, combo started with " + ''.join(imgList+ " "))
+                        #print("img's appended, combo started with " +
+                        #''.join(imgList+ " "))
                     elif file.endswith(('.mp4','.h264')):
                         print("first media is a video, writing to bash file...\n")
                         vidName = ''.join([fullscript,vidScript, file, '\n'])
                         fullscript = vidName
                         vidCount += 1
-                        filelist.pop(index)
-                        index += 1
                     else:
                         print("nothing's here...")
                         tkMessageBox.showinfo("Warning", "No suitable media found.")
@@ -112,39 +108,30 @@ def newSlideshow():
                     elif imgCount > vidCount:
                         print("image combo ongoing, populating image array...\n")
                         if file.endswith(('.jpg', '.jpeg', '.png','.gif')):
-                            imgList.append(file+" ")
+                            imgList.append(file + " ")
                             imgCount += 1
-                            filelist.pop(index)
-                            index += 1
                             print("Current combo: " + ''.join(imgList))
                         elif file.endswith((".mp4",".h264")):
                            print("combo broken!")
                            imgCount = 0
-                           combinedImg = "".join(imgList+" ")                          
+                           combinedImg = "".join(imgList)                          
                            fullscript = ''.join([fullscript, imgScript, combinedImg, '\n', vidScript, file, '\n'])
-                           vidCount += 1
-                           filelist.pop(index)
-                           index += 1
+                           vidCount += 1                          
                         else:						
                             tkMessageBox.showinfo("Warning", "No suitable media found.")					
                     else:
                         if file.endswith(('.mp4','.h264')):
                             temp = ''.join([fullscript,vidScript, file, '\n'])
                             fullscript = temp
-                            filelist.pop(index)
-                            index += 1
                         elif file.endswith(('.jpg', '.jpeg', '.png','.gif')):
                             vidCount = 0
                             imgList = []
                             imgList.append(file + " ")
                             imgCount += 1
-                            filelist.pop(index)
-                            index += 1
-                var = len(filelist)
-                if var == 1
-					combinedImg = "".join(imgList+" ")
-					fullscript = ''.join([fullscript, imgScript, combinedImg, '\n'])		
-            slide.write(fullscript + "\nexit 0")	
+            if len(imgList) > 0:
+                print(str(len(imgList))+" images left in array, writing them to file...")
+                fullscript = ''.join([fullscript, imgScript, combinedImg, '\n'])
+            slide.write(fullscript + "exit 0")	
             slide.close()
             call("chmod +x " + filepath + ".dpa", shell= True)
             tkMessageBox.showinfo("Success", "Slideshow '" + name + "' has been successfully created.")
