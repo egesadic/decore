@@ -141,9 +141,9 @@ def newSlideshow():
                             filelist.pop(index)
                             index += 1
                 var = len(filelist)
-                if var == 1
-					combinedImg = "".join(imgList+" ")
-					fullscript = ''.join([fullscript, imgScript, combinedImg, '\n'])		
+                if var == 1:
+                    combinedImg = "".join(imgList+" ")
+                    fullscript = ''.join([fullscript, imgScript, combinedImg, '\n'])		
             slide.write(fullscript + "\nexit 0")	
             slide.close()
             call("chmod +x " + filepath + ".dpa", shell= True)
