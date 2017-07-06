@@ -26,22 +26,6 @@ def enableButtons():
     for wt in root.winfo_children():
         wt.configure(state="normal")
 
-#Acilan ikinci pencere kontrollerini disable ettim
-def getFileCallback():
-    disableButtons()
-    filename = askdirectory() #askopenfilename() show an "Open" dialog box and return the path to the
-                              #selected file
-    var.set(filename)
-
-    buttonSelectFile.config(width=len(var.get()))
-    if buttonSelectFile.winfo_width() > 28:
-        buttonSelectFile.config(width=28)
-        tmp.set(filename)
-        var.set(str(tmp.get())[:24] + "...")
-    root.update_idletasks()
-    enableButtons()
-    print(filename)
-
 def newSlideshow():
     try:
         name = entryName.get()
@@ -155,22 +139,16 @@ labelNamePath.grid(row=1, column=0, columnspan=1, sticky="w", padx=10, pady=10)
 buttonSelectFile = Button(root, textvariable=var , width = 12, command=getFileCallback)
 buttonSelectFile.grid(row=1, column=1, columnspan=1,sticky="w", padx=10, pady=10)
 
-#labelPath = Label(root, textvariable=var)
-#labelPath.grid(row=1, column=1, columnspan=1, padx=10, pady=10)
 labelDelay = Label(root, text="Delay(sec): ")
 labelDelay.grid(row=2, column=0, columnspan=1,sticky="w",padx=10,pady=10)
 entryDelay = Entry(root, width=10)
 entryDelay.grid(row=2, column=1, columnspan=1,sticky="w",padx=10, pady=10)
 
-#varFS = IntVar()
-#checkFscreen = Checkbutton(root, text='Fullscreen', onvalue=1,
-#offvalue=0,variable = varFS)
-#checkFscreen.grid(row=3, column=0, columnspan=1,sticky="w", padx=10, pady=10)
-
 #varRand = IntVar()
 #checkRand = Checkbutton(root, text='Randomize Images', onvalue=1, offvalue=0,
 #variable = varRand)
 #checkRand.grid(row=3, column=1, columnspan=1, sticky="w", padx=10, pady=10)
+
 buttonCreate = Button(root, text = "OK", width = 10, command = newSlideshow)
 buttonCreate.grid(row=4, column=1, columnspan=1, sticky="e", padx=10, pady=10)
 
