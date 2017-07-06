@@ -43,7 +43,7 @@ def newSlideshow():
         else:
             print ("Found " + str(len(filelist)) + " items: " + lol + " ")
         fullscript = "#!/bin/bash\ncd " + mediapath + "\n"
-        imgScript = "DISPLAY=:0.0 XAUTHORITY=/home/pi/.Xauthority /usr/bin/feh --quiet --preload --reload 60 -Y --slideshow-delay " + str(delay) + ".0 --full-screen --cycle-once "	
+        imgScript = "feh --quiet --preload --reload 60 -Y --slideshow-delay " + str(delay) + ".0 --full-screen --cycle-once "	
         vidScript = "omxplayer " + mediapath + "/"
         if name is "":
             tkMessageBox.showinfo("Warning", "Please name your slide.")
@@ -114,6 +114,7 @@ def newSlideshow():
                             imgCount += 1
             if len(imgList) > 0:
                 print(str(len(imgList))+" images left in array, writing them to file...")
+                combinedImg = ''.join(imgList)
                 fullscript = ''.join([fullscript, imgScript, combinedImg, '\n'])
             slide.write(fullscript + "exit 0")	
             slide.close()
@@ -124,6 +125,7 @@ def newSlideshow():
     except Exception as e:
         tkMessageBox.showwarning("Error", e)
         print("There was a problem, aborted slide creation.")
+        os.remove(filepath+name+'.dpa')
         entryDelay.delete(0, END)
         entryName.delete(0, END)
         entryDelay.insert(0, 15)
@@ -133,11 +135,6 @@ labelName.grid(row=0, column=0, columnspan=1, sticky="w", padx=10, pady=10)
 entryName = Entry(root, width=30)
 entryName.grid(row=0, column=1, columnspan=1, padx=10, pady=10)
 entryName.focus_set()
-
-labelNamePath = Label(root, text="Path to images: ")
-labelNamePath.grid(row=1, column=0, columnspan=1, sticky="w", padx=10, pady=10)
-buttonSelectFile = Button(root, textvariable=var , width = 12, command=getFileCallback)
-buttonSelectFile.grid(row=1, column=1, columnspan=1,sticky="w", padx=10, pady=10)
 
 labelDelay = Label(root, text="Delay(sec): ")
 labelDelay.grid(row=2, column=0, columnspan=1,sticky="w",padx=10,pady=10)
