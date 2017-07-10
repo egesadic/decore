@@ -12,7 +12,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 root = Tk()
-root.wm_title("Create New Image Slideshow")
+root.wm_title("Create New Slideshow")
 root.resizable(0,0)
 
 def emptymedia():
