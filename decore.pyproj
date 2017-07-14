@@ -34,13 +34,31 @@
     <Content Include="photos\Slide_Sunset.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="createMovie.py" />
     <Compile Include="createSlide.py" />
+    <Compile Include="src\decDevice.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\decNode.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\decObject.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="decoreMain.py" />
+    <Compile Include="src\decPool.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\decServer.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\decSlide.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="docs" />
     <Folder Include="media" />
+    <Folder Include="src\" />
     <Folder Include="photos" />
   </ItemGroup>
   <ItemGroup>
