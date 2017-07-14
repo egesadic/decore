@@ -1,4 +1,4 @@
-from decObject import decObject
+from decObject import *
 
 class Pool():
     """description of class"""

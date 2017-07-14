@@ -1,0 +1,5 @@
+#!/bin/bash
+cd C:\Users\ege.sadic\Source\Repos\decore/media
+omxplayer C:\Users\ege.sadic\Source\Repos\decore/media/2.mp4
+feh --quiet --preload --reload 60 -Y --slideshow-delay 3.0 --full-screen --cycle-once img1.jpeg img10.jpg img11.jpeg img12.jpeg img13.jpeg img14.jpeg img2.jpeg img3.jpeg img4.jpeg img5.jpeg img6.jpeg img7.jpeg img8.jpeg img9.jpeg sparkgo_poweredby.jpg tv_optimize.jpg 
+exit 0

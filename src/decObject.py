@@ -8,8 +8,8 @@ class decObject:
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, id ,name):
-        self.id = shortuuid.uuid()
+    def __init__(self, id = shortuuid.ShortUUID ,name = ""):
+        self.id = None
         self.name = name
 
 

@@ -1,9 +1,0 @@
-#!/bin/bash
-cd C:\Users\ege.sadic\Source\Repos\decore/media
-feh --quiet --preload --reload 60 -Y --slideshow-delay 4.0 --full-screen --cycle-once img13.jpeg tv_optimize.jpg img5.jpeg sparkgo_poweredby.jpg 
-omxplayer C:\Users\ege.sadic\Source\Repos\decore/media/3.mp4
-feh --quiet --preload --reload 60 -Y --slideshow-delay 4.0 --full-screen --cycle-once img11.jpeg img1.jpeg img2.jpeg img14.jpeg 
-omxplayer C:\Users\ege.sadic\Source\Repos\decore/media/1.mp4
-feh --quiet --preload --reload 60 -Y --slideshow-delay 4.0 --full-screen --cycle-once img12.jpeg img3.jpeg img9.jpeg img6.jpeg img10.jpg 
-omxplayer C:\Users\ege.sadic\Source\Repos\decore/media/2.mp4
-feh --quiet --preload --reload 60 -Y --slideshow-delay 4.0 --full-screen --cycle-once img4.jpeg img7.jpeg img8.jpeg 

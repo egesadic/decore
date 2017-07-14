@@ -1,4 +1,5 @@
-from decPool import Pool, decObject
+from decObject import *
+from decPool import *
 
 class Device(decObject):
     """Base class for all DeCore devices."""
