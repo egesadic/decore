@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{d975b935-203a-40ad-adf4-f79c8ed154b7}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>src\createSlide.py</StartupFile>
+    <StartupFile>test\test.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -46,10 +46,17 @@
     <Content Include="photos\Slide_Pond.gif" />
     <Content Include="photos\Slide_Python.gif" />
     <Content Include="photos\Slide_Sunset.gif" />
+    <Content Include="test\Slide_Farm.gif" />
+    <Content Include="test\Slide_House.gif" />
+    <Content Include="test\Slide_Pond.gif" />
+    <Content Include="test\Slide_Python.gif" />
+    <Content Include="test\Slide_Sunset.gif" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\createSlide.py" />
-    <Compile Include="src\test.py" />
+    <Compile Include="src\dclient.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="src\decDevice.py">
       <SubType>Code</SubType>
     </Compile>
@@ -69,12 +76,16 @@
     <Compile Include="src\decSlide.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="test\test.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="docs" />
     <Folder Include="media" />
     <Folder Include="src\" />
     <Folder Include="photos" />
+    <Folder Include="test\" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\2.7" />
