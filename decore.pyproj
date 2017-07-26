@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{d975b935-203a-40ad-adf4-f79c8ed154b7}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>createSlide.py</StartupFile>
+    <StartupFile>test\test.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -23,7 +23,21 @@
   <ItemGroup>
     <Content Include="decore.png" />
     <Content Include="docs\scripto.txt" />
+    <Content Include="media\2.mp4" />
+    <Content Include="media\img1.jpeg" />
     <Content Include="media\img10.jpg" />
+    <Content Include="media\img11.jpeg" />
+    <Content Include="media\img12.jpeg" />
+    <Content Include="media\img13.jpeg" />
+    <Content Include="media\img14.jpeg" />
+    <Content Include="media\img2.jpeg" />
+    <Content Include="media\img3.jpeg" />
+    <Content Include="media\img4.jpeg" />
+    <Content Include="media\img5.jpeg" />
+    <Content Include="media\img6.jpeg" />
+    <Content Include="media\img7.jpeg" />
+    <Content Include="media\img8.jpeg" />
+    <Content Include="media\img9.jpeg" />
     <Content Include="media\sparkgo_poweredby.jpg" />
     <Content Include="media\tv_optimize.jpg" />
     <Content Include="photos\decore.png" />
@@ -32,16 +46,46 @@
     <Content Include="photos\Slide_Pond.gif" />
     <Content Include="photos\Slide_Python.gif" />
     <Content Include="photos\Slide_Sunset.gif" />
+    <Content Include="test\Slide_Farm.gif" />
+    <Content Include="test\Slide_House.gif" />
+    <Content Include="test\Slide_Pond.gif" />
+    <Content Include="test\Slide_Python.gif" />
+    <Content Include="test\Slide_Sunset.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="createMovie.py" />
-    <Compile Include="createSlide.py" />
-    <Compile Include="decoreMain.py" />
+    <Compile Include="src\createSlide.py" />
+    <Compile Include="src\dclient.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\decDevice.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\decNode.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\decObject.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\decoreMain.py" />
+    <Compile Include="src\decPool.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\decServer.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\decSlide.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="test\test.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="docs" />
     <Folder Include="media" />
+    <Folder Include="src\" />
     <Folder Include="photos" />
+    <Folder Include="test\" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\2.7" />
