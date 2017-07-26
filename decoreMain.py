@@ -10,14 +10,12 @@ sys.setdefaultencoding('utf-8')
 root = Tkinter.Tk()
 root.resizable(0,0)
 root.wm_title("DeCORE")
-#root.attributes("-fullscreen", True) -------FULLSCREEN
 
-img = ImageTk.PhotoImage(Image.open("decore.png"))
+cwd = os.getcwd()+"/"
+
+img = ImageTk.PhotoImage(Image.open(cwd+"decore.png"))
 background = Tkinter.Label(root, image = img)
 background.grid(row=0, column=1, columnspan=2)
-#background.place(x=0, y=0, relwidth=1, relheight=1) -----BACKGROUND CODE
-
-cwd = os.getcwd()
 
 optionsNormal = {}
 optionsNormal ['defaultextension'] = '.dpa'
@@ -46,26 +44,22 @@ def startShow():
             print(filename)
             enableButtons()
         else:
-            call("bash "+filename, shell=True)
-            print(filename)
-            enableButtons()
+            while True:
+                call(filename, shell=True)
+                print(filename)
+                enableButtons()
     except Exception as e:
         raise
 
 def createShow():
     disableButtons()
-    os.system('python createSlide.py')
+    #os.system("python "+cwd+"createSlide.py")
+    call("python "+ cwd+ "createSlide.py", shell=True)
     enableButtons()
-
-def createMov():
-    disableButtons()
-    os.system('python createMovie.py')
-    enableButtons()    
 
 def pptShow():
     disableButtons()
     filename = askopenfilename(**optionsPPT)
-    #filename.replace(" ", "\ ")
     print(filename)
     if not filename:
         enableButtons()
@@ -79,8 +73,6 @@ buttonStart = Tkinter.Button(root, text="Start Slideshow...", command=startShow)
 buttonStart.grid(row=1, column=1, columnspan=2, sticky="W"+"E", padx=0, )
 buttonCreate = Tkinter.Button(root, text="Create New Slideshow...", command=createShow)
 buttonCreate.grid(row=2, column=1, columnspan=2, sticky="W"+"E", padx=0)
-buttonMov = Tkinter.Button(root, text="Create New Playlist...", command=createMov)
-buttonMov.grid(row=3, column=1, columnspan=2, sticky="W"+"E", padx=0)
 buttonPPT = Tkinter.Button(root, text="Open .ppt/.pptx file...", command=pptShow)
 buttonPPT.grid(row=4, column=1, columnspan=2, sticky="W"+"E", padx=0)
 

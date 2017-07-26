@@ -4,7 +4,6 @@ import tkMessageBox
 import os
 from tkFileDialog import askdirectory
 import sys
-from subprocess import call
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -49,13 +48,12 @@ def newImgSlideshow():
         elif path is "":
             tkMessageBox.showinfo("Warning", "Please select a path to your media.")
         else:
-            cwd = os.getcwd()
+            cwd = "/home/pi/Public/DeCore/"
             print(cwd)
             filepath = os.path.join(cwd+"/slides", name)
             f = open(filepath + '.dpa','w')
             f.write("#!/bin/sh\nsetterm -cursor off\nVIDEOPATH=\""+path+"\"\nSERVICE=\"omxplayer\"\nwhile [ \"x$keypress\" = \"x\" ] ; do\n\tfor entry in $VIDEOPATH/*\n\tdo\n\t\tclear\n\t\tomxplayer -r $entry\n\t\tif [[ $key = q ]]; then break; fi\n\t\texit 0\n\tdone\ndone")
             f.close()
-            call("chmod +x "+name".dpa", shell=True)
             tkMessageBox.showinfo("Success", "Slideshow '"+name+"' has been successfully created.")
             root.destroy()
     except Exception as e:
