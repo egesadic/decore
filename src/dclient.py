@@ -1,32 +1,53 @@
 import os.path
 import sys
 import json
+import decoretoolkit
+import urllib2
 
-VER_NUM="1.0"
+VER_NUM = "1.0"
 
-print("Welcome to DeCore v"+VER_NUM+"! Initialising...")
+print("Welcome to DeCore v" + VER_NUM + "! Initialising...")
+
+url = "192.168.34.120:8080/v1/node/register"
 
 try:
-    def getMAC(interface):
-      # Return the MAC address of interface
-      try:
-        str = open('/sys/class/net/' + interface + '/address').read()
-      except:
-        str = "00:00:00:00:00:00"
-      return str[0:17]
-
     if os.path.isfile("/usr/decore/cfgval.dc") is False:
         count = 0
-        mac = getMAC('wlan0')
-        for x in range(0,4):
+        mac = decoretoolkit.getMAC('enp2s0')
+        for x in range(0, 4):
             if count is 3:
                 print("Cannot get MAC address, please contact support.")
-                sys.exit()
+                sys.exit(-1)
             if mac is "00:00:00:00:00:00":
-                count+=1
+                count += 1
             else:
-                #mac.sendtoserver()
-                newcfg = open("cfgval.dc",'w')
-                newcfg.close()
-    else:
+                print ("MAC address is: "+mac)
+                data = {
+                    "Mac": mac
+                }
+                break
 
+        request = urllib2.Request('http://192.168.34.120:8080/v1/node/register', json.dumps(data))
+        request.add_header('Content-Type', 'application/json')
+        r = urllib2.urlopen(request)
+        print ("Connection success!")
+        response = json.loads(r.read())
+        print (response)
+        value = response['value']
+        print ("Got "+str(value)+" as device id")
+        if value >= 0:
+            device_id = str(value)
+            newcfg = open("/home/sparkege/cfgval.dc", 'w')
+            newcfg.write(device_id)
+            newcfg.close()
+            print ("File written and closed. GG!")
+            exit(1)
+        elif value == -1:
+            print ("Could not connect to server, will try again in 10 seconds.")
+        elif value == -2:
+            print ("No MAC sent by device. Check the PI pls.")
+        else:
+            pass
+except Exception as e:
+    print (e)
+    pass
