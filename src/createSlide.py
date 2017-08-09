@@ -1,6 +1,6 @@
 from Tkinter import *
 import tkMessageBox
-from decoreObjects import Slide
+from decoreToolkit import Slide
 import os
 from random import shuffle
 from os import listdir, path

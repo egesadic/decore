@@ -6,7 +6,7 @@ from os.path import isfile, join
 import sys
 import json
 import httplib
-from decoretoolkit import getmacadress
+from decoreToolkit import getmacadress
 from decoreErrors import UndefinedDeviceException
 
 VER_NUM = "1.0"
@@ -34,11 +34,13 @@ def ConnectToServer():
                         "Mac": mac
                     }
                     break
+            
             #Sunucuya bağlan ve ID talep et.
             request = urllib2.Request(url, json.dumps(data))
             request.add_header('Content-Type', 'application/json')
             tmp = urllib2.urlopen(request)
             print ("Connection success!")
+            
             #Döndürülen yanıtı oku.
             response = json.loads(tmp.read())
             value = response['value']
@@ -69,14 +71,17 @@ def ConnectToServer():
                 "Id": device_id, 
                 "OldPaths": filelist
             }
-             #Sunucuya bağlan ve dosyaları talep et.
+            
+            #Sunucuya bağlan ve dosyaları talep et.
             request = urllib2.Request(url, json.dumps(data))
             request.add_header('Content-Type', 'application/json')
             tmp = urllib2.urlopen(request)
             print ("Connection success!")
+            
             #Döndürülen yanıtı oku.
             response = json.loads(tmp.read())
             tobedeleted = response["data"]["ToBeDeleted"]
+            
             #ToBeDeleted'den alınan dosyaları sil
             for the_file in tobedeleted:
                 file_path = join(mediapath, the_file)           
