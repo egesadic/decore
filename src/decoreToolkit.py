@@ -12,9 +12,16 @@ from abc import ABCMeta
 from os import listdir, unlink
 from os.path import isfile, join
 import shortuuid
+##########################################################################################################
+#                                    GLOBAL VARIABLES START HERE                                         #
+##########################################################################################################  
 
 CFG_PATH = "/usr/decore/config/cfgval.dc"
 MEDIA_PATH = "/usr/decore/media"
+
+##########################################################################################################
+#                                          CLASSES START HERE                                            #
+##########################################################################################################  
 
 class decObject:
     """Base class for all decore objects."""
@@ -63,7 +70,10 @@ class Slide(decObject):
             f.close()
         except Exception as e:
             tkMessageBox.showinfo("this",e)
-            
+
+##########################################################################################################
+#                                          FUNCTIONS START HERE                                          #
+##########################################################################################################                                                                                          
 def getmacadress(interface):
     """Gets the MAC address of specified device."""
     # Return the MAC address of interface
@@ -136,7 +146,7 @@ def createcfgfile(url):
         pass
 
 def sync():
-    """Initiate a synchronisation between DeCore and the server. Requires cfgval.dc to be properly setup.""" 
+    """Initiate a synchronisation between DeCore and the server. Requires config45.json to be properly setup.""" 
     try:
         if isfile(CFG_PATH):
             cfgfile = open(cfgpath, 'r')
@@ -147,7 +157,7 @@ def sync():
                 "Id": device_id, 
                 "OldPaths": filelist
             }
-            
+            url = "http://192.168.34.128:8080/v1/node/" + str(device_id)
             #Sunucuya bağlan ve dosyaları talep et.
             request = urllib2.Request(url, json.dumps(data))
             request.add_header('Content-Type', 'application/json')
@@ -179,3 +189,10 @@ def sync():
         pass
     except Exception as e:
         print(e)
+def forcecfgcreate(url):
+    """Forces a new config file creation. Use this only if needed."""
+    if isfile(CFG_PATH):
+        unlink(CFG_PATH)
+        createcfgfile(url)
+    else:
+        createcfgfile(url)
