@@ -1,4 +1,6 @@
-def getMAC(interface):
+"""Useful functions & utilites for DeCore programming."""
+def getmacadress(interface):
+    """Gets the MAC address of specified device."""
     # Return the MAC address of interface
     try:
         mac = open('/sys/class/net/' + interface + '/address').read()

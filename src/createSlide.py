@@ -1,6 +1,6 @@
 from Tkinter import *
 import tkMessageBox
-from decSlide import Slide
+from decoreObjects import Slide
 import os
 from random import shuffle
 from os import listdir, path
@@ -96,7 +96,7 @@ def newSlideshow():
                                 fullscript = ''.join([fullscript, imgScript, combinedImg, '\n', vidScript, file, '\n'])
                                 vidCount += 1                          
                             else:						
-                               emptymedia()					
+                                emptymedia()					
                         else:
                             if file.endswith(('.mp4','.h264')):
                                 temp = ''.join([fullscript,vidScript, file, '\n'])
