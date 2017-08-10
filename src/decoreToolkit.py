@@ -146,7 +146,7 @@ def createcfgfile(url):
         pass
 
 def sync():
-    """Initiate a synchronisation between DeCore and the server. Requires config45.json to be properly setup.""" 
+    """Initiate a synchronisation between DeCore and the server. Requires config.json to be properly setup.""" 
     try:
         if isfile(CFG_PATH):
             cfgfile = open(cfgpath, 'r')
