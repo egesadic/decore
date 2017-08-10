@@ -1,5 +1,3 @@
-from Tkinter import *
-import tkMessageBox
 from decoreToolkit import Slide
 import os
 from random import shuffle
@@ -8,13 +6,6 @@ from os.path import isfile, join
 from tkFileDialog import askdirectory
 import sys
 from subprocess import call
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
-root = Tk()
-root.wm_title("Create New Slideshow")
-root.resizable(0,0)
 
 def emptymedia():
     sys.exit("No suitable media found in DeCore.")
@@ -117,8 +108,7 @@ def newSlideshow():
                 slide.name = name
                 slide.script = fullscript
                 slide.writeToFile()
-                #slide.write(fullscript + "exit 0")	
-                #slide.close()
+
                 call("chmod +x " + filepath + ".dpa", shell= True)
                 print("Slide created under dir '"+filepath+".dpa'")
                 tkMessageBox.showinfo("Success", "Slideshow '" + name + "' has been successfully created.")
@@ -126,7 +116,7 @@ def newSlideshow():
                 return 0
 
     except Exception as e:
-        tkMessageBox.showwarning("This", e)
+        print e
         print("There was a problem, aborted slide creation.")
         if os.path.exists(filepath+'.dpa'):
             print("Removing slide file...")
@@ -138,25 +128,4 @@ def newSlideshow():
         entryDelay.insert(0, 15)
     except SystemExit as ex:
         print("No media here, stopping...")
-        tkMessageBox.showwarning("Error", ex)
-
-labelName = Label(root, text = "Slideshow Name: ")
-labelName.grid(row=0, column=0, columnspan=1, sticky="w", padx=10, pady=10)
-entryName = Entry(root, width=30)
-entryName.grid(row=0, column=1, columnspan=1, padx=10, pady=10)
-entryName.focus_set()
-
-labelDelay = Label(root, text="Delay(sec): ")
-labelDelay.grid(row=2, column=0, columnspan=1,sticky="w",padx=10,pady=10)
-entryDelay = Entry(root, width=10)
-entryDelay.grid(row=2, column=1, columnspan=1,sticky="w",padx=10, pady=10)
-
-varRand = IntVar()
-checkRand = Checkbutton(root, text='Randomize Media', onvalue=1, offvalue=0,
-variable = varRand)
-checkRand.grid(row=3, column=1, columnspan=1, sticky="w", padx=10, pady=10)
-
-buttonCreate = Button(root, text = "OK", width = 10, command = newSlideshow)
-buttonCreate.grid(row=4, column=1, columnspan=1, sticky="e", padx=10, pady=10)
-
-mainloop()
+        print ex
