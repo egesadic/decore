@@ -11,14 +11,13 @@ from decoreErrors import UndefinedDeviceException, DecoreServerConnectionExcepti
 from abc import ABCMeta
 from os import listdir, unlink
 from os.path import isfile, join
-import shortuuid
 ##########################################################################################################
 #                                    GLOBAL VARIABLES START HERE                                         #
 ##########################################################################################################  
 
 CFG_PATH = "/usr/decore/config/cfgval.dc"
-MEDIA_PATH = "/usr/decore/media"
-
+MEDIA_PATH = "/usr/decore/media/"
+SLIDE_PATH = "/usr/decore/slides/"
 ##########################################################################################################
 #                                          CLASSES START HERE                                            #
 ##########################################################################################################  
@@ -26,43 +25,28 @@ MEDIA_PATH = "/usr/decore/media"
 class decObject:
     """Base class for all decore objects."""
     __metaclass__ = ABCMeta
-    def __init__(self, id = shortuuid.ShortUUID ,name = ""):
+    def __init__(self, id = 0 ,name = ""):
         self.id = None
         self.name = name
 
-class Pool(decObject):
-    """Class for handling slide pools."""
-
-class Device(decObject):
-    """Base class for all DeCore devices."""
-    def __init__(self, name, pool = Pool, address = ""):
-        self.id = shortuuid.uuid()
-        self.name = name
-        self.pool = None
-        self.address = address
-
-class Server(Device):
-    """DeCore local server class. Inherits Device class."""
-    pass
-
-class Node(Device):
+class Node(decObject):
     """DeCore client, probably a RPi. Inherits Device class."""
-    def __init__(self, name, pool = Pool, address = '', parent = ""):
-        self.id = shortuuid.uuid()
+    def __init__(self, name, address = '', parent = ""):
+        self.id = 0
         self.name = name
-        self.pool = None
         self.address = address
         self.parent = ""
 
 class Slide(decObject):
     """DeCore slide object"""
     def __init__(self, id, name = "", node = Node, script = "" ):
-        self.id = shortuuid.uuid()
+        self.id = 0
         self.name = name
         self.node = None
         self.script = script
 
     def writeToFile(self):
+        """Generates a .DPA file to be played in RPi."""
         try:
             cwd = os.getcwd()+'\slides/'
             f = open(cwd+self.name+'.dpa', 'w')
@@ -87,9 +71,7 @@ def createcfgfile(url):
     """Connect to a local DeCore server to fetch device-id and store it in a config file under specified path. Default path to config file is '/usr/decore/config'."""    
     try:
         #Geçerli bir config dosyası olup olmadığını denetle.   
-        cfgpath = "/usr/decore/config/cfgval.dc" 
-
-        if isfile(cfgpath) is False:
+        if isfile(CFG_PATH) is False:
             count = 0
             mac = getmacadress('wlan0')
             for count in range(0, 4):
@@ -115,9 +97,9 @@ def createcfgfile(url):
             response = json.loads(tmp.read())
             value = response['value']
             print ("Got "+str(value)+" as device ID")
-            if value >= 0:
+            if value > 0:
                 device_id = str(value)
-                newcfg = open(cfgpath, 'w')
+                newcfg = open(CFG_PATH, 'w')
                 newcfg.write(device_id)
                 newcfg.close()
                 print ("File written and closed. GG!")
@@ -131,48 +113,52 @@ def createcfgfile(url):
                 time.sleep(30)
                 createcfgfile(url)
             else:
-                raise DecoreServerConnectionException('No value was returned from server. There might be problems with the server or yout connection.')
+                raise DecoreServerConnectionException('No value was returned from server. There might be problems with the server or your connection.')
     
     except DecoreServerConnectionException as u:
         print (u)
         sys.exit(1)
     except urllib2.HTTPError, e:
+        #todo - bir daha cfg yaratıcıyı çağır
         pass
     except urllib2.URLError, e:
+        #todo - URL kontrol ettir
         pass
     except httplib.HTTPException, e:
         pass
     except Exception as ex:
+        #todo - Genel hata, yapacak bişey yok
         pass
 
 def sync():
     """Initiate a synchronisation between DeCore and the server. Requires config.json to be properly setup.""" 
     try:
         if isfile(CFG_PATH):
-            cfgfile = open(cfgpath, 'r')
+            cfgfile = open(CFG_PATH, 'r')
             cfg = json.load(cfgfile)
             device_id = cfg['ID']
-            filelist = [f for f in listdir(mediapath) if isfile(join(mediapath, f))]
+            filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
             data = {
                 "Id": device_id, 
                 "OldPaths": filelist
             }
             url = "http://192.168.34.128:8080/v1/node/" + str(device_id)
+            
             #Sunucuya bağlan ve dosyaları talep et.
             request = urllib2.Request(url, json.dumps(data))
             request.add_header('Content-Type', 'application/json')
             tmp = urllib2.urlopen(request)
-            print ("Connection success!")
-            
+                        
             #Döndürülen yanıtı oku.
+            print ("Connection success!")
             response = json.loads(tmp.read())
             tobedeleted = response["data"]["ToBeDeleted"]
             
             #ToBeDeleted'den alınan dosyaları sil
             for the_file in tobedeleted:
-                file_path = join(mediapath, the_file)           
-            if isfile(file_path):
-                unlink(file_path)
+                file_path = join(MEDIA_PATH, the_file)           
+                if isfile(file_path):
+                    unlink(file_path)
             #ToBeAdded'dan gelecek dosyaları indir
             #{"data": {"Id": 1,"Paths": "{\"deneme1.jpg\": true}", "ToBeAdded": ["deneme1.jpg"], "ToBeDeleted": ["deneme2.jpg"] }}
         else:

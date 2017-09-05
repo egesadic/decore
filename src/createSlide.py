@@ -1,47 +1,43 @@
-from decoreToolkit import Slide
+from decoreToolkit import Slide, MEDIA_PATH, SLIDE_PATH
 import os
 from random import shuffle
 from os import listdir, path
 from os.path import isfile, join
-from tkFileDialog import askdirectory
 import sys
 from subprocess import call
 
 def emptymedia():
     sys.exit("No suitable media found in DeCore.")
 
-def newSlideshow():
+def newSlideshow(rnd, dly):
     try:
         slide = Slide("",None,"")
-        name = entryName.get()
-        name = name.strip()
-        cwd = os.getcwd()
-        filepath = os.path.join(cwd + "/slides", name)
-        mediapath = cwd + "/media"
+        name = "test" + ".dpa"
+        filepath = SLIDE_PATH + name
+        isRandom = rnd 
+        Delay = dly
         imgCount = 0
         vidCount = 0
         temp = ""
         init = False
-        filelist = [f for f in listdir(mediapath) if isfile(join(mediapath, f))]
+        filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
         if not filelist:
             emptymedia()
         else:
             lol = ''.join(filelist)
             print ("Found " + str(len(filelist)) + " items: " + lol + " ")
-            if varRand.get():
+            if isRandom:
                 print("Random flag was on, randomizing file list...")
                 shuffle(filelist)
                 lol = ''.join(filelist)
                 print("Randomized list: "+lol+"\n")
-            delay = int(entryDelay.get())      
-            fullscript = "#!/bin/bash\ncd " + mediapath + "\n"
+            delay = int(Delay)      
+            fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\n"
             imgScript = "feh --quiet --preload --reload 60 -Y --slideshow-delay " + str(delay) + ".0 --full-screen --cycle-once "	
-            vidScript = "omxplayer " + mediapath + "/"
+            vidScript = "omxplayer " + MEDIA_PATH 
             if name is "":
-                tkMessageBox.showinfo("Warning", "Please name your slide.")
                 print("Slide was unnamed, name your slide.")
             elif delay is "0":
-                tkMessageBox.showinfo("Warning", "Please indicate a valid delay between slides.")
                 print("Invalid or unspecified delay interval, assuming 15 second interval")
             else:
                 #slide = open(filepath + '.dpa','w')
@@ -111,8 +107,7 @@ def newSlideshow():
 
                 call("chmod +x " + filepath + ".dpa", shell= True)
                 print("Slide created under dir '"+filepath+".dpa'")
-                tkMessageBox.showinfo("Success", "Slideshow '" + name + "' has been successfully created.")
-                root.destroy()
+                print("Success", "Slideshow '" + name + "' has been successfully created.")
                 return 0
 
     except Exception as e:
@@ -123,9 +118,6 @@ def newSlideshow():
             slide.close()
             os.remove(filepath+'.dpa')
             print("Removed!")
-        entryDelay.delete(0, END)
-        entryName.delete(0, END)
-        entryDelay.insert(0, 15)
     except SystemExit as ex:
         print("No media here, stopping...")
         print ex

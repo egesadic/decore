@@ -1,13 +1,23 @@
-# -*- coding: utf-8 -*-
+import decoreToolkit
+from decoreErrors import *
 from os.path import isfile
-from decoreToolkit import CFG_PATH, createcfgfile, sync
 
-VER_NUM = "1.0"
-print "Welcome to DeCore v" + VER_NUM + "! Initialising..."
-registerurl = "192.168.34.120:8080/v1/node/register"
+VER_NUM = "0.1.0"
+print("Welcome to DeCore v" + VER_NUM + "! Initialising...")
 
-#Geçerli bir config dosyası olup olmadığını denetle.      
-if isfile(CFG_PATH) is False:
-    createcfgfile(registerurl)
+url = "192.168.34.120:8080/v1/node/register"
+
+if isfile(decoreToolkit.CFG_PATH):
+    decoreToolkit.sync()
 else:
-    sync()
+    mediaGot = False
+    while mediaGot is False:
+        try:
+            decoreToolkit.createcfgfile(url)
+            if isfile(decoreToolkit.CFG_PATH):
+                decoreToolkit.sync()
+                mediaGot=True
+        except DecoreServerConnectionException as ex:
+            pass
+        except Exception as e:
+            pass
