@@ -148,7 +148,7 @@ def sync():
                 "Id": int(device_id), 
                 "OldPaths": filelist
             }
-            print(str(data))
+            print(json.loads(data))
             url = URL + "v1/node/"
             
             #Sunucuya bağlan ve dosyaları talep et.
