@@ -77,7 +77,7 @@ def createcfgfile(url):
             os.makedirs(MEDIA_PATH)
             os.makedirs(SLIDE_PATH)
             os.makedirs(CFG_FOLDER)
-            mac = getmacadress('enp2s0')
+            mac = getmacadress('wlan0')
             for count in range(0, 4):
                 if count is 3:
                     print("Cannot get MAC address, please contact support.")
