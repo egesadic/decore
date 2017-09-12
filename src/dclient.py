@@ -15,6 +15,7 @@ else:
         try:               
             decoreToolkit.createcfgfile(url)
             if isfile(decoreToolkit.CFG_PATH):
+                print(".cfg file found, syncing...")
                 decoreToolkit.sync()
                 mediaGot=True
         except DecoreServerConnectionException as ex:

@@ -168,7 +168,7 @@ def sync():
                     unlink(file_path)
             #ToBeAdded'dan gelecek dosyaları indir ve metin dosyasına yaz
             tobeadded = response["data"]["ToBeAdded"]
-            addedFile = open("ToBeAdded.txt", 'w')
+            addedFile = open(MEDIA_PATH + "ToBeAdded.txt", 'w')
             content = ""
             for the_file in tobeadded:
                 content = ''.join([content, str(the_file), '\n'])
