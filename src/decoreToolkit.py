@@ -149,7 +149,7 @@ def sync():
                 "OldPaths": filelist
             }
             #print(json.loads(data))
-            url = URL + "v1/node/"
+            url = URL + "v1/node"
             
             #Sunucuya bağlan ve dosyaları talep et.
             request = urllib2.Request(url, json.dumps(data))
