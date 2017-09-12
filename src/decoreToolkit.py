@@ -6,7 +6,6 @@ import urllib2
 import json
 import httplib
 import time
-import tkMessageBox
 from decoreErrors import UndefinedDeviceException, DecoreServerConnectionException
 from abc import ABCMeta
 from os import listdir, unlink
@@ -18,6 +17,7 @@ from os.path import isfile, join
 CFG_PATH = "/usr/decore/config/cfgval.dc"
 MEDIA_PATH = "/usr/decore/media/"
 SLIDE_PATH = "/usr/decore/slides/"
+URL = "http://192.168.34.128:8080/"
 ##########################################################################################################
 #                                          CLASSES START HERE                                            #
 ##########################################################################################################  
@@ -53,7 +53,7 @@ class Slide(decObject):
             f.write(self.script+"exit 0")
             f.close()
         except Exception as e:
-            tkMessageBox.showinfo("this",e)
+            print e
 
 ##########################################################################################################
 #                                          FUNCTIONS START HERE                                          #
@@ -142,7 +142,7 @@ def sync():
                 "Id": device_id, 
                 "OldPaths": filelist
             }
-            url = "http://192.168.34.128:8080/v1/node/" + str(device_id)
+            url = URL + "v1/node/" + str(device_id)
             
             #Sunucuya bağlan ve dosyaları talep et.
             request = urllib2.Request(url, json.dumps(data))
@@ -159,8 +159,15 @@ def sync():
                 file_path = join(MEDIA_PATH, the_file)           
                 if isfile(file_path):
                     unlink(file_path)
-            #ToBeAdded'dan gelecek dosyaları indir
-            #{"data": {"Id": 1,"Paths": "{\"deneme1.jpg\": true}", "ToBeAdded": ["deneme1.jpg"], "ToBeDeleted": ["deneme2.jpg"] }}
+            #ToBeAdded'dan gelecek dosyaları indir ve metin dosyasına yaz
+            tobeadded = response["data"]["ToBeAdded"]
+            addedFile = open("ToBeAdded.txt", 'w')
+            content = ""
+            for the_file in tobeadded:
+                content = ''.join([content, str(the_file), '\n'])
+            addedFile.write(content)
+            addedFile.close()        
+
         else:
             raise UndefinedDeviceException("This device is not properly configured. Reboot the device and try again.")
     
