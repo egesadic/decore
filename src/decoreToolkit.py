@@ -73,7 +73,7 @@ def createcfgfile(url):
         #Geçerli bir config dosyası olup olmadığını denetle.   
         if isfile(CFG_PATH) is False:
             count = 0
-            mac = getmacadress('wlan0')
+            mac = getmacadress('enp2s0')
             for count in range(0, 4):
                 if count is 3:
                     print("Cannot get MAC address, please contact support.")
@@ -86,10 +86,12 @@ def createcfgfile(url):
                         "Mac": mac
                     }
                     break
+                data
             
             #Sunucuya bağlan ve ID talep et.
             request = urllib2.Request(url, json.dumps(data))
             request.add_header('Content-Type', 'application/json')
+            print(url)
             tmp = urllib2.urlopen(request)
             print ("Connection success!")
             
@@ -120,15 +122,15 @@ def createcfgfile(url):
         sys.exit(1)
     except urllib2.HTTPError, e:
         #todo - bir daha cfg yaratıcıyı çağır
-        pass
+        print e
     except urllib2.URLError, e:
         #todo - URL kontrol ettir
-        pass
+        print e
     except httplib.HTTPException, e:
-        pass
+        print e
     except Exception as ex:
         #todo - Genel hata, yapacak bişey yok
-        pass
+        print ex
 
 def sync():
     """Initiate a synchronisation between DeCore and the server. Requires config.json to be properly setup.""" 
