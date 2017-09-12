@@ -12,10 +12,7 @@ if isfile(decoreToolkit.CFG_PATH):
 else:
     mediaGot = False
     while mediaGot is False:
-        try:
-            os.makedirs(decoreToolkit.MEDIA_PATH)
-            os.makedirs(decoreToolkit.SLIDE_PATH)
-            os.makedirs(decoreToolkit.CFG_FOLDER)    
+        try:               
             decoreToolkit.createcfgfile(url)
             if isfile(decoreToolkit.CFG_PATH):
                 decoreToolkit.sync()
