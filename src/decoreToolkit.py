@@ -17,7 +17,7 @@ from os.path import isfile, join
 CFG_PATH = "/usr/decore/config/cfgval.dc"
 MEDIA_PATH = "/usr/decore/media/"
 SLIDE_PATH = "/usr/decore/slides/"
-URL = "http://192.168.34.128:8080/"
+URL = "http://192.168.34.120:8080/"
 ##########################################################################################################
 #                                          CLASSES START HERE                                            #
 ##########################################################################################################  
@@ -86,17 +86,18 @@ def createcfgfile(url):
                         "Mac": mac
                     }
                     break
-                data
             
             #Sunucuya bağlan ve ID talep et.
             request = urllib2.Request(url, json.dumps(data))
             request.add_header('Content-Type', 'application/json')
             print(url)
             tmp = urllib2.urlopen(request)
+            obj = json.loads(tmp.read())
             print ("Connection success!")
             
             #Döndürülen yanıtı oku.
-            response = json.loads(tmp.read())
+            response = obj
+            print(str(response))
             value = response['value']
             print ("Got "+str(value)+" as device ID")
             if value > 0:
