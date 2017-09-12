@@ -74,9 +74,9 @@ def createcfgfile(url):
         #Geçerli bir config dosyası olup olmadığını denetle.   
         if isfile(CFG_PATH) is False:
             count = 0
-            os.makedirs(decoreToolkit.MEDIA_PATH)
-            os.makedirs(decoreToolkit.SLIDE_PATH)
-            os.makedirs(decoreToolkit.CFG_FOLDER)
+            os.makedirs(MEDIA_PATH)
+            os.makedirs(SLIDE_PATH)
+            os.makedirs(CFG_FOLDER)
             mac = getmacadress('enp2s0')
             for count in range(0, 4):
                 if count is 3:
