@@ -14,7 +14,8 @@ from os.path import isfile, join
 #                                    GLOBAL VARIABLES START HERE                                         #
 ##########################################################################################################  
 
-CFG_PATH = "/usr/decore/config/cfgval.dc"
+CFG_FOLDER = "/usr/decore/config/"
+CFG_PATH = CFG_FOLDER + "cfgval.dc"
 MEDIA_PATH = "/usr/decore/media/"
 SLIDE_PATH = "/usr/decore/slides/"
 URL = "http://192.168.34.120:8080/"
@@ -101,7 +102,7 @@ def createcfgfile(url):
             value = response['value']
             print ("Got "+str(value)+" as device ID")
             if value > 0:
-                device_id = str(value)
+                device_id = str(value)              
                 newcfg = open(CFG_PATH, 'w')
                 newcfg.write(device_id)
                 newcfg.close()
