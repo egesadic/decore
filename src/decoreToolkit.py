@@ -138,13 +138,13 @@ def sync():
     try:
         if isfile(CFG_PATH):
             cfgfile = open(CFG_PATH, 'r')
-            cfg = json.load(cfgfile)
-            device_id = cfg['ID']
+            device_id = cfgfile.read()
             filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
             data = {
-                "Id": device_id, 
+                "Id": int(device_id), 
                 "OldPaths": filelist
             }
+            print(str(data))
             url = URL + "v1/node/" + str(device_id)
             
             #Sunucuya bağlan ve dosyaları talep et.
