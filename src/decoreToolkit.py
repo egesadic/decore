@@ -185,7 +185,9 @@ def sync():
                     for the_file in tobeadded:
                         content = ''.join([content, URL, "v1/files/", str(the_file), '\n'])
                     addedFile.write(content)
-                    addedFile.close()        
+                    addedFile.close()
+                    print("Fetching and adding files...")
+                    fetchfiles()        
                     print ("Added " + str(len(tobeadded)) + " files.")
                 else:
                     print("No files to be added.")
@@ -215,3 +217,15 @@ def forcecfgcreate(url):
         createcfgfile(url)
     else:
         createcfgfile(url)
+
+def fetchfiles():
+    """Fetches files from the DeCore server."""
+    x=[]
+    i=0
+    f = open(CFG_FOLDER + "ToBeAdded.txt",'r')
+    for line in f.readlines():
+        print("Now fetching: " + line)
+        x.extend([line])  
+        f.close()
+    for index in range(len(x)):
+        os.system("wget -c " + x[index] + " -P /home/pi/deneme/")
