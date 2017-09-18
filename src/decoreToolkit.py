@@ -181,7 +181,7 @@ def sync():
                 tobeadded = response["data"]["ToBeAdded"]
                 
                 if tobeadded is not None:
-                    addedFile = open(MEDIA_PATH + "ToBeAdded.txt", 'w')
+                    addedFile = open(CFG_FOLDER + "ToBeAdded.txt", 'w')
                     content = ""
                     for the_file in tobeadded:
                         content = ''.join([content, str(the_file), '\n'])
