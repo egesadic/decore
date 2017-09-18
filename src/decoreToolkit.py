@@ -159,8 +159,12 @@ def sync():
                         
             #Döndürülen yanıtı oku.
             print ("Connection success!")
+            print ("Reading response...")
             response = json.loads(tmp.read())
+            print("Done!")
+            print("Getting file list to be deleted")
             tobedeleted = response["data"]["ToBeDeleted"]
+            print("Done! Array is: " +str(tobedeleted) )
             
             #ToBeDeleted'den alınan dosyaları sil
             for the_file in tobedeleted:
