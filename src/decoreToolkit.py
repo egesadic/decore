@@ -228,4 +228,6 @@ def fetchfiles():
         x.extend([line])  
         f.close()
     for index in range(len(x)):
-        os.system("wget -c " + x[index] + " -P " + MEDIA_PATH)
+        cmd="wget -c " + x[index] + " -P " + MEDIA_PATH
+        print cmd
+        os.system(cmd)
