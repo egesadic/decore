@@ -8,3 +8,7 @@ class DecoreServerConnectionException(Exception):
     """Sunucu bağlantısı patlarsa raise edilecek exception."""
     def __init__(self,*args,**kwargs):
         Exception.__init__(self,*args,**kwargs)
+class JSONParseException(Exception):
+    """JSON okumasında sorun çıkarsa raise edilecek exception."""
+    def __init__(self,*args,**kwargs):
+        Exception.__init__(self,*args,**kwargs)

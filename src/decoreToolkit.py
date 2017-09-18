@@ -6,7 +6,7 @@ import urllib2
 import json
 import httplib
 import time
-from decoreErrors import UndefinedDeviceException, DecoreServerConnectionException
+from decoreErrors import *
 from abc import ABCMeta
 from os import listdir, unlink
 from os.path import isfile, join
@@ -161,25 +161,39 @@ def sync():
             print ("Connection success!")
             print ("Reading response...")
             response = json.loads(tmp.read())
-            print("Done!")
-            print("Getting file list to be deleted")
-            tobedeleted = response["data"]["ToBeDeleted"]
-            print("Done! Array is: " +str(tobedeleted) )
-            
-            #ToBeDeleted'den alınan dosyaları sil
-            for the_file in tobedeleted:
-                file_path = join(MEDIA_PATH, the_file)           
-                if isfile(file_path):
-                    unlink(file_path)
-            #ToBeAdded'dan gelecek dosyaları indir ve metin dosyasına yaz
-            tobeadded = response["data"]["ToBeAdded"]
-            addedFile = open(MEDIA_PATH + "ToBeAdded.txt", 'w')
-            content = ""
-            for the_file in tobeadded:
-                content = ''.join([content, str(the_file), '\n'])
-            addedFile.write(content)
-            addedFile.close()        
+            if response is not None:
+                print("Done!")
+                print("Getting file list to be deleted")
+                tobedeleted = response["data"]["ToBeDeleted"]
+                print("Done! Array is: " +str(tobedeleted) )
+                
+                if tobedeleted is not None:
+                    #ToBeDeleted'den alınan dosyaları sil
+                    for the_file in tobedeleted:
+                        file_path = join(MEDIA_PATH, the_file)           
+                        if isfile(file_path):
+                            unlink(file_path)
+                    print ("Deleted " + len(tobedeleted) + "files.")
+                else:
+                    print("No files to be deleted. Proceeding to add files.")
 
+                #ToBeAdded'dan gelecek dosyaları indir ve metin dosyasına yaz
+                tobeadded = response["data"]["ToBeAdded"]
+                
+                if tobeadded is not None:
+                    addedFile = open(MEDIA_PATH + "ToBeAdded.txt", 'w')
+                    content = ""
+                    for the_file in tobeadded:
+                        content = ''.join([content, str(the_file), '\n'])
+                    addedFile.write(content)
+                    addedFile.close()        
+                    print ("Added " + len(tobeadded) + "files.")
+                else:
+                    print("No files to be added.")
+            else:
+                print("No changes were made.")
+                raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")
+            
         else:
             raise UndefinedDeviceException("This device is not properly configured. Reboot the device and try again.")
     
