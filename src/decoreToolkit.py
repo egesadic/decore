@@ -18,7 +18,7 @@ CFG_FOLDER = "/usr/decore/config/"
 CFG_PATH = CFG_FOLDER + "cfgval.dc"
 MEDIA_PATH = "/usr/decore/media/"
 SLIDE_PATH = "/usr/decore/slides/"
-URL = "http://192.168.34.120:8080/"
+URL = "http://192.168.34.120:8080"
 ##########################################################################################################
 #                                          CLASSES START HERE                                            #
 ##########################################################################################################  
@@ -49,8 +49,7 @@ class Slide(decObject):
     def writeToFile(self):
         """Generates a .DPA file to be played in RPi."""
         try:
-            cwd = os.getcwd()+'\slides/'
-            f = open(cwd+self.name+'.dpa', 'w')
+            f = open(SLIDE_PATH+self.name+'.dpa', 'w')
             f.write(self.script+"exit 0")
             f.close()
         except Exception as e:
@@ -89,8 +88,7 @@ def createcfgfile(url):
                     data = {
                         "Mac": mac
                     }
-                    break
-            
+                    break            
             #Sunucuya bağlan ve ID talep et.
             request = urllib2.Request(url, json.dumps(data))
             request.add_header('Content-Type', 'application/json')
@@ -144,6 +142,7 @@ def sync():
             cfgfile = open(CFG_PATH, 'r')
             device_id = cfgfile.read()
             filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
+            print("Old files: "+str(filelist))
             data = {
                 "Id": int(device_id), 
                 "OldPaths": filelist
@@ -184,10 +183,10 @@ def sync():
                     addedFile = open(CFG_FOLDER + "ToBeAdded.txt", 'w')
                     content = ""
                     for the_file in tobeadded:
-                        content = ''.join([content, str(the_file), '\n'])
+                        content = ''.join([content, URL, "v1/files/", str(the_file), '\n'])
                     addedFile.write(content)
                     addedFile.close()        
-                    print ("Added " + str(len(tobeadded)) + "files.")
+                    print ("Added " + str(len(tobeadded)) + " files.")
                 else:
                     print("No files to be added.")
             else:
@@ -208,6 +207,7 @@ def sync():
         pass
     except Exception as e:
         print(e)
+
 def forcecfgcreate(url):
     """Forces a new config file creation. Use this only if needed."""
     if isfile(CFG_PATH):
