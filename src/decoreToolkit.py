@@ -224,8 +224,8 @@ def fetchfiles():
     i=0
     f = open(CFG_FOLDER + "ToBeAdded.txt",'r')
     for line in f.readlines():
-        print("Now fetching: " + line)
-        x.extend([line])  
+        print("Now fetching: " + str(line).replace('\n',""))
+        x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
         cmd="wget -c " + x[index] + " -P " + MEDIA_PATH
