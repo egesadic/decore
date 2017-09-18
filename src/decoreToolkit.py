@@ -228,4 +228,4 @@ def fetchfiles():
         x.extend([line])  
         f.close()
     for index in range(len(x)):
-        os.system("wget -c " + x[index] + " -P /home/pi/deneme/")
+        os.system("wget -c " + x[index] + " -P " + MEDIA_PATH)
