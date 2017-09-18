@@ -173,7 +173,7 @@ def sync():
                         file_path = join(MEDIA_PATH, the_file)           
                         if isfile(file_path):
                             unlink(file_path)
-                    print ("Deleted " + len(tobedeleted) + "files.")
+                    print ("Deleted " + str(len(tobedeleted)) + "files.")
                 else:
                     print("No files to be deleted. Proceeding to add files.")
 
@@ -187,7 +187,7 @@ def sync():
                         content = ''.join([content, str(the_file), '\n'])
                     addedFile.write(content)
                     addedFile.close()        
-                    print ("Added " + len(tobeadded) + "files.")
+                    print ("Added " + str(len(tobeadded)) + "files.")
                 else:
                     print("No files to be added.")
             else:
