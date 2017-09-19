@@ -33,7 +33,7 @@ def newSlideshow(rnd, dly):
                 print("Randomized list: "+lol+"\n")
             delay = int(Delay)      
             fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\n"
-            imgScript = "fbi --noverbose -a -t " + str(delay) + " -"	
+            imgScript = "fbi --noverbose -a -t " + str(delay) + " -once"	
             vidScript = "omxplayer " + MEDIA_PATH 
             if name is "":
                 print("Slide was unnamed, name your slide.")
