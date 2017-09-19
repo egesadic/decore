@@ -145,6 +145,8 @@ def sync():
     """Initiate a synchronisation between DeCore and the server. Requires config.json to be properly setup.""" 
     try:
         global FILES_CHANGED
+        global IS_RANDOM
+        global DELAY
 
         FILES_CHANGED = False
 
@@ -162,7 +164,7 @@ def sync():
             
             #Sunucuya bağlan ve dosyaları talep et.
             request = urllib2.Request(url, json.dumps(data))
-            request.add_header('Content-Type', 'application/json')
+            request.add_header('Content-Type', 'application/json')FILES_CHANGED = False
             request.get_method = lambda: 'PUT'
             tmp = urllib2.urlopen(request)
                         
