@@ -12,7 +12,7 @@ def emptymedia():
 def newSlideshow(rnd, dly):
     try:
         slide = Slide("",None,"")
-        name = "test" + ".dpa"
+        name = "test"
         filepath = SLIDE_PATH + name
         isRandom = bool(rnd)
         Delay = int(dly)
@@ -105,7 +105,7 @@ def newSlideshow(rnd, dly):
                 slide.script = fullscript
                 slide.writeToFile()
 
-                call("chmod +x " + filepath + ".dpa", shell= True)
+                call("chmod +x " + filepath , shell= True)
                 print("Slide created under dir '"+filepath)
                 print("Success", "Slideshow '" + name + "' has been successfully created.")
                 return 0
