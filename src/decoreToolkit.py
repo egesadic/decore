@@ -167,7 +167,7 @@ def sync():
             response = json.loads(tmp.read())
             if response is not None:
                 print("Done! Getting randomization and delay values...")
-                IS_RANDOM = response["data"]["IsRandom"]
+                IS_RANDOM = bool(response["data"]["IsRandom"])
                 print("Random is " + IS_RANDOM)
                 DELAY = response["data"]["Delay"]
                 print ("Delay is " + DELAY)
