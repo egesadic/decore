@@ -168,7 +168,7 @@ def sync():
             if response is not None:
                 print("Done! Getting randomization and delay values...")
                 print(str(response["data"]["IsRandom"]))
-                IS_RANDOM = bool(response["data"]["IsRandom"])
+                IS_RANDOM = str(response["data"]["IsRandom"])
                 print("Random is " + IS_RANDOM)
                 DELAY = response["data"]["Delay"]
                 print ("Delay is " + DELAY)
