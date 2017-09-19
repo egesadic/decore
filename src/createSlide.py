@@ -12,7 +12,7 @@ def emptymedia():
 def newSlideshow(rnd, dly):
     try:
         slide = Slide("",None,"")
-        name = "test"
+        name = "test.dpa"
         filepath = SLIDE_PATH + name
         isRandom = bool(rnd)
         Delay = int(dly)

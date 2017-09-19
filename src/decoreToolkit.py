@@ -52,7 +52,7 @@ class Slide(decObject):
     def writeToFile(self):
         """Generates a .DPA file to be played in RPi."""
         try:
-            f = open(SLIDE_PATH+self.name+'.dpa', 'w')
+            f = open(SLIDE_PATH+self.name, 'w')
             f.write(self.script+"exit 0")
             f.close()
         except Exception as e:
