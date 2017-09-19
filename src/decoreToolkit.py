@@ -67,16 +67,19 @@ def getmacadress(interface):
         mac = "00:00:00:00:00:00"
     return mac[0:17]
 
-def createcfgfile(url):
+def createcfgfile(url, adapter):
     """Connect to a local DeCore server to fetch device-id and store it in a config file under specified path. Default path to config file is '/usr/decore/config'."""    
     try:
         #Geçerli bir config dosyası olup olmadığını denetle.   
         if isfile(CFG_PATH) is False:
             count = 0
-            os.makedirs(MEDIA_PATH)
-            os.makedirs(SLIDE_PATH)
-            os.makedirs(CFG_FOLDER)
-            mac = getmacadress('wlan0')
+            if os.path.isdir(MEDIA_PATH) is False:
+                os.makedirs(MEDIA_PATH)
+            if os.path.isdir(SLIDE_PATH) is False:
+                os.makedirs(SLIDE_PATH)
+            if os.path.isdir(CFG_FOLDER) is False:
+                os.makedirs(CFG_FOLDER)
+            mac = getmacadress(adapter)
             for count in range(0, 4):
                 if count is 3:
                     print("Cannot get MAC address, please contact support.")
