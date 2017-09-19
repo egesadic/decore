@@ -144,7 +144,10 @@ def createcfgfile(url, adapter):
 def sync():
     """Initiate a synchronisation between DeCore and the server. Requires config.json to be properly setup.""" 
     try:
+        global FILES_CHANGED
+
         FILES_CHANGED = False
+
         if isfile(CFG_PATH):
             cfgfile = open(CFG_PATH, 'r')
             device_id = cfgfile.read()
