@@ -106,7 +106,7 @@ def newSlideshow(rnd, dly):
                 slide.writeToFile()
 
                 call("chmod +x " + filepath + ".dpa", shell= True)
-                print("Slide created under dir '"+filepath+".dpa'")
+                print("Slide created under dir '"+filepath)
                 print("Success", "Slideshow '" + name + "' has been successfully created.")
                 return 0
 
