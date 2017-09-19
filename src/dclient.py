@@ -13,7 +13,7 @@ else:
     mediaGot = False
     while mediaGot is False:
         try:               
-            decoreToolkit.createcfgfile(url,"enp2s0")
+            decoreToolkit.createcfgfile(url,"wlan0")
             if isfile(decoreToolkit.CFG_PATH):
                 print(".cfg file found, syncing...")
                 decoreToolkit.sync()
