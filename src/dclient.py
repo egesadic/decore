@@ -11,7 +11,10 @@ url = decoreToolkit.URL +"v1/node/register"
 if isfile(decoreToolkit.CFG_PATH):
     decoreToolkit.sync()
     if decoreToolkit.FILES_CHANGED is True:
+        print("asdasd")
         createSlide.newSlideshow(decoreToolkit.IS_RANDOM, decoreToolkit.DELAY)
+    else:
+        print("qweqwe")
 else:
     mediaGot = False
     while mediaGot is False:
