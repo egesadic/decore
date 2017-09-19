@@ -14,7 +14,7 @@ if isfile(decoreToolkit.CFG_PATH):
         print("asdasd")
         createSlide.newSlideshow(decoreToolkit.IS_RANDOM, decoreToolkit.DELAY)
     else:
-        print("qweqwe "+decoreToolkit.FILES_CHANGED)
+        print("Startup complete, enjoy!")
 else:
     mediaGot = False
     while mediaGot is False:
