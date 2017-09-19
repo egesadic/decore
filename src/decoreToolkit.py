@@ -170,7 +170,7 @@ def sync():
                 print(str(response["data"]["IsRandom"]))
                 IS_RANDOM = str(response["data"]["IsRandom"])
                 print("Random is " + IS_RANDOM)
-                DELAY = int(response["data"]["Delay"])
+                DELAY = str(response["data"]["Delay"])
                 print ("Delay is " + DELAY)
                 print("Getting file list to be deleted")
                 tobedeleted = response["data"]["ToBeDeleted"]
