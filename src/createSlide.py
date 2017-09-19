@@ -14,7 +14,7 @@ def newSlideshow(rnd, dly):
         slide = Slide("",None,"")
         name = "test" + ".dpa"
         filepath = SLIDE_PATH + name
-        isRandom = rnd 
+        isRandom = bool(rnd)
         Delay = dly
         imgCount = 0
         vidCount = 0

@@ -14,6 +14,8 @@ from os.path import isfile, join
 #                                    GLOBAL VARIABLES START HERE                                         #
 ##########################################################################################################  
 
+IS_RANDOM = False
+DELAY = 5
 CFG_FOLDER = "/usr/decore/config/"
 CFG_PATH = CFG_FOLDER + "cfgval.dc"
 MEDIA_PATH = "/usr/decore/media/"
@@ -164,7 +166,11 @@ def sync():
             print ("Reading response...")
             response = json.loads(tmp.read())
             if response is not None:
-                print("Done!")
+                print("Done! Getting randomization and delay values...")
+                IS_RANDOM = response["data"]["IsRandom"]
+                print("Random is " + IS_RANDOM)
+                DELAY = response["data"]["Delay"]
+                print ("Delay is " + DELAY)
                 print("Getting file list to be deleted")
                 tobedeleted = response["data"]["ToBeDeleted"]
                 print("Done! Array is: " +str(tobedeleted) )
