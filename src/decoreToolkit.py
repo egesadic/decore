@@ -203,6 +203,7 @@ def sync():
                     fetchfiles()        
                     print ("Added " + str(len(tobeadded)) + " files.")
                     FILES_CHANGED = True
+                    print("Files are CHANGED!")
                 else:
                     print("No files to be added.")                   
             else:
