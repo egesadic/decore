@@ -14,6 +14,7 @@ from os.path import isfile, join
 #                                    GLOBAL VARIABLES START HERE                                         #
 ##########################################################################################################  
 
+FILES_CHANGED = "False"
 IS_RANDOM = "False"
 DELAY = 5
 CFG_FOLDER = "/usr/decore/config/"
@@ -143,6 +144,7 @@ def createcfgfile(url, adapter):
 def sync():
     """Initiate a synchronisation between DeCore and the server. Requires config.json to be properly setup.""" 
     try:
+        FILES_CHANGED = False
         if isfile(CFG_PATH):
             cfgfile = open(CFG_PATH, 'r')
             device_id = cfgfile.read()
@@ -183,6 +185,7 @@ def sync():
                         if isfile(file_path):
                             unlink(file_path)
                     print ("Deleted " + str(len(tobedeleted)) + "files.")
+                    FILES_CHANGED = True
                 else:
                     print("No files to be deleted. Proceeding to add files.")
 
@@ -199,10 +202,12 @@ def sync():
                     print("Fetching and adding files...")
                     fetchfiles()        
                     print ("Added " + str(len(tobeadded)) + " files.")
+                    FILES_CHANGED = True
                 else:
-                    print("No files to be added.")
+                    print("No files to be added.")                   
             else:
                 print("No changes were made.")
+                FILES_CHANGED = False
                 raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")
             
         else:
