@@ -14,7 +14,7 @@ from os.path import isfile, join
 #                                    GLOBAL VARIABLES START HERE                                         #
 ##########################################################################################################  
 
-IS_RANDOM = False
+IS_RANDOM = "False"
 DELAY = 5
 CFG_FOLDER = "/usr/decore/config/"
 CFG_PATH = CFG_FOLDER + "cfgval.dc"
