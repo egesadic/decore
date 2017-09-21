@@ -12,10 +12,10 @@ def emptymedia():
 def newSlideshow(rnd, dly):
     try:
         slide = Slide("",None,"")
-        name = "test.dpa"
+        name = "slide.dpa"
         filepath = SLIDE_PATH + name
         isRandom = bool(rnd)
-        Delay = int(dly)
+        delay = int(dly)
         imgCount = 0
         vidCount = 0
         temp = ""
@@ -30,22 +30,20 @@ def newSlideshow(rnd, dly):
                 print("Random flag was on, randomizing file list...")
                 shuffle(filelist)
                 lol = ''.join(filelist)
-                print("Randomized list: "+lol+"\n")
-            delay = int(Delay)      
-            fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\n"
-            imgScript = "fbi --noverbose -a -t " + str(delay) + " -once "	
-            vidScript = "omxplayer " + MEDIA_PATH 
-            if name is "":
-                print("Slide was unnamed, name your slide.")
-            elif delay is "0":
-                print("Invalid or unspecified delay interval, assuming 15 second interval")
+                print("Randomized list: "+lol+"\n")     
+            fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo"
+            imgScript = "clear\nfbi --noverbose -a -t " + str(delay) + " -once "	
+            vidScript = "clear\nomxplayer " + MEDIA_PATH 
+            if delay is 0:
+                print("Invalid or unspecified delay interval, assuming a 15 seconds interval")
+                delay = 15
             else:
                 #slide = open(filepath + '.dpa','w')
                 for file in filelist:
 			        #check init flag
-                    print("Now processing: " + file)
+                    print("Now processing file: " + file)
                     if init is False:
-                        print ("init was false, this means this is the first media, changing flag...")
+                        #print ("init was false, this means this is the first media, changing flag...")
 				        #generate image list and vid name after init
                         init = True
                         imgList = []

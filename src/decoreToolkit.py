@@ -53,7 +53,7 @@ class Slide(decObject):
         """Generates a .DPA file to be played in RPi."""
         try:
             f = open(SLIDE_PATH+self.name, 'w')
-            f.write(self.script+"exit 0")
+            f.write(self.script+"done\nexit 0")
             f.close()
         except Exception as e:
             print e
@@ -101,19 +101,19 @@ def createcfgfile(url, adapter):
             print(url)
             tmp = urllib2.urlopen(request)
             obj = json.loads(tmp.read())
-            print ("Connection success!")
+            print ("Connection to the DeCore server success!")
             
             #Döndürülen yanıtı oku.
             response = obj
             print(str(response))
             value = response['value']
-            print ("Got "+str(value)+" as device ID")
+            print (str(value)+" assigned as device ID")
             if value > 0:
                 device_id = str(value)              
                 newcfg = open(CFG_PATH, 'w')
                 newcfg.write(device_id)
                 newcfg.close()
-                print ("File written and closed. GG!")
+                print ("Config file has been created successfully!")
                 exit(0)
             elif value == -1:
                 print ("Could not connect to server, will try again in 30 seconds.")
@@ -124,7 +124,7 @@ def createcfgfile(url, adapter):
                 time.sleep(30)
                 createcfgfile(url)
             else:
-                raise DecoreServerConnectionException('No value was returned from server. There might be problems with the server or your connection.')
+                raise DecoreServerConnectionException('No value was returned from server. There might be problems with the server or with your connection.')
     
     except DecoreServerConnectionException as u:
         print (u)
@@ -170,19 +170,19 @@ def sync():
             tmp = urllib2.urlopen(request)
                         
             #Döndürülen yanıtı oku.
-            print ("Connection success!")
-            print ("Reading response...")
+            print ("Connection success! Reading response...")
             response = json.loads(tmp.read())
             if response is not None:
                 print("Done! Getting randomization and delay values...")
                 print(str(response["data"]["IsRandom"]))
                 IS_RANDOM = str(response["data"]["IsRandom"])
-                print("Random is " + IS_RANDOM)
+                print("Random flag is " + IS_RANDOM)
                 DELAY = str(response["data"]["Delay"])
                 print ("Delay is " + DELAY)
                 print("Getting file list to be deleted")
                 tobedeleted = response["data"]["ToBeDeleted"]
-                print("Done! Array is: " +str(tobedeleted) )
+                if len(tobedeleted) is not 0:
+                    print("Files to be deleted are: " +str(tobedeleted) )
                 
                 if tobedeleted is not None:
                     #ToBeDeleted'den alınan dosyaları sil
@@ -190,10 +190,10 @@ def sync():
                         file_path = join(MEDIA_PATH, the_file)           
                         if isfile(file_path):
                             unlink(file_path)
-                    print ("Deleted " + str(len(tobedeleted)) + "files.")
+                    print ("Deleted " + str(len(tobedeleted)) + "files successfully.")
                     FILES_CHANGED = True
                 else:
-                    print("No files to be deleted. Proceeding to add files.")
+                    print("No files to be deleted. Proceeding to add files...")
 
                 #ToBeAdded'dan gelecek dosyaları indir ve metin dosyasına yaz
                 tobeadded = response["data"]["ToBeAdded"]
@@ -205,15 +205,14 @@ def sync():
                         content = ''.join([content, URL, "v1/files/", str(the_file), '\n'])
                     addedFile.write(content)
                     addedFile.close()
-                    print("Fetching and adding files...")
+                    print("Fetching the files from server...")
                     fetchfiles()        
                     print ("Added " + str(len(tobeadded)) + " files.")
                     FILES_CHANGED = True
-                    print("Files are CHANGED!")
+                    #print("Files have been CHANGED!")
                 else:
                     print("No files to be added.")                   
             else:
-                print("No changes were made.")
                 FILES_CHANGED = False
                 raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")
             
