@@ -150,6 +150,7 @@ def sync():
         FILES_CHANGED = False
 
         if isfile(CFG_PATH):
+            printmessage("Sync started with server!")
             cfgfile = open(CFG_PATH, 'r')
             device_id = cfgfile.read()
             filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
@@ -251,4 +252,4 @@ def fetchfiles():
 def printmessage(text):
     """Print specified message with a sensible delay."""
     print(text)
-    time.sleep(1)
+    time.sleep(0.3)
