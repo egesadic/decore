@@ -1,4 +1,4 @@
-from decoreToolkit import Slide, MEDIA_PATH, SLIDE_PATH, IS_RANDOM, DELAY
+from decoreToolkit import Slide, MEDIA_PATH, SLIDE_PATH, IS_RANDOM, DELAY, printmessage
 import os
 from random import shuffle
 from os import listdir, path

@@ -249,7 +249,10 @@ def fetchfiles():
         cmd="wget -c " + x[index] + " -P " + MEDIA_PATH
         print cmd
         os.system(cmd)
-def printmessage(text):
+def printmessage(text, slp):
     """Print specified message with a sensible delay."""
     print(text)
-    time.sleep(0.3)
+    if slp is None:
+        time.sleep(0.3)
+    else:
+        time.sleep(slp)
