@@ -41,7 +41,7 @@ def newSlideshow(rnd, dly):
                 #slide = open(filepath + '.dpa','w')
                 for file in filelist:
 			        #check init flag
-                    printmessage("Now processing file: " + file, 0.1)
+                    printmessage("Now processing file: " + file, 0)
                     if init is False:
                         #print ("init was false, this means this is the first media, changing flag...")
 				        #generate image list and vid name after init
@@ -61,8 +61,8 @@ def newSlideshow(rnd, dly):
                         else:
                             emptymedia()
                     else:
-                        printmessage("getting rest of the media...")
-                        printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n")
+                        printmessage("getting rest of the media...", 0)
+                        printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n", 0)
 				        #stuff to do after init
 				        #if both counters are equal, break the loop.
                         if vidCount == imgCount:
@@ -73,7 +73,7 @@ def newSlideshow(rnd, dly):
                                 printmessage("image combo ongoing, populating image array...", 0.1)
                                 imgList.append(file + " ")
                                 imgCount += 1
-                                printmessage("Current combo: " + ''.join(imgList), 0.1)
+                                printmessage("Current combo: " + ''.join(imgList), 0)
                             elif file.endswith((".mp4",".h264")):
                                 printmessage("combo broken!", 0.1)
                                 imgCount = 0
