@@ -86,12 +86,12 @@ def createcfgfile(url, adapter):
             mac = getmacadress(adapter)
             for count in range(0, 4):
                 if count is 3:
-                    print("Cannot get MAC address, please contact support.")
+                    printmessage("Cannot get MAC address, please contact support.")
                     sys.exit(-1)
                 if mac is "00:00:00:00:00:00":
                     count += 1
                 else:
-                    print ("MAC address is: "+mac)
+                    printmessage ("MAC address is: "+mac)
                     data = {
                         "Mac": mac
                     }
@@ -99,28 +99,27 @@ def createcfgfile(url, adapter):
             #Sunucuya bağlan ve ID talep et.
             request = urllib2.Request(url, json.dumps(data))
             request.add_header('Content-Type', 'application/json')
-            print(url)
+            printmessage(url)
             tmp = urllib2.urlopen(request)
             obj = json.loads(tmp.read())
-            print ("Connection to the DeCore server success!")
+            printmessage ("Connection to the DeCore server success!")
             
             #Döndürülen yanıtı oku.
             response = obj
-            print(str(response))
             value = response['value']
-            print (str(value)+" assigned as device ID")
+            printmessage (str(value)+" assigned as device ID")
             if value > 0:
                 device_id = str(value)              
                 newcfg = open(CFG_PATH, 'w')
                 newcfg.write(device_id)
                 newcfg.close()
-                print ("Config file has been created successfully!")
+                printmessage ("Config file has been created successfully!")
             elif value == -1:
-                print ("Could not connect to server, will try again in 30 seconds.")
+                printmessage ("Could not connect to server, will try again in 30 seconds.")
                 time.sleep(30)
                 createcfgfile(url)
             elif value == -2:
-                print ("No MAC sent by device, will try again in 30 seconds.")
+                printmessage ("No MAC sent by device, will try again in 30 seconds.")
                 time.sleep(30)
                 createcfgfile(url)
             else:
@@ -154,7 +153,7 @@ def sync():
             cfgfile = open(CFG_PATH, 'r')
             device_id = cfgfile.read()
             filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
-            print("Old files: "+str(filelist))
+            printmessage("Old files: "+str(filelist))
             data = {
                 "Id": int(device_id), 
                 "OldPaths": filelist
@@ -170,19 +169,16 @@ def sync():
             tmp = urllib2.urlopen(request)
                         
             #Döndürülen yanıtı oku.
-            print ("Connection success! Reading response...")
+            printmessage ("Connection success! Reading response...")
             response = json.loads(tmp.read())
             if response is not None:
-                print("Done! Getting randomization and delay values...")
-                print(str(response["data"]["IsRandom"]))
+                printmessage("Done! Getting randomization and delay values...")
                 IS_RANDOM = str(response["data"]["IsRandom"])
-                print("Random flag is " + IS_RANDOM)
                 DELAY = str(response["data"]["Delay"])
-                print ("Delay is " + DELAY)
-                print("Getting file list to be deleted")
+                printmessage("Getting file list to be deleted...")
                 tobedeleted = response["data"]["ToBeDeleted"]
                 if len(tobedeleted) is not 0:
-                    print("Files to be deleted are: " +str(tobedeleted) )
+                    printmessage("Files to be deleted are: " +str(tobedeleted) )
                 
                 if tobedeleted is not None:
                     #ToBeDeleted'den alınan dosyaları sil
@@ -190,10 +186,10 @@ def sync():
                         file_path = join(MEDIA_PATH, the_file)           
                         if isfile(file_path):
                             unlink(file_path)
-                    print ("Deleted " + str(len(tobedeleted)) + "files successfully.")
+                    printmessage ("Deleted " + str(len(tobedeleted)) + "files successfully.")
                     FILES_CHANGED = True
                 else:
-                    print("No files to be deleted. Proceeding to add files...")
+                    printmessage("No files to be deleted. Proceeding to add files...")
 
                 #ToBeAdded'dan gelecek dosyaları indir ve metin dosyasına yaz
                 tobeadded = response["data"]["ToBeAdded"]
@@ -205,13 +201,13 @@ def sync():
                         content = ''.join([content, URL, "v1/files/", str(the_file), '\n'])
                     addedFile.write(content)
                     addedFile.close()
-                    print("Fetching the files from server...")
+                    printmessage("Fetching the files from server...")
                     fetchfiles()        
-                    print ("Added " + str(len(tobeadded)) + " files.")
+                    printmessage ("Added " + str(len(tobeadded)) + " files.")
                     FILES_CHANGED = True
                     #print("Files have been CHANGED!")
                 else:
-                    print("No files to be added.")                   
+                    printmessage("No files to be added.")                   
             else:
                 FILES_CHANGED = False
                 raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")
@@ -252,3 +248,7 @@ def fetchfiles():
         cmd="wget -c " + x[index] + " -P " + MEDIA_PATH
         print cmd
         os.system(cmd)
+def printmessage(text):
+    """Print specified message with a sensible delay."""
+    print(text)
+    time.sleep(1)
