@@ -115,7 +115,6 @@ def createcfgfile(url, adapter):
                 newcfg.write(device_id)
                 newcfg.close()
                 print ("Config file has been created successfully!")
-                exit(0)
             elif value == -1:
                 print ("Could not connect to server, will try again in 30 seconds.")
                 time.sleep(30)
