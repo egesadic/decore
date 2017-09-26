@@ -87,7 +87,7 @@ def createcfgfile(url, adapter):
             for count in range(0, 4):
                 if count is 3:
                     printmessage("Cannot get MAC address, please contact support.")
-                    sys.exit(-1)
+                    exit(1)
                 if mac is "00:00:00:00:00:00":
                     count += 1
                 else:
@@ -249,6 +249,7 @@ def fetchfiles():
         cmd="wget -c " + x[index] + " -P " + MEDIA_PATH
         print cmd
         os.system(cmd)
+        
 def printmessage(text, slp = 0.3):
     """Print specified message with a sensible delay."""
     print(text)
