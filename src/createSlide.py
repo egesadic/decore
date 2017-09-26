@@ -25,23 +25,23 @@ def newSlideshow(rnd, dly):
             emptymedia()
         else:
             lol = ''.join(filelist)
-            print ("Found " + str(len(filelist)) + " items: " + lol + " ")
+            printmessage ("Found " + str(len(filelist)) + " items: " + lol + " ")
             if isRandom:
-                print("Random flag was on, randomizing file list...")
+                printmessage("Random flag was on, randomizing file list...")
                 shuffle(filelist)
                 lol = ''.join(filelist)
-                print("Randomized list: "+lol+"\n")     
+                printmessage("Randomized list: "+lol+"\n")     
             fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo"
             imgScript = "clear\nfbi --noverbose -a -t " + str(delay) + " -once "	
             vidScript = "clear\nomxplayer " + MEDIA_PATH 
             if delay is 0:
-                print("Invalid or unspecified delay interval, assuming a 15 seconds interval")
+                printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval")
                 delay = 15
             else:
                 #slide = open(filepath + '.dpa','w')
                 for file in filelist:
 			        #check init flag
-                    print("Now processing file: " + file)
+                    printmessage("Now processing file: " + file)
                     if init is False:
                         #print ("init was false, this means this is the first media, changing flag...")
 				        #generate image list and vid name after init
@@ -49,20 +49,20 @@ def newSlideshow(rnd, dly):
                         imgList = []
                         vidName = ""
                         if file.endswith(('.jpg', '.jpeg', '.png','.gif')):
-                            print("first media is an image, combo started...\n")
+                            printmessage("first media is an image, combo started...\n")
                             imgList.append(file + " ")
                             imgCount += 1
-                            print("img's appended to list, continuing process...\n")
+                            printmessage("img's appended to list, continuing process...\n")
                         elif file.endswith(('.mp4','.h264')):
-                            print("first media is a video, writing to bash file...\n")
+                            printmessage("first media is a video, writing to bash file...\n")
                             vidName = ''.join([fullscript,vidScript, file, '\n'])
                             fullscript = vidName
                             vidCount += 1
                         else:
                             emptymedia()
                     else:
-                        print("getting rest of the media...")
-                        print("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n")
+                        printmessage("getting rest of the media...")
+                        printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n")
 				        #stuff to do after init
 				        #if both counters are equal, break the loop.
                         if vidCount == imgCount:
@@ -70,12 +70,12 @@ def newSlideshow(rnd, dly):
 				        #image list generator, break the combo if the next media in line isnt an
                         elif imgCount > vidCount:                            
                             if file.endswith(('.jpg', '.jpeg', '.png','.gif')):
-                                print("image combo ongoing, populating image array...")
+                                printmessage("image combo ongoing, populating image array...")
                                 imgList.append(file + " ")
                                 imgCount += 1
-                                print("Current combo: " + ''.join(imgList))
+                                printmessage("Current combo: " + ''.join(imgList))
                             elif file.endswith((".mp4",".h264")):
-                                print("combo broken!")
+                                printmessage("combo broken!")
                                 imgCount = 0
                                 combinedImg = "".join(imgList)                          
                                 fullscript = ''.join([fullscript, imgScript, combinedImg, '\n', vidScript, file, '\n'])
@@ -88,13 +88,13 @@ def newSlideshow(rnd, dly):
                                 fullscript = temp
                                 vidCount += 1
                             elif file.endswith(('.jpg', '.jpeg', '.png','.gif')):
-                                print("img combo started...")
+                                printmessage("img combo started...")
                                 vidCount = 0
                                 imgList = []
                                 imgList.append(file + " ")
                                 imgCount += 1
                 if len(imgList) > 0:
-                    print("\n"+str(len(imgList))+" images left in array after end of operation, writing them to file...")
+                    printmessage("\n"+str(len(imgList))+" images left in array after end of operation, writing them to file...")
                     combinedImg = ''.join(imgList)
                     fullscript = ''.join([fullscript, imgScript, combinedImg, '\n'])
                     print("Done writing remainder files...\n")
