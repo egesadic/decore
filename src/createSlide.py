@@ -61,8 +61,8 @@ def newSlideshow(rnd, dly):
                         else:
                             emptymedia()
                     else:
-                        printmessage("getting rest of the media...", 0.1)
-                        printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n", 0.1)
+                        printmessage("getting rest of the media...")
+                        printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n")
 				        #stuff to do after init
 				        #if both counters are equal, break the loop.
                         if vidCount == imgCount:
