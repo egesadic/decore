@@ -14,12 +14,15 @@ if isfile(decoreToolkit.CFG_PATH):
         print("Media in this node has been changed! Rebuilding .dpa file...")
         createSlide.newSlideshow(decoreToolkit.IS_RANDOM, decoreToolkit.DELAY)
     else:
-        print("Startup complete, enjoy!")
+        print("Startup complete, listening to server for changes...")
+        decoreToolkit.time.sleep(30)      
 else:
     mediaGot = False
     while mediaGot is False:
         try:               
             decoreToolkit.createcfgfile(url,"wlan0")
+            print(str(decoreToolkit.CFG_PATH))
+            decoreToolkit.time.sleep(5)
             if isfile(decoreToolkit.CFG_PATH):
                 print(".cfg file found, syncing...")
                 decoreToolkit.sync()                
