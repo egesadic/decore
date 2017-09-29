@@ -6,14 +6,18 @@ import urllib2
 import json
 import httplib
 import time
+from createSlide import *
 from decoreErrors import *
 from abc import ABCMeta
 from os import listdir, unlink
 from os.path import isfile, join
+
 ##########################################################################################################
 #                                    GLOBAL VARIABLES START HERE                                         #
 ##########################################################################################################  
 
+OLD_FILES = []
+NEW_FILES = []
 FILES_CHANGED = "False"
 IS_RANDOM = "False"
 DELAY = 5
@@ -146,6 +150,8 @@ def sync():
         global FILES_CHANGED
         global IS_RANDOM
         global DELAY
+        global OLD_FILES
+        global NEW_FILES
 
         FILES_CHANGED = False
 
@@ -178,6 +184,7 @@ def sync():
                 DELAY = str(response["data"]["Delay"])
                 printmessage("Getting file list to be deleted...")
                 tobedeleted = response["data"]["ToBeDeleted"]
+                OLD_FILES = tobedeleted
                 if len(tobedeleted) is not 0:
                     printmessage("Files to be deleted are: " +str(tobedeleted) )
                 
@@ -194,7 +201,7 @@ def sync():
 
                 #ToBeAdded'dan gelecek dosyaları indir ve metin dosyasına yaz
                 tobeadded = response["data"]["ToBeAdded"]
-                
+                NEW_FILES = tobeadded
                 if tobeadded is not None:
                     addedFile = open(CFG_FOLDER + "ToBeAdded.txt", 'w')
                     content = ""
@@ -254,3 +261,16 @@ def printmessage(text, slp = 0.3):
     """Print specified message with a sensible delay."""
     print(text)
     time.sleep(slp)
+def generatefilelist(path = MEDIA_PATH):
+    filelist = [f for f in listdir(path) if isfile(join(path, f))]
+    return filelist
+def updateslide():
+    filelist = generatefilelist()
+    for f in filelist:
+        for fi in OLD_FILES:
+            if f is fi:
+                filelist.remove(f)
+    for f in NEW_FILES:
+        filelist.append(f)
+    newSlideshow(IS_RANDOM, filelist, DELAY)
+    pass

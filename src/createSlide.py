@@ -1,4 +1,4 @@
-from decoreToolkit import Slide, MEDIA_PATH, SLIDE_PATH, IS_RANDOM, DELAY, printmessage
+from decoreToolkit import Slide, MEDIA_PATH, SLIDE_PATH, IS_RANDOM, DELAY, printmessage,generatefilelist
 import os
 from random import shuffle
 from os import listdir, path
@@ -9,7 +9,7 @@ from subprocess import call
 def emptymedia():
     sys.exit("No suitable media found in DeCore.")
 
-def newSlideshow(rnd, dly):
+def newSlideshow(rnd, flist = generatefilelist(),  dly):
     try:
         slide = Slide("",None,"")
         name = "slide.dpa"
@@ -20,7 +20,7 @@ def newSlideshow(rnd, dly):
         vidCount = 0
         temp = ""
         init = False
-        filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
+        filelist = flist
         if not filelist:
             emptymedia()
         else:
