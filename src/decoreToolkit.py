@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Useful functions & utilites for DeCore programming."""
+import subprocess
 import sys
 import os
 import urllib2
@@ -16,6 +17,7 @@ from os.path import isfile, join
 #                                    GLOBAL VARIABLES START HERE                                         #
 ##########################################################################################################  
 
+SLIDE_PID = 0
 OLD_FILES = []
 FILES_CHANGED = "False"
 IS_RANDOM = "False"
@@ -268,5 +270,9 @@ def generatefilelist(path = MEDIA_PATH):
     return filelist
 
 def updateslide():
+    global SLIDE_PID   
+    call("kill -9 -"+SLIDE_PID, shell=True)
     filelist = generatefilelist()
     newSlideshow(IS_RANDOM, DELAY, filelist)
+    proc = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=True)
+    SLIDE_PID = proc.pid
