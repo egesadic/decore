@@ -266,19 +266,12 @@ def printmessage(text, slp = 0.3):
     print(text)
     time.sleep(slp)
 
-def generatefilelist(path = MEDIA_PATH):
-    if os.path.isdir(path):
-        filelist = [f for f in listdir(path) if isfile(join(path, f))]
-        return filelist
-    else:
-        printmessage("No such dir.")
-
 def updateslide():
     global SLIDE_PID
     if SLIDE_PID is not 0:   
         call("kill -9 -"+str(SLIDE_PID), shell=True)
     print ("patlamadı")
-    filelist = generatefilelist()
+    filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
     newSlideshow(IS_RANDOM, DELAY)
     proc = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=True)
     SLIDE_PID = proc.pid
@@ -296,7 +289,7 @@ def newSlideshow(rnd, dly):
         vidCount = 0
         temp = ""
         init = False
-        filelist = generatefilelist()
+        filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
         if not filelist:
             emptymedia()
         else:
