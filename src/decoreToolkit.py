@@ -300,7 +300,7 @@ def newSlideshow(rnd, dly):
                 shuffle(filelist)
                 lol = ''.join(filelist)
                 printmessage("Randomized list: "+lol+"\n")     
-            fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo"
+            fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo\n"
             imgScript = "clear\nfbi --noverbose -a -t " + delay + " -once "	
             vidScript = "clear\nomxplayer " + MEDIA_PATH 
             if delay is 0:
