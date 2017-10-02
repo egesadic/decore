@@ -11,7 +11,6 @@ from random import shuffle
 from os import listdir, path, unlink
 from os.path import isfile, join
 from subprocess import call
-from createSlide import *
 from decoreErrors import *
 from abc import ABCMeta
 
