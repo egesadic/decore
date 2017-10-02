@@ -279,7 +279,7 @@ def updateslide():
         call("kill -9 -"+str(SLIDE_PID), shell=True)
     print ("patlamadı")
     filelist = generatefilelist()
-    newSlideshow(IS_RANDOM, DELAY, filelist)
+    newSlideshow(IS_RANDOM, DELAY)
     proc = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=True)
     SLIDE_PID = proc.pid
 def emptymedia():
