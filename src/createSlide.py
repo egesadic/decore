@@ -9,7 +9,7 @@ from subprocess import call
 def emptymedia():
     sys.exit("No suitable media found in DeCore.")
 
-def newSlideshow(rnd, flist = generatefilelist(),  dly):
+def newSlideshow(rnd, dly, flist = generatefilelist()):
     try:
         slide = Slide("",None,"")
         name = "slide.dpa"

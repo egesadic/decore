@@ -17,7 +17,6 @@ from os.path import isfile, join
 ##########################################################################################################  
 
 OLD_FILES = []
-NEW_FILES = []
 FILES_CHANGED = "False"
 IS_RANDOM = "False"
 DELAY = 5
@@ -26,6 +25,7 @@ CFG_PATH = CFG_FOLDER + "cfgval.dc"
 MEDIA_PATH = "/usr/decore/media/"
 SLIDE_PATH = "/usr/decore/slides/"
 URL = "http://192.168.34.120:8080/"
+COOLDOWN = 30
 
 ##########################################################################################################
 #                                          CLASSES START HERE                                            #
@@ -185,10 +185,9 @@ def sync():
                 printmessage("Getting file list to be deleted...")
                 tobedeleted = response["data"]["ToBeDeleted"]
                 OLD_FILES = tobedeleted
-                if len(tobedeleted) is not 0:
-                    printmessage("Files to be deleted are: " +str(tobedeleted) )
-                
+
                 if tobedeleted is not None:
+                    printmessage("Files to be deleted are: " +str(tobedeleted) )
                     #ToBeDeleted'den alınan dosyaları sil
                     for the_file in tobedeleted:
                         file_path = join(MEDIA_PATH, the_file)           
@@ -201,7 +200,6 @@ def sync():
 
                 #ToBeAdded'dan gelecek dosyaları indir ve metin dosyasına yaz
                 tobeadded = response["data"]["ToBeAdded"]
-                NEW_FILES = tobeadded
                 if tobeadded is not None:
                     addedFile = open(CFG_FOLDER + "ToBeAdded.txt", 'w')
                     content = ""
@@ -213,13 +211,16 @@ def sync():
                     fetchfiles()        
                     printmessage ("Added " + str(len(tobeadded)) + " files.")
                     FILES_CHANGED = True
+
                     #print("Files have been CHANGED!")
                 else:
-                    printmessage("No files to be added.")                   
+                    printmessage("No files to be added. Running .dpa file...")
+                if FILES_CHANGED:
+                    print("Media in this node has been changed! Rebuilding .dpa file...")
+                    updateslide()            
             else:
                 FILES_CHANGED = False
-                raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")
-            
+                raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")            
         else:
             raise UndefinedDeviceException("This device is not properly configured. Reboot the device and try again.")
     
@@ -261,16 +262,11 @@ def printmessage(text, slp = 0.3):
     """Print specified message with a sensible delay."""
     print(text)
     time.sleep(slp)
+
 def generatefilelist(path = MEDIA_PATH):
     filelist = [f for f in listdir(path) if isfile(join(path, f))]
     return filelist
+
 def updateslide():
     filelist = generatefilelist()
-    for f in filelist:
-        for fi in OLD_FILES:
-            if f is fi:
-                filelist.remove(f)
-    for f in NEW_FILES:
-        filelist.append(f)
-    newSlideshow(IS_RANDOM, filelist, DELAY)
-    pass
+    newSlideshow(IS_RANDOM, DELAY, filelist)
