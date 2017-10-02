@@ -19,7 +19,7 @@ from abc import ABCMeta
 ##########################################################################################################  
 
 SLIDE_PID = 0
-OLD_FILES = []
+FILELIST = []
 FILES_CHANGED = "False"
 IS_RANDOM = "False"
 DELAY = 5
@@ -267,8 +267,11 @@ def printmessage(text, slp = 0.3):
     time.sleep(slp)
 
 def generatefilelist(path = MEDIA_PATH):
-    filelist = [f for f in listdir(path) if isfile(join(path, f))]
-    return filelist
+    if os.path.isdir(path):
+        filelist = [f for f in listdir(path) if isfile(join(path, f))]
+        FILELIST = filelist
+    else:
+        printmessage("No such dir.")
 
 def updateslide():
     global SLIDE_PID   
@@ -280,7 +283,7 @@ def updateslide():
 def emptymedia():
     sys.exit("No suitable media found in DeCore.")
 
-def newSlideshow(rnd, dly, flist = generatefilelist()):
+def newSlideshow(rnd, dly, flist = FILELIST):
     try:
         slide = Slide("",None,"")
         name = "slide.dpa"
