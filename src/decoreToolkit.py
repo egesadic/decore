@@ -269,7 +269,7 @@ def printmessage(text, slp = 0.3):
 def generatefilelist(path = MEDIA_PATH):
     if os.path.isdir(path):
         filelist = [f for f in listdir(path) if isfile(join(path, f))]
-        FILELIST = filelist
+        return filelist
     else:
         printmessage("No such dir.")
 
