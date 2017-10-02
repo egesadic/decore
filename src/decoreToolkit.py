@@ -285,7 +285,7 @@ def updateslide():
 def emptymedia():
     sys.exit("No suitable media found in DeCore.")
 
-def newSlideshow(rnd, dly, flist = FILELIST):
+def newSlideshow(rnd, dly):
     try:
         slide = Slide("",None,"")
         name = "slide.dpa"
@@ -296,7 +296,7 @@ def newSlideshow(rnd, dly, flist = FILELIST):
         vidCount = 0
         temp = ""
         init = False
-        filelist = flist
+        filelist = generatefilelist()
         if not filelist:
             emptymedia()
         else:
