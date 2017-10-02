@@ -1,5 +1,4 @@
 from decoreToolkit import *
-from createSlide import *
 from decoreErrors import *
 from os.path import isfile
 
