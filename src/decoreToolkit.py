@@ -289,7 +289,7 @@ def newSlideshow(rnd, dly, flist = FILELIST):
         name = "slide.dpa"
         filepath = SLIDE_PATH + name
         isRandom = bool(rnd)
-        delay = int(dly)
+        delay = str(dly)
         imgCount = 0
         vidCount = 0
         temp = ""
@@ -306,7 +306,7 @@ def newSlideshow(rnd, dly, flist = FILELIST):
                 lol = ''.join(filelist)
                 printmessage("Randomized list: "+lol+"\n")     
             fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo"
-            imgScript = "clear\nfbi --noverbose -a -t " + str(delay) + " -once "	
+            imgScript = "clear\nfbi --noverbose -a -t " + delay + " -once "	
             vidScript = "clear\nomxplayer " + MEDIA_PATH 
             if delay is 0:
                 printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval", 0.1)
