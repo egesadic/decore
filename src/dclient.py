@@ -8,8 +8,10 @@ print("Welcome to DeCore v" + VER_NUM + "! Initialising...")
 
 url = URL +"v1/node/register"
 
+mediaGot = False
+
 try:
-    while !isfile(CFG_PATH): 
+    while isfile(CFG_PATH) is False: 
         printmessage("Configuration file not found, creating new one.")
         while mediaGot is False:         
             createcfgfile(url,"wlan0")
