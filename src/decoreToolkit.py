@@ -274,8 +274,10 @@ def generatefilelist(path = MEDIA_PATH):
         printmessage("No such dir.")
 
 def updateslide():
-    global SLIDE_PID   
-    call("kill -9 -"+SLIDE_PID, shell=True)
+    global SLIDE_PID
+    if SLIDE_PID is not 0:   
+        call("kill -9 -"+str(SLIDE_PID), shell=True)
+    print ("patlamadı")
     filelist = generatefilelist()
     newSlideshow(IS_RANDOM, DELAY, filelist)
     proc = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=True)
