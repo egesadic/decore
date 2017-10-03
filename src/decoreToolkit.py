@@ -399,7 +399,8 @@ def newSlideshow(rnd, dly):
 def runslide():
     """Exectues the slide script."""
     global PROC 
-
+    global SLIDE_PID
+    
     filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
     if filelist is not None:
         PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=True)
