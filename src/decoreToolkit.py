@@ -304,9 +304,9 @@ def newSlideshow(rnd, dly):
             fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo\n"
             imgScript = "clear\nfbi --noverbose -a -t " + delay + " -once "	
             vidScript = "clear\nomxplayer " + MEDIA_PATH 
-            if delay is 0:
+            if delay is "0":
                 printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval", 0.1)
-                delay = 15
+                delay = "15"
             else:
                 #slide = open(filepath + '.dpa','w')
                 for file in filelist:
@@ -325,7 +325,7 @@ def newSlideshow(rnd, dly):
                             printmessage("img's appended to list, continuing process...\n", 0.1)
                         elif file.endswith(('.mp4','.h264')):
                             printmessage("first media is a video, writing to bash file...\n", 0.1)
-                            vidName = ''.join([fullscript,vidScript, file, '\n'])
+                            vidName = ''.join([fullscript,vidScript, file," >/dev/null 2>&1" , '\n'])
                             fullscript = vidName
                             vidCount += 1
                         else:
@@ -348,13 +348,13 @@ def newSlideshow(rnd, dly):
                                 printmessage("combo broken!", 0.1)
                                 imgCount = 0
                                 combinedImg = "".join(imgList)                          
-                                fullscript = ''.join([fullscript, imgScript, combinedImg, '\n', vidScript, file, '\n'])
+                                fullscript = ''.join([fullscript, imgScript, combinedImg, '\n', vidScript, file, " >/dev/null 2>&1" , '\n'])
                                 vidCount += 1                          
                             else:						
                                 emptymedia()					
                         else:
                             if file.endswith(('.mp4','.h264')):
-                                temp = ''.join([fullscript,vidScript, file, '\n'])
+                                temp = ''.join([fullscript,vidScript, file, " >/dev/null 2>&1", '\n'])
                                 fullscript = temp
                                 vidCount += 1
                             elif file.endswith(('.jpg', '.jpeg', '.png','.gif')):
@@ -366,7 +366,7 @@ def newSlideshow(rnd, dly):
                 if len(imgList) > 0:
                     printmessage("\n"+str(len(imgList))+" images left in array after end of operation, writing them to file...", 0.1)
                     combinedImg = ''.join(imgList)
-                    fullscript = ''.join([fullscript, imgScript, combinedImg, '\n'])
+                    fullscript = ''.join([fullscript, imgScript, combinedImg, " >/dev/null 2>&1", '\n'])
                     print("Done writing remainder files...\n")
                 
                 slide.name = name
