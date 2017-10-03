@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from decoreToolkit import *
 from decoreErrors import *
 from os.path import isfile
@@ -19,7 +20,7 @@ try:
     
     #Cihaz ilk çalıştığında slide.dpa'yı çalıştır.
     runslide()
-    
+
     while True:
         sync()
         print("Startup complete, listening to server for changes...")        
