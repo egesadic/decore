@@ -397,6 +397,6 @@ def runslide():
     """Exectues the slide script."""
     filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
     if filelist is not None:
-        call(SLIDE_PATH + "slide.dpa", shell=True)
+        subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=True)
     else:
         printmessage("No suitable media was found in device!")
