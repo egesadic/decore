@@ -276,7 +276,7 @@ def updateslide():
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
         os.killpg(os.getpgid(SLIDE_PID), signal.SIGKILL)
-        call("dd if=/dev/zero of=/dev/fb0", shell=True)
+        subprocess.Popen("dd if=/dev/zero of=/dev/fb0", shell=True)
         print ("Killed slide with PGID " + str(SLIDE_PID))
     newSlideshow(IS_RANDOM, DELAY)
     PROC = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=True)
