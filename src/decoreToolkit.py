@@ -276,8 +276,8 @@ def updateslide():
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
         #os.killpg(os.getpgid(SLIDE_PID), signal.SIGKILL)
-        subprocess.Popen("sudo killall slide.dpa", shell=True)
-        subprocess.Popen("dd if=/dev/zero of=/dev/fb0", shell=True)
+        call("sudo killall slide.dpa", shell=True)
+        call("dd if=/dev/zero of=/dev/fb0", shell=True)
         print ("Killed slide with PGID " + str(SLIDE_PID))
     newSlideshow(IS_RANDOM, DELAY)
     PROC = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=True)
@@ -404,6 +404,7 @@ def runslide():
 
     filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
     if len(filelist) is not 0:
+        call("dd if=/dev/zero of=/dev/fb0", shell=True)
         PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=True)
         SLIDE_PID = PROC.pid
     else:
