@@ -269,12 +269,13 @@ def printmessage(text, slp = 0.3):
 def updateslide():
     global SLIDE_PID
     if SLIDE_PID is not 0:   
-        call("kill -9 -"+str(SLIDE_PID), shell=True)
-    print ("patlamadı")
+        call("sudo kill -9 -"+str(SLIDE_PID), shell=True)
+        print ("Killed slide with PGID " + SLIDE_PID)
     filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
     newSlideshow(IS_RANDOM, DELAY)
     proc = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=True)
     SLIDE_PID = proc.pid
+
 def emptymedia():
     sys.exit("No suitable media found in DeCore.")
 
