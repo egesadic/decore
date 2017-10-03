@@ -7,6 +7,7 @@ import urllib2
 import json
 import httplib
 import time
+import signal
 from random import shuffle
 from os import listdir, path, unlink
 from os.path import isfile, join
@@ -402,5 +403,6 @@ def runslide():
     filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
     if filelist is not None:
         PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=True)
+        SLIDE_PID = PROC.pid
     else:
         printmessage("No suitable media was found in device!")
