@@ -16,11 +16,13 @@ try:
             createcfgfile(url,"wlan0")
             if isfile(CFG_PATH):
                 mediaGot=True        
-
+    
+    #Cihaz ilk çalıştığında slide.dpa'yı çalıştır.
+    runslide()
+    
     while True:
         sync()
-        print("Startup complete, listening to server for changes...")
-        runslide()
+        print("Startup complete, listening to server for changes...")        
         time.sleep(COOLDOWN)      
 
 except DecoreServerConnectionException as ex:
