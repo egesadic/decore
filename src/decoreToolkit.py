@@ -18,6 +18,7 @@ from abc import ABCMeta
 #                                    GLOBAL VARIABLES START HERE                                         #
 ##########################################################################################################  
 
+PROC = ""
 SLIDE_PID = 0
 FILELIST = []
 FILES_CHANGED = "False"
@@ -268,14 +269,17 @@ def printmessage(text, slp = 0.3):
 
 def updateslide():
     global SLIDE_PID
+    global PROC 
+    
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
-        subprocess.Popen("sudo kill -9 -"+str(SLIDE_PID)+"; dd if=/dev/zero of=/dev/fb0; echo "+str(SLIDE_PID)+" > /home/pi/lastpid.txt", shell=True)
+        os.killpg(os.getpgid(SLIDE_PID), signal.SIGQUIT)
+        call("dd if=/dev/zero of=/dev/fb0", shell=True)
         print ("Killed slide with PGID " + str(SLIDE_PID))
     filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
     newSlideshow(IS_RANDOM, DELAY)
-    proc = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=True)
-    SLIDE_PID = proc.pid
+    PROC = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=True)
+    SLIDE_PID = PROC.pid
 
 def emptymedia():
     sys.exit("No suitable media found in DeCore.")
@@ -393,8 +397,10 @@ def newSlideshow(rnd, dly):
 
 def runslide():
     """Exectues the slide script."""
+    global PROC 
+
     filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
     if filelist is not None:
-        subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=True)
+        PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=True)
     else:
         printmessage("No suitable media was found in device!")
