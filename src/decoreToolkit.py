@@ -271,13 +271,12 @@ def printmessage(text, slp = 0.3):
 def updateslide():
     global SLIDE_PID
     global PROC 
-    
+    printmessage("Updating slide..., current slide pid "+str(SLIDE_PID))
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
         os.killpg(os.getpgid(SLIDE_PID), signal.SIGQUIT)
         call("dd if=/dev/zero of=/dev/fb0", shell=True)
         print ("Killed slide with PGID " + str(SLIDE_PID))
-    filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
     newSlideshow(IS_RANDOM, DELAY)
     PROC = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=True)
     SLIDE_PID = PROC.pid
@@ -400,7 +399,7 @@ def runslide():
     """Exectues the slide script."""
     global PROC 
     global SLIDE_PID
-    
+
     filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
     if filelist is not None:
         PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=True)
