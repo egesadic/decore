@@ -269,7 +269,10 @@ def printmessage(text, slp = 0.3):
 def updateslide():
     global SLIDE_PID
     if SLIDE_PID is not 0:   
+        #Kill running slide and its child processes
         call("sudo kill -9 -"+str(SLIDE_PID), shell=True)
+        #Flush the framebuffer
+        call("dd if=/dev/zero of=/dev/fb0", shell= True)
         print ("Killed slide with PGID " + SLIDE_PID)
     filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
     newSlideshow(IS_RANDOM, DELAY)
