@@ -2,7 +2,7 @@ from decoreToolkit import *
 from decoreErrors import *
 from os.path import isfile
 
-VER_NUM = "0.1.1"
+VER_NUM = "0.1.3"
 print("Welcome to DeCore v" + VER_NUM + "! Initialising...")
 
 url = URL +"v1/node/register"
@@ -20,6 +20,7 @@ try:
     while True:
         sync()
         print("Startup complete, listening to server for changes...")
+        runslide()
         time.sleep(COOLDOWN)      
 
 except DecoreServerConnectionException as ex:

@@ -389,3 +389,7 @@ def newSlideshow(rnd, dly):
     except SystemExit as ex:
         print("No media here, stopping...")
         print ex
+
+def runslide():
+    """Exectues the slide script."""
+    call(SLIDE_PATH + "slide.dpa", shell=True)
