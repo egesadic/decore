@@ -7,7 +7,6 @@ VER_NUM = "0.1.3"
 print("Welcome to DeCore v" + VER_NUM + "! Initialising...")
 
 url = URL +"v1/node/register"
-
 mediaGot = False
 
 try:
