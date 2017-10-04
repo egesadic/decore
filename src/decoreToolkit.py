@@ -189,22 +189,10 @@ def sync():
                 DELAY = str(response["data"]["Delay"])
                 printmessage("Getting file list to be deleted...")
                 tobedeleted = response["data"]["ToBeDeleted"]
-                OLD_FILES = tobedeleted
-
-                if tobedeleted is not None:
-                    printmessage("Files to be deleted are: " +str(tobedeleted) )
-                    #ToBeDeleted'den alınan dosyaları sil
-                    for the_file in tobedeleted:
-                        file_path = join(MEDIA_PATH, the_file)           
-                        if isfile(file_path):
-                            unlink(file_path)
-                    printmessage ("Deleted " + str(len(tobedeleted)) + "files successfully.")
-                    FILES_CHANGED = True
-                else:
-                    printmessage("No files to be deleted. Proceeding to add files...")
-
-                #ToBeAdded'dan gelecek dosyaları indir ve metin dosyasına yaz
                 tobeadded = response["data"]["ToBeAdded"]
+                OLD_FILES = tobedeleted
+                
+                #ToBeAdded'dan gelecek dosyaları metin dosyasına yaz ve indir                
                 if tobeadded is not None:
                     addedFile = open(CFG_FOLDER + "ToBeAdded.txt", 'w')
                     content = ""
@@ -216,13 +204,24 @@ def sync():
                     fetchfiles()        
                     printmessage ("Added " + str(len(tobeadded)) + " files.")
                     FILES_CHANGED = True
-
-                    #print("Files have been CHANGED!")
+                
+                #ToBeDeleted'den alınan dosyaları sil
+                if tobedeleted is not None:
+                    printmessage("Files to be deleted are: " +str(tobedeleted) ) 
+                    for the_file in tobedeleted:
+                        file_path = join(MEDIA_PATH, the_file)           
+                        if isfile(file_path):
+                            unlink(file_path)
+                    printmessage ("Deleted " + str(len(tobedeleted)) + "files successfully.")
+                    FILES_CHANGED = True
                 else:
-                    printmessage("No files to be added. Running .dpa file...")
-                if FILES_CHANGED:
-                    print("Media in this node has been changed! Rebuilding .dpa file...")
-                    updateslide()            
+                    printmessage("No files to be deleted. Proceeding to add files...")
+
+            else:
+                printmessage("No files to be added. Running .dpa file...")
+            if FILES_CHANGED:
+                print("Media in this node has been changed! Rebuilding .dpa file...")
+                updateslide()            
             else:
                 FILES_CHANGED = False
                 raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")            
@@ -262,8 +261,7 @@ def fetchfiles():
         cmd="wget -c " + x[index] + " -P " + MEDIA_PATH
         print cmd
         #os.system(cmd)
-        pc = subprocess.Popen(cmd, shell = True)
-        pc.wait()
+        call(cmd, shell = True)
         
 def printmessage(text, slp = 0.3):
     """Print specified message with a sensible delay."""
