@@ -351,7 +351,7 @@ def newSlideshow(rnd, dly):
                                 imgList.append(file + " ")
                                 imgCount += 1
                                 printmessage("Current combo: " + ''.join(imgList), 0)
-                            elif file.endswith((".mp4",".h264")):
+                            elif file.endswith((".mp4",".h264",".mov")):
                                 printmessage("combo broken!", 0.1)
                                 imgCount = 0
                                 combinedImg = "".join(imgList)                          
@@ -360,7 +360,7 @@ def newSlideshow(rnd, dly):
                             else:						
                                 emptymedia()					
                         else:
-                            if file.endswith(('.mp4','.h264')):
+                            if file.endswith(('.mp4','.h264',".mov")):
                                 temp = ''.join([fullscript,vidScript, file, " >/dev/null 2>&1", '\n'])
                                 fullscript = temp
                                 vidCount += 1
