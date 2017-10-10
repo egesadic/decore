@@ -290,6 +290,7 @@ def newSlideshow(rnd, dly):
         filepath = SLIDE_PATH + name
         isRandom = bool(rnd)
         delay = str(dly)
+        printmessage(delay, 3)
         imgCount = 0
         vidCount = 0
         temp = ""
