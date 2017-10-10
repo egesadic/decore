@@ -156,7 +156,6 @@ def sync():
         global IS_RANDOM
         global DELAY
         global OLD_FILES
-        global NEW_FILES
 
         FILES_CHANGED = False
 
@@ -176,7 +175,6 @@ def sync():
             #Sunucuya bağlan ve dosyaları talep et.
             request = urllib2.Request(url, json.dumps(data))
             request.add_header('Content-Type', 'application/json')
-            FILES_CHANGED = False
             request.get_method = lambda: 'PUT'
             tmp = urllib2.urlopen(request)
                         
@@ -204,6 +202,8 @@ def sync():
                     fetchfiles()        
                     printmessage ("Added " + str(len(tobeadded)) + " files.")
                     FILES_CHANGED = True
+                else:
+                    printmessage("No files to be added.")
                 
                 #ToBeDeleted'den alınan dosyaları sil
                 if tobedeleted is not None:
@@ -215,15 +215,12 @@ def sync():
                     printmessage ("Deleted " + str(len(tobedeleted)) + "files successfully.")
                     FILES_CHANGED = True
                 else:
-                    printmessage("No files to be deleted. Proceeding to add files...")
+                    printmessage("No files to be deleted. Running .dpa file...")
 
+                if FILES_CHANGED:
+                     print("Media in this node has been changed! Rebuilding .dpa file...")
+                     updateslide()            
             else:
-                printmessage("No files to be added. Running .dpa file...")
-            if FILES_CHANGED:
-                print("Media in this node has been changed! Rebuilding .dpa file...")
-                updateslide()            
-            else:
-                FILES_CHANGED = False
                 raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")            
         else:
             raise UndefinedDeviceException("This device is not properly configured. Reboot the device and try again.")
