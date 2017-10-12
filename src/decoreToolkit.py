@@ -25,6 +25,7 @@ FILELIST = []
 FILES_CHANGED = "False"
 IS_RANDOM = "False"
 DELAY = 5
+LOG_PATH = "/usr/decore/log/"
 CFG_FOLDER = "/usr/decore/config/"
 CFG_PATH = CFG_FOLDER + "cfgval.dc"
 MEDIA_PATH = "/usr/decore/media/"
@@ -92,6 +93,8 @@ def createcfgfile(url, adapter):
                 os.makedirs(SLIDE_PATH)
             if os.path.isdir(CFG_FOLDER) is False:
                 os.makedirs(CFG_FOLDER)
+            if os.path.isdir(LOG_PATH) is False:
+                os.makedirs(LOG_PATH)
             mac = getmacadress(adapter)
             for count in range(0, 4):
                 if count is 3:
@@ -255,7 +258,7 @@ def fetchfiles():
         x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
-        cmd="wget -c " + x[index] + " -P " + MEDIA_PATH
+        cmd="wget -c " + x[index] + " -P " + MEDIA_PATH + "> " + LOG_PATH + "wgetLog" + str(time.strftime("%d-m-%Y/%H:%M:%S")) + ".txt"
         print cmd
         #os.system(cmd)
         call(cmd, shell = True)
