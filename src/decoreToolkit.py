@@ -253,7 +253,7 @@ def fetchfiles():
     """Fetches files from the DeCore server."""
     x=[]
     i=0
-    logfile = open(LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y/%H:%M:%S")) + ".log", 'w') 
+    logfile = open(LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y-%H:%M:%S")) + ".log", 'w') 
     f = open(CFG_FOLDER + "ToBeAdded.txt",'r')
     for line in f.readlines():
         print("Now fetching: " + str(line).replace('\n',""))
