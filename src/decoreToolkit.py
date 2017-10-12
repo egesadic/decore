@@ -278,13 +278,13 @@ def updateslide():
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
         #os.killpg(os.getpgid(SLIDE_PID), signal.SIGKILL)
-        subprocess.Popen("sudo killall /usr/decore/slides/slide.dpa", shell=True)
-        call("sudo killall omxplayer", shell=True)
-        call("sudo killall fbi", shell=True)
+        call("sudo kill " + SLIDE_PID, shell=False)
+        call("sudo kill " + str(SLIDE_PID+2), shell=False)
+        call("sudo killall omxplayer", shell=False)
         call("dd if=/dev/zero of=/dev/fb0", shell=True)
         print ("Killed slide with PGID " + str(SLIDE_PID))
     newSlideshow(IS_RANDOM, DELAY)
-    PROC = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=True)
+    PROC = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=False)
     SLIDE_PID = PROC.pid
 
 def emptymedia():
