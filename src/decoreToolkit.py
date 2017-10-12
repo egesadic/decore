@@ -306,6 +306,10 @@ def newSlideshow(rnd, dly):
         isonce = "" # " -once "	
         init = False
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
+        for file in filelist:
+            if file.endswith(('.mp4','.h264')):
+                isonce = " -once "
+                break
         if not filelist:
             emptymedia()
         else:
@@ -337,7 +341,6 @@ def newSlideshow(rnd, dly):
                         imgCount += 1
                         printmessage("img's appended to list, continuing process...\n", 0.1)
                     elif file.endswith(('.mp4','.h264')):
-                        isonce = " -once "	
                         printmessage("first media is a video, writing to bash file...\n", 0.1)
                         vidName = ''.join([fullscript,vidScript, file," >/dev/null 2>&1" , '\n'])
                         fullscript = vidName
@@ -359,7 +362,6 @@ def newSlideshow(rnd, dly):
                             imgCount += 1
                             printmessage("Current combo: " + ''.join(imgList), 0)
                         elif file.endswith((".mp4",".h264",".mov")):
-                            isonce = " -once "
                             printmessage("combo broken!", 0.1)
                             imgCount = 0
                             combinedImg = "".join(imgList)                          
@@ -369,7 +371,6 @@ def newSlideshow(rnd, dly):
                             emptymedia()					
                     else:
                         if file.endswith(('.mp4','.h264',".mov")):
-                            isonce = " -once "
                             temp = ''.join([fullscript,vidScript, file, " >/dev/null 2>&1", '\n'])
                             fullscript = temp
                             vidCount += 1
