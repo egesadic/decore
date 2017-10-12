@@ -9,7 +9,6 @@ import httplib
 import time
 import signal
 import logging
-import psutil
 from random import shuffle
 from os import listdir, path, unlink
 from os.path import isfile, join
