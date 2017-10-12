@@ -260,8 +260,8 @@ def fetchfiles():
         x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
-        cmd="wget -c " + x[index] + " -P " + MEDIA_PATH
-        logfile.write(cmd)
+        cmd = "wget -c " + x[index] + " -P " + MEDIA_PATH
+        logfile.write(cmd + "\n")
         print cmd
         #os.system(cmd)
         call(cmd, shell = True)
@@ -303,6 +303,7 @@ def newSlideshow(rnd, dly):
         imgCount = 0
         vidCount = 0
         temp = ""
+        isonce = "" # " -once "	
         init = False
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
         if not filelist:
@@ -316,7 +317,7 @@ def newSlideshow(rnd, dly):
                 lol = ''.join(filelist)
                 printmessage("Randomized list: "+lol+"\n")     
             fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo\n"
-            imgScript = "clear\nfbi --noverbose -a -t " + delay + " -once "	
+            imgScript = "clear\nfbi --noverbose -a -t " + delay + isonce
             vidScript = "clear\nomxplayer " + MEDIA_PATH 
             if delay is "0" or 0:
                 printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval", 0.1)
@@ -337,6 +338,7 @@ def newSlideshow(rnd, dly):
                         imgCount += 1
                         printmessage("img's appended to list, continuing process...\n", 0.1)
                     elif file.endswith(('.mp4','.h264')):
+                        isonce = " -once "	
                         printmessage("first media is a video, writing to bash file...\n", 0.1)
                         vidName = ''.join([fullscript,vidScript, file," >/dev/null 2>&1" , '\n'])
                         fullscript = vidName
@@ -358,6 +360,7 @@ def newSlideshow(rnd, dly):
                             imgCount += 1
                             printmessage("Current combo: " + ''.join(imgList), 0)
                         elif file.endswith((".mp4",".h264",".mov")):
+                            isonce = " -once "
                             printmessage("combo broken!", 0.1)
                             imgCount = 0
                             combinedImg = "".join(imgList)                          
@@ -367,6 +370,7 @@ def newSlideshow(rnd, dly):
                             emptymedia()					
                     else:
                         if file.endswith(('.mp4','.h264',".mov")):
+                            isonce = " -once "
                             temp = ''.join([fullscript,vidScript, file, " >/dev/null 2>&1", '\n'])
                             fullscript = temp
                             vidCount += 1
