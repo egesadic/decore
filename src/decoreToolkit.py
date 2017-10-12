@@ -311,7 +311,7 @@ def newSlideshow(rnd, dly):
             fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo\n"
             imgScript = "clear\nfbi --noverbose -a -t " + delay + " -once "	
             vidScript = "clear\nomxplayer " + MEDIA_PATH 
-            if delay is "0":
+            if delay is "0" or 0:
                 printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval", 0.1)
                 delay = "15"
             #slide = open(filepath + '.dpa','w')
