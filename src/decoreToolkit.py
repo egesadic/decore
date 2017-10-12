@@ -9,6 +9,7 @@ import httplib
 import time
 import signal
 import logging
+import psutil
 from random import shuffle
 from os import listdir, path, unlink
 from os.path import isfile, join
@@ -277,10 +278,12 @@ def updateslide():
     printmessage("Updating slide..., current slide pid "+str(SLIDE_PID))
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
-        #os.killpg(os.getpgid(SLIDE_PID), signal.SIGKILL)
-        os.kill(SLIDE_PID, signal.SIGTERM)
-        os.kill((SLIDE_PID+2), signal.SIGTERM)
+        #os.kill(SLIDE_PID, signal.SIGTERM)
+        #os.kill((SLIDE_PID+2), signal.SIGTERM)
         #call("sudo killall omxplayer", shell=False)
+        os.system("killall -9 slide.dpa")
+        os.system("killall -9 fbi")
+        os.system("killall -9 omxplayer")
         call("dd if=/dev/zero of=/dev/fb0", shell=True)
         print ("Killed slide with PGID " + str(SLIDE_PID))
     newSlideshow(IS_RANDOM, DELAY)
@@ -320,9 +323,6 @@ def newSlideshow(rnd, dly):
             if delay is "0" or 0:
                 printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval", 0.1)
                 delay = "15"
-            else:
-                printmessage("delay is asdasfsdf "+delay)
-            #slide = open(filepath + '.dpa','w')
             for file in filelist:
                 #check init flag
                 printmessage("Now processing file: " + file, 0)
