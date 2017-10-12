@@ -278,9 +278,9 @@ def updateslide():
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
         #os.killpg(os.getpgid(SLIDE_PID), signal.SIGKILL)
-        call("sudo killall slide.dpa", shell=False)
-        call("sudo killall omxplayer", shell=False)
-        call("sudo killall fbi", shell=False)
+        call("sudo killall /usr/decore/slides/slide.dpa", shell=True)
+        call("sudo killall omxplayer", shell=True)
+        call("sudo killall fbi", shell=True)
         call("dd if=/dev/zero of=/dev/fb0", shell=True)
         print ("Killed slide with PGID " + str(SLIDE_PID))
     newSlideshow(IS_RANDOM, DELAY)
