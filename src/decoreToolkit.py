@@ -265,6 +265,7 @@ def fetchfiles():
         print cmd
         #os.system(cmd)
         call(cmd, shell = True)
+    logfile.close()
         
 def printmessage(text, slp = 0.3):
     """Print specified message with a sensible delay."""
