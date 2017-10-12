@@ -8,6 +8,7 @@ import json
 import httplib
 import time
 import signal
+import logging
 from random import shuffle
 from os import listdir, path, unlink
 from os.path import isfile, join
@@ -252,13 +253,15 @@ def fetchfiles():
     """Fetches files from the DeCore server."""
     x=[]
     i=0
+    logfile = open(LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y/%H:%M:%S")) + ".log", 'w') 
     f = open(CFG_FOLDER + "ToBeAdded.txt",'r')
     for line in f.readlines():
         print("Now fetching: " + str(line).replace('\n',""))
         x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
-        cmd="wget -c " + x[index] + " -P " + MEDIA_PATH + "> " + LOG_PATH + "wgetLog" + str(time.strftime("%d-m-%Y/%H:%M:%S")) + ".txt"
+        cmd="wget -c " + x[index] + " -P " + MEDIA_PATH
+        logfile.write(cmd)
         print cmd
         #os.system(cmd)
         call(cmd, shell = True)
