@@ -21,6 +21,8 @@ from abc import ABCMeta
 ##########################################################################################################  
 
 PROC = ""
+VIDEO_EXT = ['.mp4', '.h264']
+IMAGE_EXT = ['.jpg', '.jpeg', '.png', '.gif']
 SLIDE_PID = 0
 FILELIST = []
 FILES_CHANGED = "False"
@@ -61,14 +63,7 @@ class Slide(decObject):
         self.node = None
         self.script = script
 
-    def writeToFile(self):
-        """Generates a .DPA file to be played in RPi."""
-        try:
-            f = open(SLIDE_PATH+self.name, 'w')
-            f.write(self.script+"done\nexit 0")
-            f.close()
-        except Exception as e:
-            print e
+    
 
 ##########################################################################################################
 #                                          FUNCTIONS START HERE                                          #
@@ -222,8 +217,8 @@ def sync():
                     printmessage("No files to be deleted. Running .dpa file...")
 
                 if FILES_CHANGED:
-                     print("Media in this node has been changed! Rebuilding .dpa file...")
-                     updateslide()            
+                    print("Media in this node has been changed! Rebuilding .dpa file...")
+                    updateslide()            
             else:
                 raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")            
         else:
@@ -285,118 +280,121 @@ def updateslide():
         os.system("killall -9 omxplayer")
         call("dd if=/dev/zero of=/dev/fb0", shell=True)
         print ("Killed slide with PGID " + str(SLIDE_PID))
-    newSlideshow(IS_RANDOM, DELAY)
+    newslideshow(IS_RANDOM, DELAY)
     PROC = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=False)
     SLIDE_PID = PROC.pid
 
 def emptymedia():
     sys.exit("No suitable media found in DeCore.")
 
-def newSlideshow(rnd, dly):
+def newslideshow(rnd, dly):
     try:
-        slide = Slide("",None,"")
-        name = "slide.dpa"
-        filepath = SLIDE_PATH + name
-        isRandom = bool(rnd)
-        delay = dly + " "
-        printmessage(delay, 3)
-        imgCount = 0
-        vidCount = 0
-        temp = ""
-        isonce = "" # " -once "	
-        init = False
+        #Create file manifest.
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
-        for file in filelist:
-            if file.endswith(('.mp4','.h264')):
-                isonce = " -once "
-                break
+        printmessage ("Found " + str(len(filelist)) + " items: " + ''.join(filelist) + " ")
+        
+        #If filelist is empty, print a message that indicates no media was found on the node.
         if not filelist:
             emptymedia()
         else:
-            lol = ''.join(filelist)
-            printmessage ("Found " + str(len(filelist)) + " items: " + lol + " ")
+            #Check whether if there are videos in current media.
+            #Images will be played ONCE if there are any.
+            isonce = ""
+            for file in filelist:
+                if file.endswith(VIDEO_EXT):
+                    isonce = " -once "
+                    break
+
+            #Definition of variables used in function.
+            name = "slide.dpa"
+            filepath = SLIDE_PATH + name
+            isRandom = bool(rnd)
+            delay = dly + " "
+            imgCount = 0
+            imgList = []
+            vidCount = 0
+            vidName = ""            
+            temp = ""       
+            init = False
+
+            #Script bodies that will be used while creating the slide. 
+            fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo\n"
+            imgScript = "clear\nfbi --noverbose -a -t " + delay + isonce
+            vidScript = "clear\nomxplayer " + MEDIA_PATH
+
+            #Delay cannot be zero. 15 seconds is the default interval value.
+            if delay is "0" or 0:
+                    printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval", 0.1)
+                    delay = "15"
+            
+            #Files are randomized in order if the RANDOM flag was set.
             if isRandom:
                 printmessage("Random flag was on, randomizing file list...", 0.1)
                 shuffle(filelist)
-                lol = ''.join(filelist)
-                printmessage("Randomized list: "+lol+"\n")     
-            fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo\n"
-            imgScript = "clear\nfbi --noverbose -a -t " + delay + isonce
-            vidScript = "clear\nomxplayer " + MEDIA_PATH 
-            if delay is "0" or 0:
-                printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval", 0.1)
-                delay = "15"
+                printmessage("Randomized list: " + ''.join(filelist) + "\n")
+
+            #Beginning of the slide creation.                                                    
             for file in filelist:
-                #check init flag
                 printmessage("Now processing file: " + file, 0)
-                if init is False:
-                    #print ("init was false, this means this is the first media, changing flag...")
-                    #generate image list and vid name after init
-                    init = True
-                    imgList = []
-                    vidName = ""
-                    if file.endswith(('.jpg', '.jpeg', '.png','.gif')):
-                        printmessage("first media is an image, combo started...\n", 0.1)
+                printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n", 0)
+                
+                if imgCount == vidCount:                  
+                    if file.endswith(IMAGE_EXT):
+                        #printmessage("first media is an image, combo started...\n", 0.1)
                         imgList.append(file + " ")
                         imgCount += 1
-                        printmessage("img's appended to list, continuing process...\n", 0.1)
-                    elif file.endswith(('.mp4','.h264')):
-                        printmessage("first media is a video, writing to bash file...\n", 0.1)
+                        #printmessage("img's appended to list, continuing process...\n", 0.1)
+                    elif file.endswith(VIDEO_EXT):
+                        #printmessage("first media is a video, writing to bash file...\n", 0.1)
                         vidName = ''.join([fullscript,vidScript, file," >/dev/null 2>&1" , '\n'])
                         fullscript = vidName
                         vidCount += 1
                     else:
                         emptymedia()
-                else:
-                    printmessage("getting rest of the media...", 0)
-                    printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n", 0)
-                    #stuff to do after init
-                    #if both counters are equal, break the loop.
-                    if vidCount == imgCount:
+                
+                #image list generator, break the combo if the next media in line isnt an
+                elif imgCount > vidCount:                            
+                    if file.endswith(IMAGE_EXT):
+                        printmessage("image combo ongoing, populating image array...", 0.1)
+                        imgList.append(file + " ")
+                        imgCount += 1
+                        printmessage("Current combo: " + ''.join(imgList), 0)
+                    elif file.endswith(VIDEO_EXT):
+                        printmessage("combo broken!", 0.1)
+                        imgCount = 0
+                        combinedImg = "".join(imgList)                          
+                        fullscript = ''.join([fullscript, imgScript, combinedImg, '\n', vidScript, file, " >/dev/null 2>&1" , '\n'])
+                        vidCount += 1                          
+                    else:						
                         emptymedia()
-                    #image list generator, break the combo if the next media in line isnt an
-                    elif imgCount > vidCount:                            
-                        if file.endswith(('.jpg', '.jpeg', '.png','.gif')):
-                            printmessage("image combo ongoing, populating image array...", 0.1)
-                            imgList.append(file + " ")
-                            imgCount += 1
-                            printmessage("Current combo: " + ''.join(imgList), 0)
-                        elif file.endswith((".mp4",".h264",".mov")):
-                            printmessage("combo broken!", 0.1)
-                            imgCount = 0
-                            combinedImg = "".join(imgList)                          
-                            fullscript = ''.join([fullscript, imgScript, combinedImg, '\n', vidScript, file, " >/dev/null 2>&1" , '\n'])
-                            vidCount += 1                          
-                        else:						
-                            emptymedia()					
-                    else:
-                        if file.endswith(('.mp4','.h264',".mov")):
-                            temp = ''.join([fullscript,vidScript, file, " >/dev/null 2>&1", '\n'])
-                            fullscript = temp
-                            vidCount += 1
-                        elif file.endswith(('.jpg', '.jpeg', '.png','.gif')):
-                            printmessage("img combo started...", 0.1)
-                            vidCount = 0
-                            imgList = []
-                            imgList.append(file + " ")
-                            imgCount += 1
+
+                elif vidCount > imgCount:
+                    if file.endswith(VIDEO_EXT):
+                        temp = ''.join([fullscript,vidScript, file, " >/dev/null 2>&1", '\n'])
+                        fullscript = temp
+                        vidCount += 1
+                    elif file.endswith(IMAGE_EXT):
+                        printmessage("img combo started...", 0.1)
+                        vidCount = 0
+                        imgList = []
+                        imgList.append(file + " ")
+                        imgCount += 1
+
             if len(imgList) > 0:
                 printmessage("\n"+str(len(imgList))+" images left in array after end of operation, writing them to file...", 0.1)
                 combinedImg = ''.join(imgList)
                 fullscript = ''.join([fullscript, imgScript, combinedImg, " >/dev/null 2>&1", '\n'])
                 print("Done writing remainder files...\n")
             
-            slide.name = name
-            slide.script = fullscript
-            slide.writeToFile()
+            f = open(SLIDE_PATH + name, 'w')
+            f.write(fullscript + "done\nexit 0")
+            f.close()
 
             call("chmod +x " + filepath , shell= True)
-            print("Slide created under dir '"+filepath)
-            print("Success", "Slideshow '" + name + "' has been successfully created.")
-            return 0
+            print("Success", "Slideshow '" + name + "' has been successfully created under " + filepath + ".")
 
     except Exception as e:
-        print e
+        #log e
         print("There was a problem, aborted slide creation.")
         if os.path.exists(filepath+'.dpa'):
             print("Removing slide file...")
@@ -420,7 +418,7 @@ def runslide():
             PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=False)
             SLIDE_PID = PROC.pid
         else:
-            newSlideshow(IS_RANDOM, DELAY)
+            newslideshow(IS_RANDOM, DELAY)
             call("dd if=/dev/zero of=/dev/fb0", shell=True)
             PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=False)
             SLIDE_PID = PROC.pid
