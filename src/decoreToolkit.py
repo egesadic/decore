@@ -278,7 +278,7 @@ def updateslide():
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
         #os.killpg(os.getpgid(SLIDE_PID), signal.SIGKILL)
-        call("sudo killall /usr/decore/slides/slide.dpa", shell=True)
+        subprocess.Popen("sudo killall /usr/decore/slides/slide.dpa", shell=True)
         call("sudo killall omxplayer", shell=True)
         call("sudo killall fbi", shell=True)
         call("dd if=/dev/zero of=/dev/fb0", shell=True)
@@ -417,12 +417,12 @@ def runslide():
     if len(filelist) is not 0:
         if isfile(SLIDE_PATH + "slide.dpa"):
             call("dd if=/dev/zero of=/dev/fb0", shell=True)
-            PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=True)
+            PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=False)
             SLIDE_PID = PROC.pid
         else:
             newSlideshow(IS_RANDOM, DELAY)
             call("dd if=/dev/zero of=/dev/fb0", shell=True)
-            PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=True)
+            PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=False)
             SLIDE_PID = PROC.pid
     else:
         printmessage("No suitable media was found in device!")
