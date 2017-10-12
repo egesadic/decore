@@ -253,19 +253,17 @@ def fetchfiles():
     """Fetches files from the DeCore server."""
     x=[]
     i=0
-    logfile = open(LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y-%H:%M:%S")) + ".log", 'w') 
+    log = LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y-%H:%M:%S")) + ".log"
     f = open(CFG_FOLDER + "ToBeAdded.txt",'r')
     for line in f.readlines():
         print("Now fetching: " + str(line).replace('\n',""))
         x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
-        cmd = "wget -c " + x[index] + " -P " + MEDIA_PATH
-        logfile.write(cmd + "\n")
+        cmd = "wget -c " + x[index] + " -P " + MEDIA_PATH + "> " + log
         print cmd
         #os.system(cmd)
         call(cmd, shell = True)
-    logfile.close()
         
 def printmessage(text, slp = 0.3):
     """Print specified message with a sensible delay."""
