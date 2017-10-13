@@ -263,7 +263,7 @@ def emptymedia():
 def newslideshow(rnd, dly):
     try:
         global SLIDE_PATH
-        
+
         #Create file manifest.
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
         printmessage ("Found " + str(len(filelist)) + " items: " + ''.join(filelist) + " ")
@@ -369,8 +369,8 @@ def newslideshow(rnd, dly):
             print("Success", "Slideshow '" + name + "' has been successfully created under " + filepath + ".")
 
     except Exception as e:
-        #log e
-        print("There was a problem, aborted slide creation.\n" + e)
+        print e
+        print("There was a problem, aborted slide creation.\n")
         if os.path.exists(filepath+'.dpa'):
             print("Removing slide file...")
             slide.close()
