@@ -34,7 +34,7 @@ CFG_PATH = CFG_FOLDER + "cfgval.dc"
 MEDIA_PATH = "/usr/decore/media/"
 SLIDE_PATH = "/usr/decore/slides/"
 URL = "http://192.168.34.11:8080/"
-COOLDOWN = 60
+COOLDOWN = 30
 
 ##########################################################################################################
 #                                          FUNCTIONS START HERE                                          #
@@ -303,7 +303,7 @@ def newslideshow(dly):
 
             #Beginning of the slide creation.                                                    
             for file in filelist:
-                printmessage("Now processing file: " + file, 3)
+                printmessage("Now processing file: " + file, 0.1)
                 printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n", 0)
                 
                 if imgCount == vidCount:                  
