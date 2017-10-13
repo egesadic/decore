@@ -251,7 +251,7 @@ def updateslide():
         os.system("dd if=/dev/zero of=/dev/fb0")
         print ("Killed slide with PGID " + str(SLIDE_PID))
     newslideshow(DELAY)
-    #runslide()
+    runslide()
 
 def emptymedia():
     sys.exit("No suitable media found in DeCore.")
@@ -309,12 +309,12 @@ def newslideshow(dly):
                 if imgCount == vidCount:                  
                     if file.endswith(IMAGE_EXT):
                         #printmessage("first media is an image, combo started...\n", 0.1)
-                        imgList.append(file + " ")
+                        imgList.append(str(file).replace(' ', "\\ ")  + " ")
                         imgCount += 1
                         #printmessage("img's appended to list, continuing process...\n", 0.1)
                     elif file.endswith(VIDEO_EXT):
                         #printmessage("first media is a video, writing to bash file...\n", 0.1)
-                        vidName = ''.join([fullscript,vidScript, file," >/dev/null 2>&1" , '\n'])
+                        vidName = ''.join([fullscript,vidScript, str(file).replace(' ', "\\ ") ," >/dev/null 2>&1" , '\n'])
                         fullscript = vidName
                         vidCount += 1
                     else:
@@ -324,28 +324,28 @@ def newslideshow(dly):
                 elif imgCount > vidCount:                            
                     if file.endswith(IMAGE_EXT):
                         printmessage("image combo ongoing, populating image array...", 0.1)
-                        imgList.append(file + " ")
+                        imgList.append(str(file).replace(' ', "\\ ") + " ")
                         imgCount += 1
                         printmessage("Current combo: " + ''.join(imgList), 0)
                     elif file.endswith(VIDEO_EXT):
                         printmessage("combo broken!", 0.1)
                         imgCount = 0
                         combinedImg = "".join(imgList)                          
-                        fullscript = ''.join([fullscript, imgScript, combinedImg, '\n', vidScript, file, " >/dev/null 2>&1" , '\n'])
+                        fullscript = ''.join([fullscript, imgScript, combinedImg, '\n', vidScript, str(file).replace(' ', "\\ "), " >/dev/null 2>&1" , '\n'])
                         vidCount += 1                          
                     else:						
                         emptymedia()
 
                 elif vidCount > imgCount:
                     if file.endswith(VIDEO_EXT):
-                        temp = ''.join([fullscript,vidScript, file, " >/dev/null 2>&1", '\n'])
+                        temp = ''.join([fullscript,vidScript, str(file).replace(' ', "\\ "), " >/dev/null 2>&1", '\n'])
                         fullscript = temp
                         vidCount += 1
                     elif file.endswith(IMAGE_EXT):
                         printmessage("img combo started...", 0.1)
                         vidCount = 0
                         imgList = []
-                        imgList.append(file + " ")
+                        imgList.append(str(file).replace(' ', "\\ ")  + " ")
                         imgCount += 1
                     else:						
                         emptymedia()

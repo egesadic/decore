@@ -18,7 +18,7 @@ try:
                 mediaGot=True        
     
     #Cihaz ilk çalıştığında slide.dpa'yı çalıştır.
-    #runslide()
+    runslide()
 
     while True:
         sync()
