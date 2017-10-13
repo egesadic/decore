@@ -262,6 +262,8 @@ def emptymedia():
 
 def newslideshow(rnd, dly):
     try:
+        global SLIDE_PATH
+        
         #Create file manifest.
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
         printmessage ("Found " + str(len(filelist)) + " items: " + ''.join(filelist) + " ")
