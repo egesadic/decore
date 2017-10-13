@@ -37,37 +37,9 @@ URL = "http://192.168.34.11:8080/"
 COOLDOWN = 60
 
 ##########################################################################################################
-#                                          CLASSES START HERE                                            #
-##########################################################################################################  
-
-class decObject:
-    """Base class for all decore objects."""
-    __metaclass__ = ABCMeta
-    def __init__(self, id = 0 ,name = ""):
-        self.id = None
-        self.name = name
-
-class Node(decObject):
-    """DeCore client, probably a RPi. Inherits Device class."""
-    def __init__(self, name, address = '', parent = ""):
-        self.id = 0
-        self.name = name
-        self.address = address
-        self.parent = ""
-
-class Slide(decObject):
-    """DeCore slide object"""
-    def __init__(self, id, name = "", node = Node, script = "" ):
-        self.id = 0
-        self.name = name
-        self.node = None
-        self.script = script
-
-    
-
-##########################################################################################################
 #                                          FUNCTIONS START HERE                                          #
 ##########################################################################################################                                                                                          
+
 def getmacadress(interface):
     """Gets the MAC address of specified device."""
     # Return the MAC address of interface
@@ -278,7 +250,8 @@ def updateslide():
         os.system("killall -9 slide.dpa")
         os.system("killall -9 fbi")
         os.system("killall -9 omxplayer")
-        call("dd if=/dev/zero of=/dev/fb0", shell=True)
+        os.system("killall -9 omxplayer.bin")
+        os.system("dd if=/dev/zero of=/dev/fb0")
         print ("Killed slide with PGID " + str(SLIDE_PID))
     newslideshow(IS_RANDOM, DELAY)
     PROC = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=False)
