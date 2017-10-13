@@ -244,9 +244,6 @@ def updateslide():
     printmessage("Updating slide..., current slide pid "+str(SLIDE_PID))
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
-        #os.kill(SLIDE_PID, signal.SIGTERM)
-        #os.kill((SLIDE_PID+2), signal.SIGTERM)
-        #call("sudo killall omxplayer", shell=False)
         os.system("killall -9 slide.dpa")
         os.system("killall -9 fbi")
         os.system("killall -9 omxplayer")
