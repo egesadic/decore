@@ -323,9 +323,9 @@ def newslideshow(rnd, dly):
             vidScript = "clear\nomxplayer " + MEDIA_PATH
 
             #Delay cannot be zero. 15 seconds is the default interval value.
-            if delay is "0" or 0:
+            if str(dly) is "0":
                     printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval", 0.1)
-                    delay = "15"
+                    delay = "15 "
             
             #Files are randomized in order if the RANDOM flag was set.
             if isRandom:
