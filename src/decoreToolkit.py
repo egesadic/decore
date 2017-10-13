@@ -253,7 +253,7 @@ def updateslide():
         os.system("killall -9 omxplayer.bin")
         os.system("dd if=/dev/zero of=/dev/fb0")
         print ("Killed slide with PGID " + str(SLIDE_PID))
-    newslideshow(IS_RANDOM, DELAY)
+    newslideshow(DELAY)
     PROC = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=False)
     SLIDE_PID = PROC.pid
 
@@ -392,7 +392,7 @@ def runslide():
             PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=False)
             SLIDE_PID = PROC.pid
         else:
-            newslideshow(IS_RANDOM, DELAY)
+            newslideshow(DELAY)
             call("dd if=/dev/zero of=/dev/fb0", shell=True)
             PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=False)
             SLIDE_PID = PROC.pid
