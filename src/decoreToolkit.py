@@ -21,8 +21,8 @@ from abc import ABCMeta
 ##########################################################################################################  
 
 PROC = ""
-VIDEO_EXT = ['.mp4', '.h264']
-IMAGE_EXT = ['.jpg', '.jpeg', '.png', '.gif']
+VIDEO_EXT = ('.mp4', '.h264')
+IMAGE_EXT = ('.jpg', '.jpeg', '.png', '.gif')
 SLIDE_PID = 0
 FILELIST = []
 FILES_CHANGED = "False"
@@ -260,13 +260,11 @@ def updateslide():
 def emptymedia():
     sys.exit("No suitable media found in DeCore.")
 
-def newslideshow(rnd, dly):
+def newslideshow(dly):
     try:
-        global SLIDE_PATH
-
         #Create file manifest.
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
-        printmessage ("Found " + str(len(filelist)) + " items: " + ''.join(filelist) + " ")
+        printmessage ("Found " + str(len(filelist)) + " items: " + ' '.join(filelist) + " ")
         
         #If filelist is empty, print a message that indicates no media was found on the node.
         if not filelist:
@@ -283,14 +281,13 @@ def newslideshow(rnd, dly):
             #Definition of variables used in function.
             name = "slide.dpa"
             filepath = SLIDE_PATH + name
-            isRandom = bool(rnd)
+            #isRandom = bool(rnd)
             delay = dly + " "
             imgCount = 0
             imgList = []
             vidCount = 0
             vidName = ""            
             temp = ""       
-            init = False
 
             #Script bodies that will be used while creating the slide. 
             fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo\n"
@@ -303,10 +300,10 @@ def newslideshow(rnd, dly):
                     delay = "15 "
             
             #Files are randomized in order if the RANDOM flag was set.
-            if isRandom:
+            ''' if isRandom:
                 printmessage("Random flag was on, randomizing file list...", 0.1)
                 shuffle(filelist)
-                printmessage("Randomized list: " + ''.join(filelist) + "\n")
+                printmessage("Randomized list: " + ''.join(filelist) + "\n") '''
 
             #Beginning of the slide creation.                                                    
             for file in filelist:
@@ -354,7 +351,9 @@ def newslideshow(rnd, dly):
                         imgList = []
                         imgList.append(file + " ")
                         imgCount += 1
-
+                    else:						
+                        emptymedia()
+            
             if len(imgList) > 0:
                 printmessage("\n"+str(len(imgList))+" images left in array after end of operation, writing them to file...", 0.1)
                 combinedImg = ''.join(imgList)
