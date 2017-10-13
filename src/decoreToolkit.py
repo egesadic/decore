@@ -227,7 +227,7 @@ def fetchfiles():
         x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
-        cmd = "wget -c " + x[index] + " -P " + MEDIA_PATH + " -o " + log
+        cmd = "wget -c " + str(x[index]).replace(' ', "// ") + " -P " + MEDIA_PATH + " -o " + log
         print cmd
         #os.system(cmd)
         call(cmd, shell = True)
