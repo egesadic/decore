@@ -251,8 +251,7 @@ def updateslide():
         os.system("dd if=/dev/zero of=/dev/fb0")
         print ("Killed slide with PGID " + str(SLIDE_PID))
     newslideshow(DELAY)
-    PROC = subprocess.Popen(SLIDE_PATH+"slide.dpa", shell=False)
-    SLIDE_PID = PROC.pid
+    #runslide()
 
 def emptymedia():
     sys.exit("No suitable media found in DeCore.")
@@ -304,7 +303,7 @@ def newslideshow(dly):
 
             #Beginning of the slide creation.                                                    
             for file in filelist:
-                printmessage("Now processing file: " + file, 0)
+                printmessage("Now processing file: " + file, 3)
                 printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n", 0)
                 
                 if imgCount == vidCount:                  
@@ -385,12 +384,12 @@ def runslide():
 
     if len(filelist) is not 0:
         if isfile(SLIDE_PATH + "slide.dpa"):
-            call("dd if=/dev/zero of=/dev/fb0", shell=True)
+            os.system("dd if=/dev/zero of=/dev/fb0")
             PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=False)
             SLIDE_PID = PROC.pid
         else:
             newslideshow(DELAY)
-            call("dd if=/dev/zero of=/dev/fb0", shell=True)
+            os.system("dd if=/dev/zero of=/dev/fb0")
             PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=False)
             SLIDE_PID = PROC.pid
     else:
