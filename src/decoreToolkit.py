@@ -279,7 +279,7 @@ def newslideshow(dly):
             name = "slide.dpa"
             filepath = SLIDE_PATH + name
             #isRandom = bool(rnd)
-            delay = dly + " "
+            delay = str(dly) + " "
             imgCount = 0
             imgList = []
             vidCount = 0
