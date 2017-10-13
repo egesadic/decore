@@ -368,7 +368,7 @@ def newslideshow(rnd, dly):
 
     except Exception as e:
         #log e
-        print("There was a problem, aborted slide creation.")
+        print("There was a problem, aborted slide creation.\n" + e)
         if os.path.exists(filepath+'.dpa'):
             print("Removing slide file...")
             slide.close()
