@@ -301,7 +301,7 @@ def newslideshow(dly):
 
             #Delay cannot be zero. 15 seconds is the default interval value.
             if str(dly) is "0":
-                    printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval", 0.1)
+                    printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval")
                     delay = "15 "
             
             #Files are randomized in order if the RANDOM flag was set.
@@ -312,8 +312,8 @@ def newslideshow(dly):
 
             #Beginning of the slide creation.                                                    
             for file in filelist:
-                printmessage("Now processing file: " + file, 0.1)
-                printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n", 0)
+                printmessage("Now processing file: " + file)
+                printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n")
                 
                 if imgCount == vidCount:                  
                     if file.endswith(IMAGE_EXT):
@@ -332,12 +332,12 @@ def newslideshow(dly):
                 #image list generator, break the combo if the next media in line isnt an
                 elif imgCount > vidCount:                            
                     if file.endswith(IMAGE_EXT):
-                        printmessage("image combo ongoing, populating image array...", 0.1)
+                        printmessage("image combo ongoing, populating image array...")
                         imgList.append(str(file).replace(' ', "\\ ") + " ")
                         imgCount += 1
-                        printmessage("Current combo: " + ''.join(imgList), 0)
+                        printmessage("Current combo: " + ''.join(imgList))
                     elif file.endswith(VIDEO_EXT):
-                        printmessage("combo broken!", 0.1)
+                        printmessage("combo broken!")
                         imgCount = 0
                         combinedImg = "".join(imgList)                          
                         fullscript = ''.join([fullscript, imgScript, combinedImg, '\n', vidScript, str(file).replace(' ', "\\ "), " >/dev/null 2>&1" , '\n'])
@@ -351,7 +351,7 @@ def newslideshow(dly):
                         fullscript = temp
                         vidCount += 1
                     elif file.endswith(IMAGE_EXT):
-                        printmessage("img combo started...", 0.1)
+                        printmessage("img combo started...")
                         vidCount = 0
                         imgList = []
                         imgList.append(str(file).replace(' ', "\\ ")  + " ")
@@ -360,17 +360,17 @@ def newslideshow(dly):
                         emptymedia()
             
             if len(imgList) > 0:
-                printmessage("\n"+str(len(imgList))+" images left in array after end of operation, writing them to file...", 0.1)
+                printmessage("\n"+str(len(imgList))+" images left in array after end of operation, writing them to file...")
                 combinedImg = ''.join(imgList)
                 fullscript = ''.join([fullscript, imgScript, combinedImg, " >/dev/null 2>&1", '\n'])
-                print("Done writing remainder files...\n")
+                printmessage("Done writing remainder files...\n")
             
             f = open(SLIDE_PATH + name, 'w')
             f.write(fullscript + "done\nexit 0")
             f.close()
 
             call("chmod +x " + filepath , shell= True)
-            print("Success", "Slideshow '" + name + "' has been successfully created under " + filepath + ".")
+            printmessage("Success", "Slideshow '" + name + "' has been successfully created under " + filepath + ".")
 
     except Exception as e:
         print e
