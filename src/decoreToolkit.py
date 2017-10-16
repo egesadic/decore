@@ -232,10 +232,19 @@ def fetchfiles():
         #os.system(cmd)
         call(cmd, shell = True)
         
-def printmessage(text, slp = 0.3):
+def printmessage(text, lvl="info"):
     """Print specified message with a sensible delay."""
-    print(text)
-    time.sleep(slp)
+    logging.basicConfig(filename= LOG_PATH + "decore-" + str(time.strftime("%d-%m-%Y")) + ".log", level=logging.INFO)
+    logoptions={
+        "debug" : logging.debug,
+        "info" : logging.info,
+        "warning" : logging.warning,
+        "error" : logging.error,
+        "critical" : logging.critical,
+    }
+    logoptions[lvl](str('(' + str(time.strftime("%H:%M:%S") + '): ' + text)))
+    if lvl is ("info", "warning", "error", "critical"):
+        time.sleep(0.2)
 
 def updateslide():
     global SLIDE_PID
