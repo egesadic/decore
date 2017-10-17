@@ -9,6 +9,7 @@ import httplib
 import time
 import signal
 import logging
+import collections
 from random import shuffle
 from os import listdir, path, unlink
 from os.path import isfile, join
@@ -69,13 +70,18 @@ def createcfgfile(url, adapter):
                     printmessage("Cannot get MAC address, please contact support.")
                     exit(1)
                 if mac is "00:00:00:00:00:00":
-                    count += 1
+                    printmessage("errro")
+                    exit(1)
                 else:
                     printmessage ("MAC address is: "+mac)
-                    data = {
-                        "Mac": mac
-                    }
-                    break            
+                    
+                    break
+            usage = disk_usage('/')
+            data = {
+                    "Mac": mac,
+                    "Storage": int(usage.total/1024),
+                    "RemainingStorage": int(usage.free/1024)
+            }            
             #Sunucuya bağlan ve ID talep et.
             request = urllib2.Request(url, json.dumps(data))
             request.add_header('Content-Type', 'application/json')
@@ -136,9 +142,11 @@ def sync():
             device_id = cfgfile.read()
             filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
             printmessage("Old files: "+str(filelist))
+            usage = disk_usage('/')
             data = {
                 "Id": int(device_id), 
-                "OldPaths": filelist
+                "OldPaths": filelist,
+                "RemainingStorage": int(usage.free/1024)
             }
             #print(json.loads(data))
             url = URL + "v1/node"
@@ -166,7 +174,7 @@ def sync():
                     addedFile = open(CFG_FOLDER + "ToBeAdded.txt", 'w')
                     content = ""
                     for the_file in tobeadded:
-                        content = ''.join([content, URL, "v1/files/", str(the_file), '\n'])
+                        content = ''.join([content, URL, "v1/files/dosyaAdi.jpg?id=" + str(device_id), str(the_file), '\n'])
                     addedFile.write(content)
                     addedFile.close()
                     printmessage("Fetching the files from server...")
@@ -244,6 +252,7 @@ def printmessage(text, lvl="info"):
     }
     logoptions[lvl](str('(' + str(time.strftime("%H:%M:%S") + '): ' + text)))
     if lvl is ("info", "warning", "error", "critical"):
+        print(text)
         time.sleep(0.2)
 
 def updateslide():
@@ -403,3 +412,23 @@ def runslide():
             SLIDE_PID = PROC.pid
     else:
         printmessage("No suitable media was found in device!")
+    
+def disk_usage(pth):
+    _ntuple_diskusage = collections.namedtuple('usage', 'total used free')
+   
+    st = os.statvfs(pth)
+    free = st.f_bavail * st.f_frsize
+    total = st.f_blocks * st.f_frsize
+    used = (st.f_blocks - st.f_bfree) * st.f_frsize
+    return _ntuple_diskusage(total, used, free)
+
+def bytes2human(n):
+    symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
+    prefix = {}
+    for i, s in enumerate(symbols):
+        prefix[s] = 1 << (i+1)*10
+    for s in reversed(symbols):
+        if n >= prefix[s]:
+            value = float(n) / prefix[s]
+            return '%.1f%s' % (value, s)
+    return "%sB" % n
