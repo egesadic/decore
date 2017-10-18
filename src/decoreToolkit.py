@@ -174,7 +174,7 @@ def sync():
                     addedFile = open(CFG_FOLDER + "ToBeAdded.txt", 'w')
                     content = ""
                     for the_file in tobeadded:
-                        content = ''.join([content, URL, "v1/files/dosyaAdi.jpg?id=" + str(device_id) + " ", str(the_file), '\n'])
+                        content = ''.join([content, URL, "v1/files/" + str(the_file) + "?id=" + str(device_id), '\n'])
                     addedFile.write(content)
                     addedFile.close()
                     printmessage("Fetching the files from server...")
