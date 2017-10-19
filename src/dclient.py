@@ -12,6 +12,7 @@ checkdir(LOG_PATH)
 logging.basicConfig(filename= LOG_PATH + "decore-" + str(time.strftime("%d-%m-%Y")) + ".log", level=logging.INFO)
 
 try:
+    raise Exception
     while isfile(CFG_PATH) is False: 
         printmessage("Configuration file not found, creating new one.")
         while mediaGot is False:         
@@ -30,5 +31,5 @@ try:
 except DecoreServerConnectionException as ex:
     pass
 except Exception as e:
-    pass    
+    printmessage(str("There has been a problem: " + e), "critical")   
 
