@@ -174,7 +174,7 @@ def sync():
                     addedFile.write(content)
                     addedFile.close()
                     printmessage("Fetching the files from server...")
-                    fetchfiles()        
+                    fetchfiles(device_id)        
                     printmessage ("Added " + str(len(tobeadded)) + " files.")
                     FILES_CHANGED = True
                 else:
@@ -220,7 +220,7 @@ def forcecfgcreate(url):
     else:
         createcfgfile(url)
 
-def fetchfiles():
+def fetchfiles(did):
     """Fetches files from the DeCore server."""
     x=[]
     i=0
@@ -231,7 +231,7 @@ def fetchfiles():
         x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
-        cmd = "wget -c " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ")+ "?id=" + str(device_id) + " -P " + MEDIA_PATH + " -o " + log
+        cmd = "wget -c " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ")+ "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log
         print cmd
         #os.system(cmd)
         call(cmd, shell = True)
