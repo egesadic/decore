@@ -170,7 +170,7 @@ def sync():
                     addedFile = open(CFG_FOLDER + "ToBeAdded.txt", 'w')
                     content = ""
                     for the_file in tobeadded:
-                        content = ''.join([content, URL, "v1/files/" + str(the_file) + "?id=" + str(device_id), '\n'])
+                        content = ''.join([content, str(the_file) ,"\n"])
                     addedFile.write(content)
                     addedFile.close()
                     printmessage("Fetching the files from server...")
@@ -231,7 +231,7 @@ def fetchfiles():
         x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
-        cmd = "wget -c " + str(x[index]).replace(' ', "\\ ") + " -P " + MEDIA_PATH + " -o " + log
+        cmd = "wget -c " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ")+ "?id=" + str(device_id) + " -P " + MEDIA_PATH + " -o " + log
         print cmd
         #os.system(cmd)
         call(cmd, shell = True)
