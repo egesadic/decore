@@ -432,4 +432,3 @@ def bytes2human(n):
 def checkdir(path):
     if not os.path.exists(path):
         os.makedirs(path)
-        #lol

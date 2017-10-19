@@ -3,7 +3,7 @@ from decoreToolkit import *
 from decoreErrors import *
 from os.path import isfile
 
-VER_NUM = "0.1.5"
+VER_NUM = "0.2.0"
 print("Welcome to DeCore v" + VER_NUM + "! Initialising...")
 
 url = URL +"v1/node/register"
