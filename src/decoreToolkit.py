@@ -56,14 +56,10 @@ def createcfgfile(url, adapter):
         #Geçerli bir config dosyası olup olmadığını denetle.   
         if isfile(CFG_PATH) is False:
             count = 0
-            if os.path.isdir(MEDIA_PATH) is False:
-                os.makedirs(MEDIA_PATH)
-            if os.path.isdir(SLIDE_PATH) is False:
-                os.makedirs(SLIDE_PATH)
-            if os.path.isdir(CFG_FOLDER) is False:
-                os.makedirs(CFG_FOLDER)
-            if os.path.isdir(LOG_PATH) is False:
-                os.makedirs(LOG_PATH)
+            checkdir(CFG_FOLDER)
+            checkdir(MEDIA_PATH)
+            checkdir(SLIDE_PATH)
+            checkdir(LOG_PATH)            
             mac = getmacadress(adapter)
             for count in range(0, 4):
                 if count is 3:
@@ -432,3 +428,8 @@ def bytes2human(n):
             value = float(n) / prefix[s]
             return '%.1f%s' % (value, s)
     return "%sB" % n
+
+def checkdir(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+        #lol
