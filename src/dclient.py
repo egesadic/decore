@@ -8,10 +8,10 @@ VER_NUM = "0.2.0"
 url = URL +"v1/node/register"
 mediaGot = False
 checkdir(LOG_PATH)
-logging.basicConfig(filename= LOG_PATH + "decore-" + str(time.strftime("%d-%m-%Y")) + ".log", level=logging.INFO)
-printmessage("Welcome to DeCore v" + VER_NUM + "! Initialising...")
 
 try:
+    logging.basicConfig(filename= LOG_PATH + "decore-" + str(time.strftime("%d-%m-%Y")) + ".log", level=logging.INFO)
+    printmessage("Welcome to DeCore v" + VER_NUM + "! Initialising...")
     while isfile(CFG_PATH) is False: 
         printmessage("Configuration file not found, creating new one under " + CFG_PATH)
         while mediaGot is False:         
