@@ -274,13 +274,16 @@ def updateslide():
     printmessage("Updating slide..., current slide pid "+str(SLIDE_PID))
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
+        printmessage("Killing slide.dpa and related processes.", "debug")
         os.system("killall -9 slide.dpa")
         os.system("killall -9 fbi")
         os.system("killall -9 omxplayer")
         os.system("killall -9 omxplayer.bin")
         os.system("dd if=/dev/zero of=/dev/fb0")
-        print ("Killed slide with PGID " + str(SLIDE_PID))
+        printmessage("Killed all processes and flushed the framebuffer.", "debug")
+    printmessage("Updating slide.dpa...", "debug")
     newslideshow(DELAY)
+    printmessage("Slide updated successfully. Running slide.", "debug")
     runslide()
 
 def emptymedia():
@@ -414,16 +417,18 @@ def runslide():
 
     if len(filelist) is not 0:
         if isfile(SLIDE_PATH + "slide.dpa"):
+            printmessage("slide.dpa found, running file.", "debug")
             os.system("dd if=/dev/zero of=/dev/fb0")
             PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=False)
             SLIDE_PID = PROC.pid
         else:
+            printmessage("slide.dpa was not present in directory, recreating.", "warning")
             newslideshow(DELAY)
             os.system("dd if=/dev/zero of=/dev/fb0")
             PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=False)
             SLIDE_PID = PROC.pid
     else:
-        printmessage("No suitable media was found in device!")
+        printmessage("No suitable media was found in device!", "warning")
     
 def disk_usage(pth):
     _ntuple_diskusage = collections.namedtuple('usage', 'total used free')

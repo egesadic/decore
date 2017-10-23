@@ -25,11 +25,12 @@ try:
 
     while True:
         sync()
-        print("Startup complete, listening to server for changes...")        
+        print("Listening to server for changes...")
+        printmessage("Listening to server for changes. Checking for changes in " + str(COOLDOWN) + " seconds.")         
         time.sleep(COOLDOWN)      
 
 except DecoreServerConnectionException as ex:
     pass
 except Exception as e:
-    print e   
+    quitdecore(e, False)   
 
