@@ -7,7 +7,6 @@ import urllib2
 import json
 import httplib
 import time
-import signal
 import logging
 import collections
 from random import shuffle
@@ -15,7 +14,6 @@ from os import listdir, path, unlink
 from os.path import isfile, join
 from subprocess import call
 from decoreErrors import *
-from abc import ABCMeta
 
 ##########################################################################################################
 #                                    GLOBAL VARIABLES START HERE                                         #
@@ -53,38 +51,46 @@ def getmacadress(interface):
 def createcfgfile(url, adapter):
     """Connect to a local DeCore server to fetch device-id and store it in a config file under specified path. Default path to config file is '/usr/decore/config'."""    
     try:
-        #Geçerli bir config dosyası olup olmadığını denetle.   
+        #Geçerli bir config dosyası olup olmadığını denetle.
+        printmessage("Beginning creation of configuration file. Checking whether " + CFG_PATH + "exists.")
         if isfile(CFG_PATH) is False:
+            printmessage("Configuration file does NOT exist. Assuming this is the first time the node boots up.", "debug")
             count = 0
+            printmessage("Checking whether essential directories exist or not...")
             checkdir(CFG_FOLDER)
             checkdir(MEDIA_PATH)
             checkdir(SLIDE_PATH)
             checkdir(LOG_PATH)            
             mac = getmacadress(adapter)
-            for count in range(0, 4):
+            while count < 4:
                 if count is 3:
-                    printmessage("Cannot get MAC address, please contact support.")
-                    exit(1)
-                if mac is "00:00:00:00:00:00":
-                    printmessage("errro")
-                    exit(1)
+                    printmessage("Cannot get MAC address properly. Please contact support.", "crtitcal")
+                    quitdecore("CANNOT OBTAIN MAC ADDRESS", False)
+                if mac == "00:00:00:00:00:00":
+                    err = "Invalid MAC address, trying again. (MAC was " + mac + ")"
+                    printmessage(err,"warning")
+                    count += 1
                 else:
-                    printmessage ("MAC address is: "+mac)
-                    
+                    printmessage("MAC address is: "+mac)                   
                     break
+            
             usage = disk_usage('/')
+            printmessage("Total storage on this device is " + str(bytes2human(usage.total)))
+            printmessage("Free storage on this device is " + str(bytes2human(usage.free)))
             data = {
                     "Mac": mac,
                     "Storage": int(usage.total/1024),
                     "RemainingStorage": int(usage.free/1024)
-            }            
+            }       
+
             #Sunucuya bağlan ve ID talep et.
             request = urllib2.Request(url, json.dumps(data))
+            printmessage("JSON encoded. Starting server connection.")
             request.add_header('Content-Type', 'application/json')
-            printmessage(url)
+            printmessage("Connecting to URL: " + url)
             tmp = urllib2.urlopen(request)
             obj = json.loads(tmp.read())
-            printmessage ("Connection to the DeCore server success!")
+            printmessage ("Connection to the DeCore server success! Reading response...")
             
             #Döndürülen yanıtı oku.
             response = obj
@@ -108,19 +114,18 @@ def createcfgfile(url, adapter):
                 raise DecoreServerConnectionException('No value was returned from server. There might be problems with the server or with your connection.')
     
     except DecoreServerConnectionException as u:
-        print (u)
-        sys.exit(1)
+        quitdecore(u)
     except urllib2.HTTPError, e:
         #todo - bir daha cfg yaratıcıyı çağır
-        print e
+        pass
     except urllib2.URLError, e:
         #todo - URL kontrol ettir
-        print e
+        quitdecore(e, False)
     except httplib.HTTPException, e:
-        print e
+        quitdecore(e, False)
     except Exception as ex:
         #todo - Genel hata, yapacak bişey yok
-        print ex
+        quitdecore(ex, False)
 
 def sync():
     """Initiate a synchronisation between DeCore and the server. Requires config.json to be properly setup.""" 
@@ -133,9 +138,9 @@ def sync():
         FILES_CHANGED = False
 
         if isfile(CFG_PATH):
-            printmessage("Sync started with server!")
+            printmessage("Syncronisation started with server!")
             cfgfile = open(CFG_PATH, 'r')
-            device_id = cfgfile.read()
+            device_id = cfgfile.read()            
             filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
             printmessage("Old files: "+str(filelist))
             usage = disk_usage('/')
@@ -144,10 +149,14 @@ def sync():
                 "OldPaths": filelist,
                 "RemainingStorage": int(usage.free/1024)
             }
+            printmessage("Device ID is: " + str(device_id))
+            printmessage("Free storage on this device is " + str(bytes2human(usage.free)))
+            
             #print(json.loads(data))
             url = URL + "v1/node"
             
             #Sunucuya bağlan ve dosyaları talep et.
+            printmessage("Attempting to connect to server...", "debug")
             request = urllib2.Request(url, json.dumps(data))
             request.add_header('Content-Type', 'application/json')
             request.get_method = lambda: 'PUT'
@@ -160,13 +169,17 @@ def sync():
                 printmessage("Done! Getting randomization and delay values...")
                 IS_RANDOM = str(response["data"]["IsRandom"])
                 DELAY = str(response["data"]["Delay"])
-                printmessage("Getting file list to be deleted...")
+                printmessage("Random flag is " + str(IS_RANDOM), "debug")
+                printmessage("Delay is " + str(DELAY))
                 tobedeleted = response["data"]["ToBeDeleted"]
                 tobeadded = response["data"]["ToBeAdded"]
+                printmessage("Files to be deleted: "+str(tobedeleted))
+                printmessage("Files to be added: "+str(tobeadded))
                 OLD_FILES = tobedeleted
                 
                 #ToBeAdded'dan gelecek dosyaları metin dosyasına yaz ve indir                
                 if tobeadded is not None:
+                    printmessage("Writing new files names to TXT file.", "debug")
                     addedFile = open(CFG_FOLDER + "ToBeAdded.txt", 'w')
                     content = ""
                     for the_file in tobeadded:
@@ -198,19 +211,23 @@ def sync():
             else:
                 raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")            
         else:
-            raise UndefinedDeviceException("This device is not properly configured. Reboot the device and try again.")
+            raise UndefinedDeviceException("This device is not properly configured. Forcing configuration file creation.")
     
     except UndefinedDeviceException as u:
-        print u
-        sys.exit(1)
+        printmessage(u, "error")
+        forcecfgcreate(URL + "v1/node/register")
+        printmessage("Retrying syncronisation with the server...")
+        sync()
+    except JSONParseException as e:
+        quitdecore(e, True)
     except urllib2.HTTPError, e:
-        pass
+        quitdecore(e, False)
     except urllib2.URLError, e:
-        pass
+        quitdecore(e, False)
     except httplib.HTTPException, e:
-        pass
+        quitdecore(e, False)
     except Exception as e:
-        print(e)
+        quitdecore(e, False)
 
 def forcecfgcreate(url):
     """Forces a new config file creation. Use this only if needed."""
@@ -227,14 +244,13 @@ def fetchfiles(did):
     log = LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y-%H:%M:%S")) + ".log"
     f = open(CFG_FOLDER + "ToBeAdded.txt",'r')
     for line in f.readlines():
-        print("Now fetching: " + str(line).replace('\n',""))
         x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
         cmd = "wget -c " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + str(x[index]).replace(' ', "\\ ")
-        print cmd
-        #os.system(cmd)
-        call(cmd, shell = True)
+        #print cmd
+        os.system(cmd)
+        #call(cmd, shell = True)
         
 def printmessage(text, lvl="info"):
     """Print specified message with a sensible delay."""
@@ -431,4 +447,18 @@ def bytes2human(n):
 
 def checkdir(path):
     if not os.path.exists(path):
+        printmessage(path + " does not exists. Creating dir...")
         os.makedirs(path)
+        printmessage(path + " has been successfully created.")
+    else:
+        printmessage(path + " already exists.")
+def quitdecore(msg, expect = True):
+    expected = bool(expect)
+    if expected is False:
+        txt = "Exiting DeCore abruptly. Reason: " + msg
+        printmessage(msg, "critical")
+        exit(1)
+    else:
+        txt = msg
+        printmessage(msg)
+        exit(0)
