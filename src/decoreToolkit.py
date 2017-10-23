@@ -456,7 +456,12 @@ def checkdir(path):
         os.makedirs(path)
         printmessage(path + " has been successfully created.")
     else:
-        printmessage(path + " already exists.")
+         printmessage(path + " already exists.")
+
+def checklogpath():
+    if not os.path.exists(LOG_PATH):
+        os.makedirs(LOG_PATH)
+
 def quitdecore(msg, expect = True):
     expected = bool(expect)
     if expected is False:
