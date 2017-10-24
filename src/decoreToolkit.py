@@ -20,6 +20,8 @@ from decoreErrors import *
 #                                    GLOBAL VARIABLES START HERE                                         #
 ##########################################################################################################  
 
+LOGGER = None
+
 PROC = ""
 VIDEO_EXT = ('.mp4', '.h264')
 IMAGE_EXT = ('.jpg', '.jpeg', '.png', '.gif')
@@ -256,23 +258,25 @@ def fetchfiles(did):
 
 def createlogfile():
     """Creates a log file each midnight."""
-    logger = logging.getLogger(LOG_NAME)
-    logger.setLevel(logging.INFO)
- 
-    handler = TimedRotatingFileHandler(LOG_NAME,
+    global LOGGER
+
+    LOGGER = logging.getLogger("decoreLog")
+    LOGGER.setLevel(logging.INFO)
+
+    handler = TimedRotatingFileHandler("/home/sparkege/Desktop/decoreLog",
                                        when='midnight',
                                        interval=1,
                                        backupCount=7)
-    logger.addHandler(handler)
-        
+    LOGGER.addHandler(handler)
+
 def printmessage(text, lvl="info"):
     """Print specified message with a sensible delay."""
     logoptions={
-        "debug" : logging.debug,
-        "info" : logging.info,
-        "warning" : logging.warning,
-        "error" : logging.error,
-        "critical" : logging.critical,
+        "debug" : LOGGER.debug,
+        "info" : LOGGER.info,
+        "warning" : LOGGER.warning,
+        "error" : LOGGER.error,
+        "critical" : LOGGER.critical,
     }
     logoptions[lvl](str('(' + str(time.strftime("%H:%M:%S") + '): ' + text)))
     if lvl is ("info", "warning", "error", "critical"):
