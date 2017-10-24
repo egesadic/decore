@@ -8,6 +8,7 @@ import json
 import httplib
 import time
 import logging
+from logging.handlers import TimedRotatingFileHandler
 import collections
 from random import shuffle
 from os import listdir, path, unlink
@@ -251,10 +252,20 @@ def fetchfiles(did):
         #print cmd
         os.system(cmd)
         #call(cmd, shell = True)
+
+def createlogfile():
+    """Creates a log file each midnight."""
+    logger = logging.getLogger(LOG_PATH + "decore-" + str(time.strftime("%d-%m-%Y")) + ".log")
+    logger.setLevel(logging.INFO)
+ 
+    handler = TimedRotatingFileHandler(LOG_PATH,
+                                       when='midnight',
+                                       interval=1,
+                                       backupCount=7)
+    logger.addHandler(handler)
         
 def printmessage(text, lvl="info"):
     """Print specified message with a sensible delay."""
-    logging.basicConfig(filename= LOG_PATH + "decore-" + str(time.strftime("%d-%m-%Y")) + ".log", level=logging.INFO)
     logoptions={
         "debug" : logging.debug,
         "info" : logging.info,

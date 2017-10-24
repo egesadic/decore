@@ -8,7 +8,7 @@ VER_NUM = "0.2.0"
 url = URL +"v1/node/register"
 mediaGot = False
 checklogpath()
-logging.basicConfig(filename= LOG_PATH + "decore-" + str(time.strftime("%d-%m-%Y")) + ".log", level=logging.INFO)
+createlogfile()
 
 try: 
     printmessage("Welcome to DeCore v" + VER_NUM + "! Initialising...")
