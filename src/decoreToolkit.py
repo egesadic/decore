@@ -263,8 +263,8 @@ def createlogfile():
     LOGGER = logging.getLogger("decoreLog")
     LOGGER.setLevel(logging.INFO)
     handler = TimedRotatingFileHandler(LOG_NAME,
-                                       when='midnight',
-                                       interval=1,
+                                       when='S',
+                                       interval=15,
                                        backupCount=7)
     LOGGER.addHandler(handler)
 
