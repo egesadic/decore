@@ -31,7 +31,7 @@ FILES_CHANGED = "False"
 IS_RANDOM = "False"
 DELAY = 5
 LOG_PATH = "/usr/decore/log/"
-LOG_NAME = LOG_PATH + "decore-"
+LOG_NAME = LOG_PATH + "decoreLog"
 CFG_FOLDER = "/usr/decore/config/"
 CFG_PATH = CFG_FOLDER + "cfgval.dc"
 MEDIA_PATH = "/usr/decore/media/"
@@ -263,7 +263,7 @@ def createlogfile():
     LOGGER = logging.getLogger("decoreLog")
     LOGGER.setLevel(logging.INFO)
 
-    handler = TimedRotatingFileHandler("/home/sparkege/Desktop/decoreLog",
+    handler = TimedRotatingFileHandler(LOG_NAME,
                                        when='midnight',
                                        interval=1,
                                        backupCount=7)
