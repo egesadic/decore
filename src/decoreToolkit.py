@@ -262,6 +262,7 @@ def createlogfile():
 
     LOGGER = logging.getLogger("decoreLog")
     LOGGER.setLevel(logging.INFO)
+    LOGGER.
 
     handler = TimedRotatingFileHandler(LOG_NAME,
                                        when='midnight',
@@ -278,7 +279,7 @@ def printmessage(text, lvl="info"):
         "error" : LOGGER.error,
         "critical" : LOGGER.critical,
     }
-    logoptions[lvl](str('(' + str(time.strftime("%H:%M:%S") + '): ' + text)))
+    logoptions[lvl](str(lvl.upper() +' (' + str(time.strftime("%H:%M:%S") + '): ' + text)))
     if lvl is ("info", "warning", "error", "critical"):
         print(text)
         time.sleep(0.2)
