@@ -21,7 +21,6 @@ from decoreErrors import *
 ##########################################################################################################  
 
 LOGGER = None
-
 PROC = ""
 VIDEO_EXT = ('.mp4', '.h264')
 IMAGE_EXT = ('.jpg', '.jpeg', '.png', '.gif')
@@ -65,8 +64,8 @@ def createcfgfile(url, adapter):
             checkdir(MEDIA_PATH)
             checkdir(SLIDE_PATH)
             checkdir(LOG_PATH)            
-            mac = getmacadress(adapter)
             while count < 4:
+                mac = getmacadress(adapter)
                 if count is 3:
                     printmessage("Cannot get MAC address properly. Please contact support.", "crtitcal")
                     quitdecore("CANNOT OBTAIN MAC ADDRESS", False)
@@ -210,7 +209,7 @@ def sync():
                     printmessage("No files to be deleted. Running .dpa file...")
 
                 if FILES_CHANGED:
-                    print("Media in this node has been changed! Rebuilding .dpa file...")
+                    printmessage("Media in this node has been changed! Rebuilding .dpa file...")
                     updateslide()            
             else:
                 raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")            
@@ -261,7 +260,7 @@ def createlogfile():
     global LOGGER
 
     LOGGER = logging.getLogger("decoreLog")
-    LOGGER.setLevel(logging.INFO)
+    LOGGER.setLevel(logging.DEBUG)
     handler = TimedRotatingFileHandler(LOG_NAME,
                                        when='midnight',
                                        interval=1,

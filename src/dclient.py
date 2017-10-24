@@ -21,7 +21,6 @@ try:
     
     #Cihaz ilk çalıştığında slide.dpa'yı çalıştır.
     runslide()
-
     while True:
         sync()
         print("Listening to server for changes...")
