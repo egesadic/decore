@@ -29,6 +29,7 @@ FILES_CHANGED = "False"
 IS_RANDOM = "False"
 DELAY = 5
 LOG_PATH = "/usr/decore/log/"
+LOG_NAME = LOG_PATH + "decore-" + str(time.strftime("%d-%m-%Y")) + ".log"
 CFG_FOLDER = "/usr/decore/config/"
 CFG_PATH = CFG_FOLDER + "cfgval.dc"
 MEDIA_PATH = "/usr/decore/media/"
@@ -258,7 +259,7 @@ def createlogfile():
     logger = logging.getLogger(LOG_PATH + "decore-" + str(time.strftime("%d-%m-%Y")) + ".log")
     logger.setLevel(logging.INFO)
  
-    handler = TimedRotatingFileHandler(LOG_PATH,
+    handler = TimedRotatingFileHandler(LOG_NAME,
                                        when='midnight',
                                        interval=1,
                                        backupCount=7)
