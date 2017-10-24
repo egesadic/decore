@@ -23,7 +23,6 @@ try:
     runslide()
     while True:
         sync()
-        print("Listening to server for changes...")
         printmessage("Listening to server for changes. Checking for changes in " + str(COOLDOWN) + " seconds.")         
         time.sleep(COOLDOWN)      
 
