@@ -263,8 +263,8 @@ def createlogfile():
     LOGGER = logging.getLogger("decoreLog")
     LOGGER.setLevel(logging.INFO)
     handler = TimedRotatingFileHandler(LOG_NAME,
-                                       when='S',
-                                       interval=15,
+                                       when='midnight',
+                                       interval=1,
                                        backupCount=7)
     LOGGER.addHandler(handler)
 
@@ -278,9 +278,6 @@ def printmessage(text, lvl="info"):
         "critical" : LOGGER.critical,
     }
     logoptions[lvl](str(lvl.upper() +' (' + str(time.strftime("%H:%M:%S") + '): ' + text)))
-    if lvl is ("info", "warning", "error", "critical"):
-        print(text)
-        time.sleep(0.2)
 
 def updateslide():
     global SLIDE_PID
