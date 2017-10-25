@@ -36,7 +36,7 @@ CFG_PATH = CFG_FOLDER + "cfgval.dc"
 MEDIA_PATH = "/usr/decore/media/"
 SLIDE_PATH = "/usr/decore/slides/"
 URL = "http://192.168.34.11:8082/"
-COOLDOWN = 30
+COOLDOWN = 60
 
 ##########################################################################################################
 #                                          FUNCTIONS START HERE                                          #
@@ -251,9 +251,7 @@ def fetchfiles(did):
         f.close()
     for index in range(len(x)):
         cmd = "wget -c " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + str(x[index]).replace(' ', "\\ ")
-        #print cmd
         os.system(cmd)
-        #call(cmd, shell = True)
 
 def createlogfile():
     """Creates a log file each midnight."""
@@ -268,7 +266,7 @@ def createlogfile():
     LOGGER.addHandler(handler)
 
 def printmessage(text, lvl="info"):
-    """Print specified message with a sensible delay."""
+    """Print specified message to log file."""
     logoptions={
         "debug" : LOGGER.debug,
         "info" : LOGGER.info,
@@ -395,7 +393,7 @@ def newslideshow(dly):
                         emptymedia()
             
             if len(imgList) > 0:
-                printmessage("\n"+str(len(imgList))+" images left in array after end of operation, writing them to file...")
+                printmessage(str(len(imgList))+" images left in array after end of operation, writing them to file...")
                 combinedImg = ''.join(imgList)
                 fullscript = ''.join([fullscript, imgScript, combinedImg, " >/dev/null 2>&1", '\n'])
                 printmessage("Done writing remainder files...\n")
@@ -404,20 +402,18 @@ def newslideshow(dly):
             f.write(fullscript + "done\nexit 0")
             f.close()
 
-            call("chmod +x " + filepath , shell= True)
+            os.system("chmod +x " + filepath)
             printmessage("Success", "Slideshow '" + name + "' has been successfully created under " + filepath + ".")
 
     except Exception as e:
-        print e
-        print("There was a problem, aborted slide creation.\n")
-        if os.path.exists(filepath+'.dpa'):
-            print("Removing slide file...")
+        printmessage("Aborted slide creation.\nReason was: " + e, "critical")
+        if os.path.exists(filepath):
+            printmessage("Removing incomplete slide file...", "warning")
             slide.close()
-            os.remove(filepath+'.dpa')
-            print("Removed!")
+            os.remove(filepath)
+            printmessage("Removed file successfully.", "warning")
     except SystemExit as ex:
-        print("No media here, stopping...")
-        print ex
+        printmessage(ex, "warning")
 
 def runslide():
     """Exectues the slide script."""
