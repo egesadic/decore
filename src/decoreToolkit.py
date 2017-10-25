@@ -145,7 +145,7 @@ def sync():
             cfgfile = open(CFG_PATH, 'r')
             device_id = cfgfile.read()            
             filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
-            printmessage("Old files: "+str(filelist))
+            printmessage("Current files: "+str(filelist))
             usage = disk_usage('/')
             data = {
                 "Id": int(device_id), 
@@ -169,19 +169,17 @@ def sync():
             printmessage ("Connection success! Reading response...")
             response = json.loads(tmp.read())
             if response is not None:
-                printmessage("Done! Getting randomization and delay values...")
                 IS_RANDOM = str(response["data"]["IsRandom"])
                 DELAY = str(response["data"]["Delay"])
                 printmessage("Random flag is " + str(IS_RANDOM), "debug")
                 printmessage("Delay is " + str(DELAY))
                 tobedeleted = response["data"]["ToBeDeleted"]
-                tobeadded = response["data"]["ToBeAdded"]
-                printmessage("Files to be deleted: "+str(tobedeleted))
-                printmessage("Files to be added: "+str(tobeadded))
+                tobeadded = response["data"]["ToBeAdded"]               
                 OLD_FILES = tobedeleted
                 
                 #ToBeAdded'dan gelecek dosyaları metin dosyasına yaz ve indir                
                 if tobeadded is not None:
+                    printmessage("Files to be added: "+str(tobeadded))
                     printmessage("Writing new files names to TXT file.", "debug")
                     addedFile = open(CFG_FOLDER + "ToBeAdded.txt", 'w')
                     content = ""
