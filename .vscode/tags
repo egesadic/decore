@@ -1,0 +1,92 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+CFG_FOLDER	../src/decoreToolkit.py	/^CFG_FOLDER = "\/usr\/decore\/config\/"$/;"	kind:variable	line:34
+CFG_PATH	../src/decoreToolkit.py	/^CFG_PATH = CFG_FOLDER + "cfgval.dc"$/;"	kind:variable	line:35
+COOLDOWN	../src/decoreToolkit.py	/^COOLDOWN = 60$/;"	kind:variable	line:39
+DELAY	../src/decoreToolkit.py	/^DELAY = 5$/;"	kind:variable	line:31
+DecoreServerConnectionException	../src/decoreErrors.py	/^class DecoreServerConnectionException(Exception):$/;"	kind:class	line:7
+FILELIST	../src/decoreToolkit.py	/^FILELIST = []$/;"	kind:variable	line:28
+FILES_CHANGED	../src/decoreToolkit.py	/^FILES_CHANGED = "False"$/;"	kind:variable	line:29
+IMAGE_EXT	../src/decoreToolkit.py	/^IMAGE_EXT = ('.jpg', '.jpeg', '.png', '.gif')$/;"	kind:variable	line:26
+IS_RANDOM	../src/decoreToolkit.py	/^IS_RANDOM = "False"$/;"	kind:variable	line:30
+Image	../old-stuff/decoreMain-old.py	/^from PIL import Image, ImageTk$/;"	kind:namespace	line:3
+ImageTk	../old-stuff/decoreMain-old.py	/^from PIL import Image, ImageTk$/;"	kind:namespace	line:3
+JSONParseException	../src/decoreErrors.py	/^class JSONParseException(Exception):$/;"	kind:class	line:11
+LOGGER	../src/decoreToolkit.py	/^LOGGER = None$/;"	kind:variable	line:23
+LOG_NAME	../src/decoreToolkit.py	/^LOG_NAME = LOG_PATH + "decoreLog"$/;"	kind:variable	line:33
+LOG_PATH	../src/decoreToolkit.py	/^LOG_PATH = "\/usr\/decore\/log\/"$/;"	kind:variable	line:32
+MEDIA_PATH	../src/decoreToolkit.py	/^MEDIA_PATH = "\/usr\/decore\/media\/"$/;"	kind:variable	line:36
+PROC	../src/decoreToolkit.py	/^PROC = ""$/;"	kind:variable	line:24
+SLIDE_PATH	../src/decoreToolkit.py	/^SLIDE_PATH = "\/usr\/decore\/slides\/"$/;"	kind:variable	line:37
+SLIDE_PID	../src/decoreToolkit.py	/^SLIDE_PID = 0$/;"	kind:variable	line:27
+TimedRotatingFileHandler	../src/decoreToolkit.py	/^from logging.handlers import TimedRotatingFileHandler$/;"	kind:namespace	line:11
+Tkinter	../old-stuff/decoreMain-old.py	/^import Tkinter$/;"	kind:namespace	line:2
+URL	../src/decoreToolkit.py	/^URL = "http:\/\/192.168.34.11:8082\/"$/;"	kind:variable	line:38
+UndefinedDeviceException	../src/decoreErrors.py	/^class UndefinedDeviceException(Exception):$/;"	kind:class	line:3
+VER_NUM	../src/dclient.py	/^VER_NUM = "0.3.2"$/;"	kind:variable	line:6
+VIDEO_EXT	../src/decoreToolkit.py	/^VIDEO_EXT = ('.mp4', '.h264')$/;"	kind:variable	line:25
+__init__	../src/decoreErrors.py	/^    def __init__(self,*args,**kwargs):$/;"	kind:member	line:13
+__init__	../src/decoreErrors.py	/^    def __init__(self,*args,**kwargs):$/;"	kind:member	line:5
+__init__	../src/decoreErrors.py	/^    def __init__(self,*args,**kwargs):$/;"	kind:member	line:9
+askopenfilename	../old-stuff/decoreMain-old.py	/^from tkFileDialog import askopenfilename$/;"	kind:namespace	line:4
+background	../old-stuff/decoreMain-old.py	/^background = Tkinter.Label(root, image = img)$/;"	kind:variable	line:17
+buttonCreate	../old-stuff/decoreMain-old.py	/^buttonCreate = Tkinter.Button(root, text="Create New Slideshow...", command=createShow)$/;"	kind:variable	line:74
+buttonPPT	../old-stuff/decoreMain-old.py	/^buttonPPT = Tkinter.Button(root, text="Open .ppt\/.pptx file...", command=pptShow)$/;"	kind:variable	line:76
+buttonStart	../old-stuff/decoreMain-old.py	/^buttonStart = Tkinter.Button(root, text="Start Slideshow...", command=startShow)$/;"	kind:variable	line:72
+bytes2human	../src/decoreToolkit.py	/^def bytes2human(n):$/;"	kind:function	line:447
+call	../old-stuff/decoreMain-old.py	/^from subprocess import call$/;"	kind:namespace	line:6
+call	../src/decoreToolkit.py	/^from subprocess import call$/;"	kind:namespace	line:16
+checkdir	../src/decoreToolkit.py	/^def checkdir(path):$/;"	kind:function	line:458
+checklogpath	../src/decoreToolkit.py	/^def checklogpath():$/;"	kind:function	line:466
+collections	../src/decoreToolkit.py	/^import collections$/;"	kind:namespace	line:12
+createShow	../old-stuff/decoreMain-old.py	/^def createShow():$/;"	kind:function	line:54
+createcfgfile	../src/decoreToolkit.py	/^def createcfgfile(url, adapter):$/;"	kind:function	line:54
+createlogfile	../src/decoreToolkit.py	/^def createlogfile():$/;"	kind:function	line:254
+cwd	../old-stuff/decoreMain-old.py	/^cwd = os.getcwd()+"\/"$/;"	kind:variable	line:14
+dclient.py	../src/dclient.py	1;"	kind:file	line:1
+decoreErrors.py	../src/decoreErrors.py	1;"	kind:file	line:1
+decoreMain-old.py	../old-stuff/decoreMain-old.py	1;"	kind:file	line:1
+decoreToolkit.py	../src/decoreToolkit.py	1;"	kind:file	line:1
+disableButtons	../old-stuff/decoreMain-old.py	/^def disableButtons():$/;"	kind:function	line:31
+disk_usage	../src/decoreToolkit.py	/^def disk_usage(pth):$/;"	kind:function	line:438
+emptymedia	../src/decoreToolkit.py	/^def emptymedia():$/;"	kind:function	line:296
+enableButtons	../old-stuff/decoreMain-old.py	/^def enableButtons():$/;"	kind:function	line:34
+fetchfiles	../src/decoreToolkit.py	/^def fetchfiles(did):$/;"	kind:function	line:241
+forcecfgcreate	../src/decoreToolkit.py	/^def forcecfgcreate(url):$/;"	kind:function	line:233
+getmacadress	../src/decoreToolkit.py	/^def getmacadress(interface):$/;"	kind:function	line:45
+httplib	../src/decoreToolkit.py	/^import httplib$/;"	kind:namespace	line:8
+img	../old-stuff/decoreMain-old.py	/^img = ImageTk.PhotoImage(Image.open(cwd+"decore.png"))$/;"	kind:variable	line:16
+isfile	../src/dclient.py	/^from os.path import isfile$/;"	kind:namespace	line:4
+isfile	../src/decoreToolkit.py	/^from os.path import isfile, join$/;"	kind:namespace	line:15
+join	../src/decoreToolkit.py	/^from os.path import isfile, join$/;"	kind:namespace	line:15
+json	../src/decoreToolkit.py	/^import json$/;"	kind:namespace	line:7
+listdir	../src/decoreToolkit.py	/^from os import listdir, path, unlink$/;"	kind:namespace	line:14
+logging	../src/decoreToolkit.py	/^import logging$/;"	kind:namespace	line:10
+mediaGot	../src/dclient.py	/^                mediaGot=True        $/;"	kind:variable	line:20
+mediaGot	../src/dclient.py	/^mediaGot = False$/;"	kind:variable	line:9
+newslideshow	../src/decoreToolkit.py	/^def newslideshow(dly):$/;"	kind:function	line:299
+optionsNormal	../old-stuff/decoreMain-old.py	/^optionsNormal = {}$/;"	kind:variable	line:20
+optionsPPT	../old-stuff/decoreMain-old.py	/^optionsPPT = {}$/;"	kind:variable	line:25
+os	../old-stuff/decoreMain-old.py	/^import os$/;"	kind:namespace	line:1
+os	../src/decoreToolkit.py	/^import os$/;"	kind:namespace	line:5
+path	../src/decoreToolkit.py	/^from os import listdir, path, unlink$/;"	kind:namespace	line:14
+pptShow	../old-stuff/decoreMain-old.py	/^def pptShow():$/;"	kind:function	line:60
+printmessage	../src/decoreToolkit.py	/^def printmessage(text, lvl="info"):$/;"	kind:function	line:266
+quitdecore	../src/decoreToolkit.py	/^def quitdecore(msg, expect = True):$/;"	kind:function	line:470
+root	../old-stuff/decoreMain-old.py	/^root = Tkinter.Tk()$/;"	kind:variable	line:10
+runslide	../src/decoreToolkit.py	/^def runslide():$/;"	kind:function	line:416
+shuffle	../src/decoreToolkit.py	/^from random import shuffle$/;"	kind:namespace	line:13
+startShow	../old-stuff/decoreMain-old.py	/^def startShow():$/;"	kind:function	line:38
+subprocess	../src/decoreToolkit.py	/^import subprocess$/;"	kind:namespace	line:3
+sync	../src/decoreToolkit.py	/^def sync():$/;"	kind:function	line:133
+sys	../old-stuff/decoreMain-old.py	/^import sys$/;"	kind:namespace	line:5
+sys	../src/decoreToolkit.py	/^import sys$/;"	kind:namespace	line:4
+time	../src/decoreToolkit.py	/^import time$/;"	kind:namespace	line:9
+unlink	../src/decoreToolkit.py	/^from os import listdir, path, unlink$/;"	kind:namespace	line:14
+updateslide	../src/decoreToolkit.py	/^def updateslide():$/;"	kind:function	line:277
+url	../src/dclient.py	/^url = URL +"v1\/node\/register"$/;"	kind:variable	line:8
+urllib2	../src/decoreToolkit.py	/^import urllib2$/;"	kind:namespace	line:6

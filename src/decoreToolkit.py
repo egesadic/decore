@@ -470,7 +470,7 @@ def checklogpath():
 def quitdecore(msg, expect = True):
     expected = bool(expect)
     if expected is False:
-        txt = "Exiting DeCore abruptly. Reason: " + msg
+        txt = "Exiting DeCore abruptly. Reason: " + str(msg)
         printmessage(msg, "critical")
         exit(1)
     else:
