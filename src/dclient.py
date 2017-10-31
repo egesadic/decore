@@ -29,5 +29,5 @@ try:
 except DecoreServerConnectionException as ex:
     pass
 except Exception as e:
-    quitdecore(str(e), False)   
+    pass  
 

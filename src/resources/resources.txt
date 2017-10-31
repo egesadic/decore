@@ -2,6 +2,10 @@ A firmware "color test" splash when device gets powered-on.
 
 Removed with disable_splash=1 in /boot/config.txt.
 
+Disable blinking cursor
+
+vt.global_cursor_default=0
+
 
 
 "Rainbow-colored square" over-current indicator popping up on the right, regardless of PSU or cables, it seems.
