@@ -333,7 +333,7 @@ def newslideshow(dly):
             #Delay cannot be zero. 15 seconds is the default interval value.
             if str(dly) is "0":
                     printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval")
-                    delay = "15 "
+                    delay = str(15)
             
             #Files are randomized in order if the RANDOM flag was set.
             ''' if isRandom:
@@ -358,7 +358,7 @@ def newslideshow(dly):
                         fullscript = vidName
                         vidCount += 1
                     else:
-                        emptymedia()
+                        printmessage("File " + file + "has an unknown (or undefined) file format.", "warning")
                 
                 #image list generator, break the combo if the next media in line isnt an
                 elif imgCount > vidCount:                            
@@ -374,7 +374,7 @@ def newslideshow(dly):
                         fullscript = ''.join([fullscript, imgScript, combinedImg, '\n', vidScript, str(file).replace(' ', "\\ "), " >/dev/null 2>&1" , '\n'])
                         vidCount += 1                          
                     else:						
-                        emptymedia()
+                        printmessage("File " + file + "has an unknown (or undefined) file format.", "warning")
 
                 elif vidCount > imgCount:
                     if file.endswith(VIDEO_EXT):
@@ -388,7 +388,7 @@ def newslideshow(dly):
                         imgList.append(str(file).replace(' ', "\\ ")  + " ")
                         imgCount += 1
                     else:						
-                        emptymedia()
+                        printmessage("File " + file + "has an unknown (or undefined) file format.", "warning")
             
             if len(imgList) > 0:
                 printmessage(str(len(imgList))+" images left in array after end of operation, writing them to file...")
