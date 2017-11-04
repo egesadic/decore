@@ -401,7 +401,7 @@ def newslideshow(dly):
             f.close()
 
             os.system("chmod +x " + filepath)
-            printmessage("Success", "Slideshow '" + name + "' has been successfully created under " + filepath + ".")
+            printmessage("Success! Slideshow " + name + " has been successfully created under " + filepath + ".", "info")
 
     except Exception as e:
         printmessage("Aborted slide creation.\nReason was: " + e, "critical")
