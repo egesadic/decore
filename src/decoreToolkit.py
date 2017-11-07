@@ -116,19 +116,19 @@ def createcfgfile(url, adapter):
             else:
                 raise DecoreServerConnectionException('No value was returned from server. There might be problems with the server or with your connection.')
     
-    except DecoreServerConnectionException as u:
-        quitdecore(u)
+    except DecoreServerConnectionException as e:
+        printmessage(e,"critical")
     except urllib2.HTTPError, e:
         #todo - bir daha cfg yaratıcıyı çağır
-        pass
+        printmessage(e,"critical")
     except urllib2.URLError, e:
         #todo - URL kontrol ettir
-        quitdecore(e, False)
+        printmessage(e,"critical")
     except httplib.HTTPException, e:
-        quitdecore(e, False)
-    except Exception as ex:
+        printmessage(e,"critical")
+    except Exception as e:
         #todo - Genel hata, yapacak bişey yok
-        quitdecore(ex, False)
+        printmessage(e,"critical")
 
 def sync():
     """Initiate a synchronisation between DeCore and the server. Requires config.json to be properly setup.""" 
@@ -220,15 +220,15 @@ def sync():
         printmessage("Retrying syncronisation with the server...")
         sync()
     except JSONParseException as e:
-        quitdecore(e, True)
+        printmessage(e,"critical")
     except urllib2.HTTPError, e:
-        quitdecore(e, False)
+        printmessage(e,"critical")
     except urllib2.URLError, e:
-        quitdecore(e, False)
+        printmessage(e,"critical")
     except httplib.HTTPException, e:
-        quitdecore(e, False)
+        printmessage(e,"critical")
     except Exception as e:
-        quitdecore(e, False)
+        printmessage(e,"critical")
 
 def forcecfgcreate(url):
     """Forces a new config file creation. Use this only if needed."""
@@ -275,11 +275,12 @@ def printmessage(text, lvl="info"):
         "error" : LOGGER.error,
         "critical" : LOGGER.critical,
     }
+
     if lvl is "critical":
         newline = "\n"
         errortxt = "Problem with deCore. Problem: " 
 
-    logoptions[lvl](newline + str(lvl.upper() +' (' + str(time.strftime("%H:%M:%S") + '): ' +  errortxt + text + newline)))
+    logoptions[lvl](newline + str(lvl.upper() +' (' + str(time.strftime("%H:%M:%S") + '): ' +  errortxt + msg + newline)))
 
 def updateslide():
     global SLIDE_PID
