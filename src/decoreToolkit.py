@@ -475,7 +475,7 @@ def quitdecore(msg, expect = True):
     if expected is False:
         txt = "Exiting DeCore abruptly. Reason: " + str(msg)
         printmessage(txt, "critical")
-        exit(1)
+        #exit(1)
     else:
         printmessage(str(msg))
-        exit(0)
+        #exit(0)
