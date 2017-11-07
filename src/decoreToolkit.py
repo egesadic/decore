@@ -266,6 +266,8 @@ def createlogfile():
 def printmessage(text, lvl="info"):
     """Print specified message to log file."""
     newline = ""
+    errortxt = ""
+    msg = str(text)
     logoptions={
         "debug" : LOGGER.debug,
         "info" : LOGGER.info,
@@ -275,7 +277,9 @@ def printmessage(text, lvl="info"):
     }
     if lvl is "critical":
         newline = "\n"
-    logoptions[lvl](newline + str(lvl.upper() +' (' + str(time.strftime("%H:%M:%S") + '): ' + text + newline)))
+        errortxt = "Problem with deCore. Problem: " 
+
+    logoptions[lvl](newline + str(lvl.upper() +' (' + str(time.strftime("%H:%M:%S") + '): ' +  errortxt + text + newline)))
 
 def updateslide():
     global SLIDE_PID
@@ -475,7 +479,7 @@ def quitdecore(msg, expect = True):
     if expected is False:
         txt = "Exiting DeCore abruptly. Reason: " + str(msg)
         printmessage(txt, "critical")
-        #exit(1)
+        exit(1)
     else:
         printmessage(str(msg))
-        #exit(0)
+        exit(0)
