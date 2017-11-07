@@ -265,6 +265,7 @@ def createlogfile():
 
 def printmessage(text, lvl="info"):
     """Print specified message to log file."""
+    newline = ""
     logoptions={
         "debug" : LOGGER.debug,
         "info" : LOGGER.info,
@@ -272,7 +273,9 @@ def printmessage(text, lvl="info"):
         "error" : LOGGER.error,
         "critical" : LOGGER.critical,
     }
-    logoptions[lvl](str(lvl.upper() +' (' + str(time.strftime("%H:%M:%S") + '): ' + text)))
+    if lvl is "critical":
+        newline = "\n"
+    logoptions[lvl](newline + str(lvl.upper() +' (' + str(time.strftime("%H:%M:%S") + '): ' + text + newline)))
 
 def updateslide():
     global SLIDE_PID
