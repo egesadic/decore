@@ -23,7 +23,7 @@ try:
     runslide()
     while True:
         sync()
-        printmessage("Listening to server for changes. Checking for changes in " + str(COOLDOWN) + " seconds.")         
+        printmessage("Listening to server for changes. Checking for changes in " + str(COOLDOWN) + " seconds.\n")         
         time.sleep(COOLDOWN)      
 
 except DecoreServerConnectionException as ex:
