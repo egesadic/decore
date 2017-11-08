@@ -3,7 +3,7 @@ from decoreToolkit import *
 from decoreErrors import *
 from os.path import isfile
 
-VER_NUM = "0.3.2"
+VER_NUM = "0.4"
 
 url = URL +"v1/node/register"
 mediaGot = False
