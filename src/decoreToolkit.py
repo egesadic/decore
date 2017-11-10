@@ -321,14 +321,13 @@ def newslideshow(dly):
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
         printmessage ("Found " + str(len(filelist)) + " items: " + ' '.join(filelist) + " ")
 
-        if not mediacheck():
-            os.system("killall -9 fbi")
         #If filelist is empty, print a message that indicates no media was found on the node.
         if not filelist:
             HAS_MEDIA = False
             emptymedia()
         else:
             HAS_MEDIA = True
+            os.system("killall -9 fbi")
             #Check whether if there are videos in current media.
             #Images will be played ONCE if there are any.
             isonce = ""
