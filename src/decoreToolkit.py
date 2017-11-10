@@ -311,8 +311,7 @@ def updateslide():
     runslide()
 
 def emptymedia():
-    printmessage("Will show nomedia right now","debug")
-    subprocess.Popen("fbi --noverbose resources/images/nomedia.jpg", shell=False)
+    subprocess.Popen("fbi --noverbose /home/pi/decore/src/resources/images/nomedia.jpg", shell=True)
 
 def newslideshow(dly):
     try:
