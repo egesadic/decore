@@ -248,7 +248,7 @@ def fetchfiles(did):
         x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
-        cmd = "wget -T 60 -c " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + str(x[index]).replace(' ', "\\ ")
+        cmd = "wget -T 60 " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + str(x[index]).replace(' ', "\\ ")
         os.system(cmd)
 
 def createlogfile():
@@ -302,7 +302,7 @@ def updateslide():
     runslide()
 
 def emptymedia():
-    sys.exit("No suitable media found in DeCore.")
+    subprocess.Popen("fbi --noverbose /home/pi/decore/resources/images/nomedia.jpg", shell=False)
 
 def newslideshow(dly):
     try:
