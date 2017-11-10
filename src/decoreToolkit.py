@@ -311,7 +311,7 @@ def updateslide():
     runslide()
 
 def emptymedia():
-    os.system("fbi --noverbose /home/pi/decore/src/resources/images/nomedia.jpg")
+    subprocess.Popen("fbi --noverbose /home/pi/decore/src/resources/images/nomedia.jpg", shell=False)
 
 def newslideshow(dly):
     try:
@@ -320,14 +320,14 @@ def newslideshow(dly):
         #Create file manifest.
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
         printmessage ("Found " + str(len(filelist)) + " items: " + ' '.join(filelist) + " ")
-
+           
         #If filelist is empty, print a message that indicates no media was found on the node.
         if not filelist:
             HAS_MEDIA = False
             emptymedia()
         else:
-            HAS_MEDIA = True
             os.system("killall -9 fbi")
+            HAS_MEDIA = True
             #Check whether if there are videos in current media.
             #Images will be played ONCE if there are any.
             isonce = ""
@@ -456,6 +456,7 @@ def runslide():
             SLIDE_PID = PROC.pid
     else:
         printmessage("No suitable media was found in device!", "warning")
+        emptymedia()
     
 def disk_usage(pth):
     _ntuple_diskusage = collections.namedtuple('usage', 'total used free')
