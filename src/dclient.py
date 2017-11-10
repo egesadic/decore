@@ -30,5 +30,5 @@ try:
 except DecoreServerConnectionException as ex:
     pass
 except Exception as e:
-    pass  
+    printmessage(e, "critical")  
 
