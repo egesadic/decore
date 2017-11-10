@@ -233,6 +233,7 @@ def sync():
 
 def mediacheck():
     global HAS_MEDIA
+    
     if HAS_MEDIA:
         return True
     else:
@@ -310,7 +311,7 @@ def updateslide():
     runslide()
 
 def emptymedia():
-    subprocess.Popen("fbi --noverbose /home/pi/decore/resources/images/nomedia.jpg", shell=False)
+    subprocess.Popen("fbi --noverbose /home/pi/decore/src/resources/images/nomedia.jpg", shell=False)
 
 def newslideshow(dly):
     try:

@@ -11,7 +11,7 @@ checklogpath()
 createlogfile()
 
 try:
-    os.system("dd if=/dev/zero of=/dev/fb0")
+    os.system("clear")
     printmessage("Welcome to DeCore v" + VER_NUM + "! Initialising...")
     while isfile(CFG_PATH) is False: 
         printmessage("Configuration file not found, creating new one under " + CFG_PATH)
