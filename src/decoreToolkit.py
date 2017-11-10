@@ -21,6 +21,7 @@ from decoreErrors import *
 ##########################################################################################################  
 
 LOGGER = None
+HAS_MEDIA = False
 PROC = ""
 VIDEO_EXT = ('.mp4', '.h264')
 IMAGE_EXT = ('.jpg', '.jpeg', '.png', '.gif')
@@ -230,6 +231,13 @@ def sync():
     except Exception as e:
         printmessage(e,"critical")
 
+def mediacheck():
+    global HAS_MEDIA
+    if HAS_MEDIA:
+        return True
+    else:
+        return False
+
 def forcecfgcreate(url):
     """Forces a new config file creation. Use this only if needed."""
     if isfile(CFG_PATH):
@@ -306,14 +314,20 @@ def emptymedia():
 
 def newslideshow(dly):
     try:
+        global HAS_MEDIA
+
         #Create file manifest.
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
         printmessage ("Found " + str(len(filelist)) + " items: " + ' '.join(filelist) + " ")
-        
+
+        if not mediacheck():
+            os.system("killall -9 fbi")
         #If filelist is empty, print a message that indicates no media was found on the node.
         if not filelist:
+            HAS_MEDIA = False
             emptymedia()
         else:
+            HAS_MEDIA = True
             #Check whether if there are videos in current media.
             #Images will be played ONCE if there are any.
             isonce = ""
