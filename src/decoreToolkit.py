@@ -22,6 +22,8 @@ from decoreErrors import *
 
 LOGGER = None
 HAS_MEDIA = False
+JSON = None
+RESPONSE = None 
 PROC = ""
 VIDEO_EXT = ('.mp4', '.h264')
 IMAGE_EXT = ('.jpg', '.jpeg', '.png', '.gif')
@@ -38,6 +40,12 @@ MEDIA_PATH = "/usr/decore/media/"
 SLIDE_PATH = "/usr/decore/slides/"
 URL = "http://192.168.34.11:8082/"
 COOLDOWN = 60
+
+##########################################################################################################
+#                                          CLASSESS START HERE                                           #
+########################################################################################################## 
+
+
 
 ##########################################################################################################
 #                                          FUNCTIONS START HERE                                          #
@@ -160,7 +168,7 @@ def sync():
             url = URL + "v1/node"
             
             #Sunucuya bağlan ve dosyaları talep et.
-            printmessage("Attempting to connect to server...", "debug")
+            printmessage("Attempting to connect to server...", "info")
             request = urllib2.Request(url, json.dumps(data))
             request.add_header('Content-Type', 'application/json')
             request.get_method = lambda: 'PUT'
@@ -173,7 +181,7 @@ def sync():
                 IS_RANDOM = str(response["data"]["IsRandom"])
                 DELAY = str(response["data"]["Delay"])
                 printmessage("Random flag is " + str(IS_RANDOM), "debug")
-                printmessage("Delay is " + str(DELAY))
+                printmessage("Delay is " + str(DELAY), "debug")
                 tobedeleted = response["data"]["ToBeDeleted"]
                 tobeadded = response["data"]["ToBeAdded"]               
                 OLD_FILES = tobedeleted
@@ -259,6 +267,28 @@ def fetchfiles(did):
     for index in range(len(x)):
         cmd = "wget -T 60 " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + str(x[index]).replace(' ', "\\ ")
         os.system(cmd)
+        bsize = os.path.getsize(MEDIA_PATH + str(x[index])) 
+        sendjson("/v1/files/checksum", {"Deviceid":did,"Filename":str(x[index]),"Bytesize": int(bsize)})
+        if RESPONSE["ecode"] is 0:
+            printmessage("File " + str(x[index] + " passed checksum"))
+        else:
+            printmessage("File " + str(x[index] + " failed checksum.", "error"))
+            os.remove(MEDIA_PATH + str(x[index]))
+
+def sendjson(domain, data, method='POST')
+    global RESPONSE
+    dest = URL + domain
+
+    json = json.dumps(data)
+    printmessage("JSON created with parameters: " + str(json))
+
+    #Sunucuya bağlan ve dosyaları talep et.
+    request = urllib2.Request(dest, json, {'Content-Type': 'application/json'} )
+    printmessage("JSON encoded. Starting server connection.")
+    request.get_method = lambda: method
+    printmessage("Connecting to URL: " + url)
+    tmp = urllib2.urlopen(request)
+    RESPONSE = json.loads(tmp.read())
 
 def createlogfile():
     """Creates a log file each midnight."""

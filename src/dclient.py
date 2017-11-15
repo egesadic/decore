@@ -28,7 +28,6 @@ try:
         time.sleep(COOLDOWN)      
 
 except DecoreServerConnectionException as ex:
-    pass
+    printmessage(ex, "critical")
 except Exception as e:
-    printmessage(e, "critical")  
-
+    printmessage(e, "critical")
