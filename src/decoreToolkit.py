@@ -60,6 +60,21 @@ def getmacadress(interface):
         mac = "00:00:00:00:00:00"
     return mac[0:17]
 
+def sendjson(domain, data, method='POST'):
+    global RESPONSE
+    dest = URL + domain
+
+    json = json.dumps(data)
+    printmessage("JSON created with parameters: " + str(json))
+
+    #Sunucuya bağlan ve dosyaları talep et.
+    request = urllib2.Request(dest, json, {'Content-Type': 'application/json'} )
+    printmessage("JSON encoded. Starting server connection.")
+    request.get_method = lambda: method
+    printmessage("Connecting to URL: " + url)
+    tmp = urllib2.urlopen(request)
+    RESPONSE = json.loads(tmp.read())
+
 def createcfgfile(url, adapter):
     """Connect to a local DeCore server to fetch device-id and store it in a config file under specified path. Default path to config file is '/usr/decore/config'."""    
     try:
@@ -274,21 +289,6 @@ def fetchfiles(did):
         else:
             printmessage("File " + str(x[index] + " failed checksum. It will be deleted.", "error"))
             os.remove(MEDIA_PATH + str(x[index]))
-
-def sendjson(domain, data, method='POST')
-    global RESPONSE
-    dest = URL + domain
-
-    json = json.dumps(data)
-    printmessage("JSON created with parameters: " + str(json))
-
-    #Sunucuya bağlan ve dosyaları talep et.
-    request = urllib2.Request(dest, json, {'Content-Type': 'application/json'} )
-    printmessage("JSON encoded. Starting server connection.")
-    request.get_method = lambda: method
-    printmessage("Connecting to URL: " + url)
-    tmp = urllib2.urlopen(request)
-    RESPONSE = json.loads(tmp.read())
 
 def createlogfile():
     """Creates a log file each midnight."""
