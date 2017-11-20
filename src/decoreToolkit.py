@@ -22,7 +22,6 @@ from decoreErrors import *
 
 LOGGER = None
 HAS_MEDIA = False
-JSON = None
 RESPONSE = None 
 PROC = ""
 VIDEO_EXT = ('.mp4', '.h264')
