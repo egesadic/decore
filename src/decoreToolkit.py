@@ -68,7 +68,7 @@ def sendjson(domain, data, method='POST'):
     request = urllib2.Request(dest, json.dumps(data), {'Content-Type': 'application/json'} )
     printmessage("JSON encoded. Starting server connection.")
     request.get_method = lambda: method
-    printmessage("Connecting to URL: " + url)
+    printmessage("Connecting to URL: " + dest)
     tmp = urllib2.urlopen(request)
     RESPONSE = json.loads(tmp.read())
 
