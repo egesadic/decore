@@ -282,8 +282,8 @@ def fetchfiles(did):
     for index in range(len(x)):
         cmd = "wget -T 60 " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + str(x[index]).replace(' ', "\\ ")
         os.system(cmd)
-        bsize = os.path.getsize(MEDIA_PATH + str(x[index])) 
-        sendjson("v1/files/checksum", {"Deviceid":did,"Filename":str(x[index]),"Bytesize": bsize})
+        bsize = str(os.path.getsize(MEDIA_PATH + str(x[index])))
+        sendjson("v1/files/checksum", {"Deviceid":int(did),"Filename":str(x[index]),"Bytesize": bsize})
         printmessage("eCode: " + str(RESPONSE["eCode"]))
         if RESPONSE["eCode"] is not 0:
             printmessage("File " + str(x[index]) + " failed checksum. It will be deleted.", "error")
