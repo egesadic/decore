@@ -284,7 +284,9 @@ def fetchfiles(did):
         os.system(cmd)
         bsize = os.path.getsize(MEDIA_PATH + str(x[index])) 
         sendjson("/v1/files/checksum", {"Deviceid":did,"Filename":str(x[index]),"Bytesize": bsize})
-        if RESPONSE["ecode"] is 0:
+        if RESPONSE["ecode"] is not 0:
+            os.remove(MEDIA_PATH + str(x[index]))
+                    
             printmessage("File " + str(x[index] + " passed checksum"))
         else:
             printmessage("File " + str(x[index] + " failed checksum. It will be deleted.", "error"))
