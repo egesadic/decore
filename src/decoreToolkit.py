@@ -70,6 +70,7 @@ def sendjson(domain, data, method='POST'):
     request.get_method = lambda: method
     printmessage("Connecting to URL: " + dest)
     tmp = urllib2.urlopen(request)
+    printmessage("Successfully connected to: " + dest)
     RESPONSE = json.loads(tmp.read())
 
 def createcfgfile(url, adapter):
