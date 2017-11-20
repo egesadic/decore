@@ -16,6 +16,8 @@ from os.path import isfile, join
 from subprocess import call
 from decoreErrors import *
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 ##########################################################################################################
 #                                    GLOBAL VARIABLES START HERE                                         #
 ##########################################################################################################  

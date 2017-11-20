@@ -3,6 +3,7 @@ from decoreToolkit import *
 from decoreErrors import *
 from os.path import isfile
 
+sys.setdefaultencoding('utf8')
 VER_NUM = "0.4"
 
 url = URL +"v1/node/register"
