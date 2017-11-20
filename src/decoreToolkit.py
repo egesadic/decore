@@ -281,16 +281,16 @@ def fetchfiles(did):
         x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
-        item = str(x[index])
-        cmd = "wget -T 60 " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + str(x[index]).replace(' ', "\\ ")
+        item = str(x[index]).encode('utf8')
+        cmd = "wget -T 60 " + URL + "v1/files/" + item.replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + item.replace(' ', "\\ ")
         os.system(cmd)
         printmessage("Current item: " + item)
         bsize = str(os.path.getsize(MEDIA_PATH + item))        
         sendjson("v1/files/checksum", {"Deviceid":int(did),"Filename":str(x[index]),"Bytesize": bsize})
         printmessage("eCode: " + str(RESPONSE["eCode"]))
         if RESPONSE["eCode"] is not 0:
-            printmessage("File " + str(x[index]) + " failed checksum. It will be deleted.\n", "error")
-            os.remove(MEDIA_PATH + str(x[index]))                
+            printmessage("File " + item + " failed checksum. It will be deleted.\n", "error")
+            os.remove(MEDIA_PATH + item)                
         else:
             printmessage("File " + str(x[index] + " passed checksum.\n"))
 
