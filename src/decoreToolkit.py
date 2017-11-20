@@ -62,8 +62,11 @@ def getmacadress(interface):
     return mac[0:17]
 
 def sendjson(domain, data, method='POST'):
+    printmessage("Starting JSON procedure.")
     global RESPONSE
+    printmessage("Got RESPONSE global var.")
     dest = URL + domain
+    printmessage("Destination: " + dest)
     printmessage("JSON created with parameters: " + str(json.dumps(data)))
 
     #Sunucuya bağlan ve dosyaları talep et.
