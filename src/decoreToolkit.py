@@ -211,7 +211,7 @@ def sync():
                         content = ''.join([content, str(the_file) ,"\n"])
                     addedFile.write(content)
                     addedFile.close()
-                    printmessage("Fetching the files from server...")
+                    printmessage("Fetching the files from server...\n")
                     fetchfiles(device_id)        
                     printmessage ("Added " + str(len(tobeadded)) + " files.")
                     FILES_CHANGED = True
@@ -286,10 +286,10 @@ def fetchfiles(did):
         sendjson("v1/files/checksum", {"Deviceid":int(did),"Filename":str(x[index]),"Bytesize": bsize})
         printmessage("eCode: " + str(RESPONSE["eCode"]))
         if RESPONSE["eCode"] is not 0:
-            printmessage("File " + str(x[index]) + " failed checksum. It will be deleted.", "error")
+            printmessage("File " + str(x[index]) + " failed checksum. It will be deleted.\n", "error")
             os.remove(MEDIA_PATH + str(x[index]))                
         else:
-            printmessage("File " + str(x[index] + " passed checksum"))
+            printmessage("File " + str(x[index] + " passed checksum.\n"))
 
 def createlogfile():
     """Creates a log file each midnight."""
