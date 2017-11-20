@@ -62,12 +62,10 @@ def getmacadress(interface):
 def sendjson(domain, data, method='POST'):
     global RESPONSE
     dest = URL + domain
-
-    json = json.dumps(data)
-    printmessage("JSON created with parameters: " + str(json))
+    printmessage("JSON created with parameters: " + str(json.dumps(data)))
 
     #Sunucuya bağlan ve dosyaları talep et.
-    request = urllib2.Request(dest, json, {'Content-Type': 'application/json'} )
+    request = urllib2.Request(dest, json.dumps(data), {'Content-Type': 'application/json'} )
     printmessage("JSON encoded. Starting server connection.")
     request.get_method = lambda: method
     printmessage("Connecting to URL: " + url)
