@@ -273,6 +273,7 @@ def forcecfgcreate(url):
 def fetchfiles(did):
     """Fetches files from the DeCore server."""
     x=[]
+    
     i=0
     log = LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y-%H:%M:%S")) + ".log"
     f = open(CFG_FOLDER + "ToBeAdded.txt",'r')
@@ -280,9 +281,11 @@ def fetchfiles(did):
         x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
+        item = str(x[index])
         cmd = "wget -T 60 " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + str(x[index]).replace(' ', "\\ ")
         os.system(cmd)
-        bsize = str(os.path.getsize(MEDIA_PATH + str(x[index])))
+        printmessage("Current item: " + item)
+        bsize = str(os.path.getsize(MEDIA_PATH + item))        
         sendjson("v1/files/checksum", {"Deviceid":int(did),"Filename":str(x[index]),"Bytesize": bsize})
         printmessage("eCode: " + str(RESPONSE["eCode"]))
         if RESPONSE["eCode"] is not 0:
