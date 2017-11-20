@@ -281,14 +281,12 @@ def fetchfiles(did):
         cmd = "wget -T 60 " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + str(x[index]).replace(' ', "\\ ")
         os.system(cmd)
         bsize = os.path.getsize(MEDIA_PATH + str(x[index])) 
-        sendjson("/v1/files/checksum", {"Deviceid":did,"Filename":str(x[index]),"Bytesize": bsize})
+        sendjson("v1/files/checksum", {"Deviceid":did,"Filename":str(x[index]),"Bytesize": bsize})
         if RESPONSE["ecode"] is not 0:
-            os.remove(MEDIA_PATH + str(x[index]))
-                    
-            printmessage("File " + str(x[index] + " passed checksum"))
-        else:
             printmessage("File " + str(x[index] + " failed checksum. It will be deleted.", "error"))
-            os.remove(MEDIA_PATH + str(x[index]))
+            os.remove(MEDIA_PATH + str(x[index]))                
+        else:
+            printmessage("File " + str(x[index] + " passed checksum"))
 
 def createlogfile():
     """Creates a log file each midnight."""
