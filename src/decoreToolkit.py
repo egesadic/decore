@@ -288,7 +288,11 @@ def fetchfiles(did):
         cmd = "wget -T 60 " + URL + "v1/files/" + item.replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + item.replace(' ', "\\ ")
         os.system(cmd)
         printmessage("Current item: " + item)
-        bsize = str(os.path.getsize(MEDIA_PATH + item))        
+        mediaUTF=str(MEDIA_PATH).encode('utf8')
+        printmessage("mediapath utf: "+mediaUTF)
+        printmessage("item utf: "+item)
+        bsize = str(os.path.getsize(mediaUTF + item))        
+        printmessage("bsize: "+bsize)
         sendjson("v1/files/checksum", {"Deviceid":int(did),"Filename":item,"Bytesize": bsize})
         printmessage("eCode: " + str(RESPONSE["eCode"]))
         if RESPONSE["eCode"] is not 0:
