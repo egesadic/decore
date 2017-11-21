@@ -280,18 +280,26 @@ def forcecfgcreate(url):
         createcfgfile(url)
 
 def checksum(fname, did):
-    bsize = str(os.path.getsize(MEDIA_PATH + fname))        
-    sendjson("v1/files/checksum", {"Deviceid":int(did),"Filename":fname,"Bytesize":bsize})
-    printmessage("eCode: " + str(RESPONSE["eCode"]))
-    if RESPONSE["eCode"] is not 0:
-        printmessage("File " + fname + " failed checksum. It will be deleted.\n", "error")
-        os.remove(MEDIA_PATH + fname)                
-    else:
-        printmessage("File " + fname + " passed checksum.\n")
-
+    try:
+        bsize = str(os.path.getsize(MEDIA_PATH + fname))        
+        sendjson("v1/files/checksum", {"Deviceid":int(did),"Filename":fname,"Bytesize":bsize})
+        printmessage("eCode: " + str(RESPONSE["eCode"]))
+        if RESPONSE["eCode"] is not 0:
+            printmessage("File " + fname + " failed checksum. It will be deleted.\n", "error")
+            os.remove(MEDIA_PATH + fname)                
+        else:
+            printmessage("File " + fname + " passed checksum.\n")
+    except urllib2.HTTPError, e:
+        printmessage(e,"exception")
+        removemedia(item) 
+    except urllib2.URLError, e:
+        printmessage(e,"exception")
+        removemedia(item) 
+    except httplib.HTTPException, e:
+        printmessage(e,"exception") 
+        removemedia(item) 
 def fetchfiles(did):
     """Fetches files from the DeCore server."""
-    try:
         x=[]  
         i=0
         log = LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y-%H:%M:%S")) + ".log"
@@ -304,16 +312,7 @@ def fetchfiles(did):
             cmd = "wget -T 60 " + URL + "v1/files/" + item.replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + item.replace(' ', "\\ ")
             os.system(cmd)
             printmessage("Current item: " + item)
-            checksum(item,did)
-    except urllib2.HTTPError, e:
-        printmessage(e,"exception")
-        removemedia(item) 
-    except urllib2.URLError, e:
-        printmessage(e,"exception")
-        removemedia(item) 
-    except httplib.HTTPException, e:
-        printmessage(e,"exception") 
-        removemedia(item) 
+            checksum(item,did)   
               
 def createlogfile():
     """Creates a log file each midnight."""
