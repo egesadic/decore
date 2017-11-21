@@ -291,13 +291,13 @@ def checksum(fname, did):
             printmessage("File " + fname + " passed checksum.\n")
     except urllib2.HTTPError, e:
         printmessage(e,"exception")
-        removemedia(item) 
+        removemedia(fname) 
     except urllib2.URLError, e:
         printmessage(e,"exception")
-        removemedia(item) 
+        removemedia(fname) 
     except httplib.HTTPException, e:
         printmessage(e,"exception") 
-        removemedia(item) 
+        removemedia(fname) 
 def fetchfiles(did):
     """Fetches files from the DeCore server."""
         x=[]  
