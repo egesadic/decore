@@ -298,6 +298,7 @@ def checksum(fname, did):
     except httplib.HTTPException, e:
         printmessage(e,"exception") 
         removemedia(fname) 
+        
 def fetchfiles(did):
     """Fetches files from the DeCore server."""
     x=[]  
