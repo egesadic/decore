@@ -62,21 +62,27 @@ def getmacadress(interface):
     return mac[0:17]
 
 def sendjson(domain, data, method='POST'):
-    printmessage("Starting JSON procedure.")
-    global RESPONSE
-    printmessage("Got RESPONSE global var.")
-    dest = URL + domain
-    printmessage("Destination: " + dest)
-    printmessage("JSON created with parameters: " + str(json.dumps(data)))
+    try:
+        global RESPONSE
+        dest = URL + domain
+        printmessage("JSON created with parameters: " + str(json.dumps(data)))
+        
+        #Sunucuya bağlan ve dosyaları talep et.
+        request = urllib2.Request(dest, json.dumps(data), {'Content-Type': 'application/json'} )
+        printmessage("JSON encoded. Starting server connection.")
+        request.get_method = lambda: method
+        printmessage("Connecting to URL: " + dest)
+        tmp = urllib2.urlopen(request)
+        printmessage("Successfully connected to: " + dest)
+        RESPONSE = json.loads(tmp.read())
+        return True
+    except Exception as e:
+        printmessage(e,"exception")
+        return False
 
-    #Sunucuya bağlan ve dosyaları talep et.
-    request = urllib2.Request(dest, json.dumps(data), {'Content-Type': 'application/json'} )
-    printmessage("JSON encoded. Starting server connection.")
-    request.get_method = lambda: method
-    printmessage("Connecting to URL: " + dest)
-    tmp = urllib2.urlopen(request)
-    printmessage("Successfully connected to: " + dest)
-    RESPONSE = json.loads(tmp.read())
+def removemedia(fname):
+    if isfile(MEDIA_PATH + fname):
+        os.remove(MEDIA_PATH + fname)    
 
 def createcfgfile(url, adapter):
     """Connect to a local DeCore server to fetch device-id and store it in a config file under specified path. Default path to config file is '/usr/decore/config'."""    
@@ -144,18 +150,18 @@ def createcfgfile(url, adapter):
                 raise DecoreServerConnectionException('No value was returned from server. There might be problems with the server or with your connection.')
     
     except DecoreServerConnectionException as e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except urllib2.HTTPError, e:
         #todo - bir daha cfg yaratıcıyı çağır
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except urllib2.URLError, e:
         #todo - URL kontrol ettir
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except httplib.HTTPException, e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except Exception as e:
         #todo - Genel hata, yapacak bişey yok
-        printmessage(e,"critical")
+        printmessage(e,"exception")
 
 def sync():
     """Initiate a synchronisation between DeCore and the server. Requires config.json to be properly setup.""" 
@@ -247,15 +253,15 @@ def sync():
         printmessage("Retrying syncronisation with the server...")
         sync()
     except JSONParseException as e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except urllib2.HTTPError, e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except urllib2.URLError, e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except httplib.HTTPException, e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except Exception as e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
 
 def mediacheck():
     global HAS_MEDIA
@@ -273,34 +279,42 @@ def forcecfgcreate(url):
     else:
         createcfgfile(url)
 
+def checksum(fname, did):
+    bsize = str(os.path.getsize(MEDIA_PATH + fname))        
+    sendjson("v1/files/checksum", {"Deviceid":int(did),"Filename":fname,"Bytesize":bsize})
+    printmessage("eCode: " + str(RESPONSE["eCode"]))
+    if RESPONSE["eCode"] is not 0:
+        printmessage("File " + fname + " failed checksum. It will be deleted.\n", "error")
+        os.remove(MEDIA_PATH + fname)                
+    else:
+        printmessage("File " + fname + " passed checksum.\n")
+
 def fetchfiles(did):
     """Fetches files from the DeCore server."""
-    x=[]
-    
-    i=0
-    log = LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y-%H:%M:%S")) + ".log"
-    f = open(CFG_FOLDER + "ToBeAdded.txt",'r')
-    for line in f.readlines():
-        x.extend([str(line).replace('\n',"")])  
-        f.close()
-    for index in range(len(x)):
-        item = str(x[index]).encode('utf8')
-        cmd = "wget -T 60 " + URL + "v1/files/" + item.replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + item.replace(' ', "\\ ")
-        os.system(cmd)
-        printmessage("Current item: " + item)
-        mediaUTF=str(MEDIA_PATH).encode('utf8')
-        printmessage("mediapath utf: "+mediaUTF)
-        printmessage("item utf: "+item)
-        bsize = str(os.path.getsize(mediaUTF + item))        
-        printmessage("bsize: "+bsize)
-        sendjson("v1/files/checksum", {"Deviceid":int(did),"Filename":item,"Bytesize": bsize})
-        printmessage("eCode: " + str(RESPONSE["eCode"]))
-        if RESPONSE["eCode"] is not 0:
-            printmessage("File " + item + " failed checksum. It will be deleted.\n", "error")
-            os.remove(MEDIA_PATH + item)                
-        else:
-            printmessage("File " + str(x[index] + " passed checksum.\n"))
-
+    try:
+        x=[]  
+        i=0
+        log = LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y-%H:%M:%S")) + ".log"
+        f = open(CFG_FOLDER + "ToBeAdded.txt",'r')
+        for line in f.readlines():
+            x.extend([str(line).replace('\n',"")])  
+            f.close()
+        for index in range(len(x)):
+            item = str(x[index]).encode('utf8')
+            cmd = "wget -T 60 " + URL + "v1/files/" + item.replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + item.replace(' ', "\\ ")
+            os.system(cmd)
+            printmessage("Current item: " + item)
+            checksum(item,did)
+    except urllib2.HTTPError, e:
+        printmessage(e,"exception")
+        removemedia(item) 
+    except urllib2.URLError, e:
+        printmessage(e,"exception")
+        removemedia(item) 
+    except httplib.HTTPException, e:
+        printmessage(e,"exception") 
+        removemedia(item) 
+              
 def createlogfile():
     """Creates a log file each midnight."""
     global LOGGER
@@ -324,9 +338,10 @@ def printmessage(text, lvl="info"):
         "warning" : LOGGER.warning,
         "error" : LOGGER.error,
         "critical" : LOGGER.critical,
+        "exception" : LOGGER.exception
     }
 
-    if lvl is "critical":
+    if lvl is "exception":
         newline = "\n"
         errortxt = "Problem with deCore. Problem: " 
 
@@ -467,7 +482,7 @@ def newslideshow(dly):
             printmessage("Success! Slideshow " + name + " has been successfully created under " + filepath + ".", "info")
 
     except Exception as e:
-        printmessage("Aborted slide creation.\nReason was: " + e, "critical")
+        printmessage("Aborted slide creation.\nReason was: " + e, "exception")
         if os.path.exists(filepath):
             printmessage("Removing incomplete slide file...", "warning")
             slide.close()
