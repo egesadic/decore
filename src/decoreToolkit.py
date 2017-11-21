@@ -300,19 +300,19 @@ def checksum(fname, did):
         removemedia(fname) 
 def fetchfiles(did):
     """Fetches files from the DeCore server."""
-        x=[]  
-        i=0
-        log = LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y-%H:%M:%S")) + ".log"
-        f = open(CFG_FOLDER + "ToBeAdded.txt",'r')
-        for line in f.readlines():
-            x.extend([str(line).replace('\n',"")])  
-            f.close()
-        for index in range(len(x)):
-            item = str(x[index]).encode('utf8')
-            cmd = "wget -T 60 " + URL + "v1/files/" + item.replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + item.replace(' ', "\\ ")
-            os.system(cmd)
-            printmessage("Current item: " + item)
-            checksum(item,did)   
+    x=[]  
+    i=0
+    log = LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y-%H:%M:%S")) + ".log"
+    f = open(CFG_FOLDER + "ToBeAdded.txt",'r')
+    for line in f.readlines():
+        x.extend([str(line).replace('\n',"")])  
+        f.close()
+    for index in range(len(x)):
+        item = str(x[index]).encode('utf8')
+        cmd = "wget -T 60 " + URL + "v1/files/" + item.replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + item.replace(' ', "\\ ")
+        os.system(cmd)
+        printmessage("Current item: " + item)
+        checksum(item,did)   
               
 def createlogfile():
     """Creates a log file each midnight."""
