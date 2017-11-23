@@ -327,7 +327,7 @@ def createlogfile():
                                        backupCount=7)
     LOGGER.addHandler(handler)
 
-def printmessage(text, l
+def printmessage(text, lvl='info'): 
     """Print specified message to log file."""
     newline = ""
     errortxt = ""
