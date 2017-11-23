@@ -327,7 +327,7 @@ def createlogfile():
                                        backupCount=7)
     LOGGER.addHandler(handler)
 
-def printmessage(text, lvl="info"):
+def printmessage(text, l
     """Print specified message to log file."""
     newline = ""
     errortxt = ""
@@ -367,7 +367,7 @@ def updateslide():
     runslide()
 
 def emptymedia():
-    subprocess.Popen("fbi --noverbose /home/pi/decore/src/resources/images/nomedia.jpg", shell=True)
+    subprocess.Popen("fbi -a --noverbose /home/pi/decore/src/resources/images/nomedia.jpg", shell=True)
 
 def newslideshow(dly):
     try:
