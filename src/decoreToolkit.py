@@ -163,6 +163,20 @@ def createcfgfile(url, adapter):
         #todo - Genel hata, yapacak bişey yok
         printmessage(e,"exception")
 
+#Will get order AND delay of files
+def orderNdelay():
+    try:
+        cfgfile = open(CFG_PATH, 'r')
+        device_id = cfgfile.read()
+        dest = URL + "v1/node/order/"+device_id
+
+        # Sunucuya bağlan ve dosyaları talep et
+        orderdelay = urllib2.urlopen(dest).read()
+        printmessage("orderNdelay: "+orderdelay,"critical")
+
+    except Exception as e:
+        printmessage(e, "exception")
+
 def sync():
     """Initiate a synchronisation between DeCore and the server. Requires config.json to be properly setup.""" 
     try:
@@ -197,7 +211,7 @@ def sync():
             request.add_header('Content-Type', 'application/json')
             request.get_method = lambda: 'PUT'
             tmp = urllib2.urlopen(request)
-                        
+
             #Döndürülen yanıtı oku.
             printmessage ("Connection success! Reading response...")
             response = json.loads(tmp.read())
@@ -241,7 +255,10 @@ def sync():
 
                 if FILES_CHANGED:
                     printmessage("Media in this node has been changed! Rebuilding .dpa file...")
-                    updateslide()            
+                    updateslide()
+                else:
+                    #No media was changed, check for orderNdelay
+                    orderNdelay()
             else:
                 raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")            
         else:
