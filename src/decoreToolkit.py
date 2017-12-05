@@ -190,8 +190,15 @@ def orderNdelay():
             #order or delay changed
             orderNdelayConfig = open(OND_PATH, 'w')
             orderNdelayConfig.write(orderNdelayResponse)
-            filesArray=orderNdelayResponse["pathsInOrder"]
-            delaysArray=orderNdelayResponse["delaysInOrder"]
+
+            filesArray=[]
+            delaysArray=[]
+
+            for key, value in orderNdelayResponse.iteritems():
+                if key=="pathsInOrder":
+                    filesArray=value
+                elif key=="delaysInOrder":
+                    delaysArray=value
 
             #If they are None then they either has no file or something goes wrong
             if filesArray is None:
