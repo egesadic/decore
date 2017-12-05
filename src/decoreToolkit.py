@@ -174,12 +174,17 @@ def orderNdelay():
         # Sunucuya bağlan ve dosyaları talep et
         orderNdelayResponse = urllib2.urlopen(dest).read()
 
-        alreadyOrderNDelay = open(OND_PATH, 'r').read()
+        changed=False
 
-        if alreadyOrderNDelay==orderNdelayResponse:
-            printmessage("they are same","critical")
+        if isfile(OND_PATH):
+            alreadyOrderNDelay = open(OND_PATH, 'r').read()
+            if alreadyOrderNDelay==orderNdelayResponse:
+                printmessage("they are same","critical")
+            else:
+                changed=True
+                printmessage("they are not same", "critical")
         else:
-            printmessage("they are not same", "critical")
+            changed=True
 
         orderNdelayConfig = open(OND_PATH, 'w')
         orderNdelayConfig.write(orderNdelayResponse)
