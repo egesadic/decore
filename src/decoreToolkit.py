@@ -463,12 +463,15 @@ def newslideshow(dly,forceMode,filesArray,delaysMap):
         #Create file manifest.
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
 
+        printmessage("Files in order:"+str(filesArray))
+
         existingFilesInOrder=filelist
         if forceMode==True and len(filelist)>=len(filesArray):
             existingFilesInOrder = []
             for f1 in filesArray:
                 doesExist=False
                 for f2 in filelist:
+                    printmessage("Checking for equality of: "+f1+" and "+f2)
                     if f1==f2:
                         doesExist
                         break
