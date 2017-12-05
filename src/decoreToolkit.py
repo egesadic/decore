@@ -194,11 +194,15 @@ def orderNdelay():
             filesArray=[]
             delaysArray=[]
 
-            for key, value in orderNdelayResponse.iteritems():
-                if key=="pathsInOrder":
-                    filesArray=value
-                elif key=="delaysInOrder":
-                    delaysArray=value
+            # for key, value in orderNdelayResponse.iteritems():
+            #     if key=="pathsInOrder":
+            #         filesArray=value
+            #     elif key=="delaysInOrder":
+            #         delaysArray=value
+
+            orderNdelayResponse=json.loads(orderNdelayResponse)
+            filesArray=orderNdelayResponse["pathsInOrder"]
+            delaysArray= orderNdelayResponse["delaysInOrder"]
 
             #If they are None then they either has no file or something goes wrong
             if filesArray is None:
