@@ -173,11 +173,28 @@ def orderNdelay():
 
         # Sunucuya bağlan ve dosyaları talep et
         orderNdelayResponse = urllib2.urlopen(dest).read()
-        printmessage("orderNdelay: "+orderNdelayResponse,"critical")
 
-        orderNdelayConfig = open(CFG_FOLDER + "OrderNDelay.txt", 'w')
+        alreadyOrderNDelay = open(OND_PATH, 'r').read()
+
+        if alreadyOrderNDelay==orderNdelayResponse:
+            printmessage("they are same","critical")
+        else:
+            printmessage("they are not same", "critical")
+
+        orderNdelayConfig = open(OND_PATH, 'w')
         orderNdelayConfig.write(orderNdelayResponse)
 
+
+    except UndefinedDeviceException as u:
+        printmessage(u, "error")
+    except JSONParseException as e:
+        printmessage(e, "exception")
+    except urllib2.HTTPError, e:
+        printmessage(e, "exception")
+    except urllib2.URLError, e:
+        printmessage(e, "exception")
+    except httplib.HTTPException, e:
+        printmessage(e, "exception")
     except Exception as e:
         printmessage(e, "exception")
 
