@@ -39,7 +39,7 @@ CFG_FOLDER = "/usr/decore/config/"
 CFG_PATH = CFG_FOLDER + "cfgval.dc"
 MEDIA_PATH = "/usr/decore/media/"
 SLIDE_PATH = "/usr/decore/slides/"
-URL = "http://192.168.34.11:8082/"
+URL = "http://192.168.34.120:8082/"
 COOLDOWN = 60
 
 ##########################################################################################################
