@@ -37,6 +37,7 @@ LOG_PATH = "/usr/decore/log/"
 LOG_NAME = LOG_PATH + "decoreLog"
 CFG_FOLDER = "/usr/decore/config/"
 CFG_PATH = CFG_FOLDER + "cfgval.dc"
+OND_PATH = CFG_PATH + "orderndelay"
 MEDIA_PATH = "/usr/decore/media/"
 SLIDE_PATH = "/usr/decore/slides/"
 URL = "http://192.168.34.120:8082/"
@@ -171,8 +172,11 @@ def orderNdelay():
         dest = URL + "v1/node/order/"+device_id
 
         # Sunucuya bağlan ve dosyaları talep et
-        orderdelay = urllib2.urlopen(dest).read()
-        printmessage("orderNdelay: "+orderdelay,"critical")
+        orderNdelayResponse = urllib2.urlopen(dest).read()
+        printmessage("orderNdelay: "+orderNdelayResponse,"critical")
+
+        orderNdelayConfig = open(CFG_FOLDER + "OrderNDelay.txt", 'w')
+        orderNdelayConfig.write(orderNdelayResponse)
 
     except Exception as e:
         printmessage(e, "exception")
@@ -255,6 +259,10 @@ def sync():
 
                 if FILES_CHANGED:
                     printmessage("Media in this node has been changed! Rebuilding .dpa file...")
+                    #Delete old orderNdelay if exist
+                    orderNdelay_path = OND_PATH
+                    if isfile(orderNdelay_path):
+                        unlink(orderNdelay_path)
                     updateslide()
                 else:
                     #No media was changed, check for orderNdelay
