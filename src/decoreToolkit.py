@@ -186,9 +186,31 @@ def orderNdelay():
         else:
             changed=True
 
-        orderNdelayConfig = open(OND_PATH, 'w')
-        orderNdelayConfig.write(orderNdelayResponse)
+        if changed==True:
+            #order or delay changed
+            orderNdelayConfig = open(OND_PATH, 'w')
+            orderNdelayConfig.write(orderNdelayResponse)
+            filesArray=orderNdelayResponse["pathsInOrder"]
+            delaysArray=orderNdelayResponse["delaysInOrder"]
 
+            #If they are None then they either has no file or something goes wrong
+            if filesArray is None:
+                printmessage("orderNdelay is none","warning")
+                return
+            if delaysArray is None:
+                printmessage("orderNdelay is none", "warning")
+                return
+
+            if len(filesArray)!=len(delaysArray):
+                printmessage("orderNdelay is fetched but their length not match","error")
+                return
+
+            delaysMap={}
+
+            for index in range(0,len(filesArray)):
+                delaysMap[index+1]=delaysArray[index]
+
+            updateslide(True,filesArray,delaysMap)
 
     except UndefinedDeviceException as u:
         printmessage(u, "error")
@@ -285,7 +307,7 @@ def sync():
                     orderNdelay_path = OND_PATH
                     if isfile(orderNdelay_path):
                         unlink(orderNdelay_path)
-                    updateslide()
+                    updateslide(False,None,None)
                 else:
                     #No media was changed, check for orderNdelay
                     orderNdelay()
@@ -394,11 +416,16 @@ def printmessage(text, lvl='info'):
 
     logoptions[lvl](newline + str(lvl.upper() +' (' + str(time.strftime("%H:%M:%S") + '): ' +  errortxt + msg + newline)))
 
-def updateslide():
+#If forceMode is set to True, then it will check orderNdelay
+def updateslide(forceMode,filesArray,delaysMap):
     global SLIDE_PID
-    global PROC 
+    global PROC
+
+    if forceMode==True:
+        printmessage("will Update slide for orderNdelay")
 
     printmessage("Updating slide..., current slide pid "+str(SLIDE_PID))
+
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
         printmessage("Killing slide.dpa and related processes.", "debug")
@@ -409,32 +436,48 @@ def updateslide():
         os.system("dd if=/dev/zero of=/dev/fb0")
         printmessage("Killed all processes and flushed the framebuffer.", "debug")
     printmessage("Updating slide.dpa...", "debug")
-    newslideshow(DELAY)
+    newslideshow(DELAY,forceMode,filesArray,delaysMap)
     printmessage("Slide updated successfully. Running slide.", "debug")
     runslide()
 
 def emptymedia():
     subprocess.Popen("fbi -a --noverbose /home/pi/decore/src/resources/images/nomedia.jpg", shell=True)
 
-def newslideshow(dly):
+#filesMap-> [1:"picturename.jpg",2:"videoname.mp4"] (order:fileName)
+#delaysMap-> [1:10,2:15,3:0] (order:delay {0 means default delay will be used})
+def newslideshow(dly,forceMode,filesArray,delaysMap):
     try:
         global HAS_MEDIA
 
         #Create file manifest.
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
-        printmessage ("Found " + str(len(filelist)) + " items: " + ' '.join(filelist) + " ")
-           
+
+        existingFilesInOrder=filelist
+        if forceMode==True and len(filelist)>=len(filesArray):
+            existingFilesInOrder = []
+            for f1 in filesArray:
+                doesExist=False
+                for f2 in filelist:
+                    if f1==f2:
+                        doesExist
+                        break
+                if doesExist==True:
+                    existingFilesInOrder.append(f1)
+
+
+        printmessage ("Found " + str(len(existingFilesInOrder)) + " items: " + ' '.join(existingFilesInOrder) + " ")
+
         #If filelist is empty, print a message that indicates no media was found on the node.
-        if not filelist:
+        if not existingFilesInOrder:
             HAS_MEDIA = False
             emptymedia()
         else:
             os.system("killall -9 fbi")
             HAS_MEDIA = True
-            #Check whether if there are videos in current media.
-            #Images will be played ONCE if there are any.
+            #Check whether there are videos in current media.
+            #Images will be played ONCE if there are any video.
             isonce = ""
-            for file in filelist:
+            for file in existingFilesInOrder:
                 if file.endswith(VIDEO_EXT):
                     isonce = " -once "
                     break
@@ -463,11 +506,11 @@ def newslideshow(dly):
             #Files are randomized in order if the RANDOM flag was set.
             ''' if isRandom:
                 printmessage("Random flag was on, randomizing file list...", 0.1)
-                shuffle(filelist)
-                printmessage("Randomized list: " + ''.join(filelist) + "\n") '''
+                shuffle(existingFilesInOrder)
+                printmessage("Randomized list: " + ''.join(existingFilesInOrder) + "\n") '''
 
             #Beginning of the slide creation.                                                    
-            for file in filelist:
+            for file in existingFilesInOrder:
                 printmessage("Now processing file: " + file)
                 printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n")
                 
@@ -553,7 +596,7 @@ def runslide():
             SLIDE_PID = PROC.pid
         else:
             printmessage("slide.dpa was not present in directory, recreating.", "warning")
-            newslideshow(DELAY)
+            newslideshow(DELAY,False,None,None)
             os.system("dd if=/dev/zero of=/dev/fb0")
             PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=False)
             SLIDE_PID = PROC.pid
