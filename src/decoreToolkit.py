@@ -473,7 +473,7 @@ def newslideshow(dly,forceMode,filesArray,delaysMap):
                 for f2 in filelist:
                     printmessage("Checking for equality of: "+f1+" and "+f2)
                     if f1==f2:
-                        doesExist
+                        doesExist=True
                         break
                 if doesExist==True:
                     existingFilesInOrder.append(f1)
