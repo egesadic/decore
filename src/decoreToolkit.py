@@ -210,7 +210,7 @@ def orderNdelay():
             delaysMap={}
 
             for index in range(0,len(filesArray)):
-                delaysMap[filesArray[index]]=delaysArray[index]
+                delaysMap[str(filesArray[index])]=delaysArray[index]
 
             updateslide(True,filesArray,delaysMap)
 
@@ -456,7 +456,6 @@ def newslideshow(dly,forceMode,filesArray,delaysMap):
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
 
         printmessage("Files in order:"+str(filesArray))
-        printmessage("delaysMap: "+str(delaysMap))
 
         existingFilesInOrder=filelist
         if forceMode==True and len(filelist)>=len(filesArray):
@@ -520,8 +519,12 @@ def newslideshow(dly,forceMode,filesArray,delaysMap):
                 printmessage("Now processing file: " + file)
                 printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n")
 
-                currentFilesDelay=delaysMap[file]
-                printmessage("Current file's delay is: "+currentFilesDelay)
+                currentFilesDelay=delay
+
+                if forceMode==True:
+                    if delaysMap[file]!=None and delaysMap[file]!=0:
+                        currentFilesDelay=str(delaysMap[file])
+                        printmessage("Current file's delay is: "+currentFilesDelay)
 
                 if imgCount == vidCount:                  
                     if file.endswith(IMAGE_EXT):
