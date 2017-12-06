@@ -191,15 +191,6 @@ def orderNdelay():
             orderNdelayConfig = open(OND_PATH, 'w')
             orderNdelayConfig.write(orderNdelayResponse)
 
-            filesArray=[]
-            delaysArray=[]
-
-            # for key, value in orderNdelayResponse.iteritems():
-            #     if key=="pathsInOrder":
-            #         filesArray=value
-            #     elif key=="delaysInOrder":
-            #         delaysArray=value
-
             orderNdelayResponse=json.loads(orderNdelayResponse)
             filesArray=orderNdelayResponse["pathsInOrder"]
             delaysArray= orderNdelayResponse["delaysInOrder"]
@@ -464,6 +455,7 @@ def newslideshow(dly,forceMode,filesArray,delaysMap):
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
 
         printmessage("Files in order:"+str(filesArray))
+        printmessage("delaysMap: "+str(delaysMap))
 
         existingFilesInOrder=filelist
         if forceMode==True and len(filelist)>=len(filesArray):
@@ -471,7 +463,6 @@ def newslideshow(dly,forceMode,filesArray,delaysMap):
             for f1 in filesArray:
                 doesExist=False
                 for f2 in filelist:
-                    printmessage("Checking for equality of: "+f1+" and "+f2)
                     if f1==f2:
                         doesExist=True
                         break
