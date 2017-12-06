@@ -210,7 +210,7 @@ def orderNdelay():
             delaysMap={}
 
             for index in range(0,len(filesArray)):
-                delaysMap[index+1]=delaysArray[index]
+                delaysMap[filesArray[index]]=delaysArray[index]
 
             updateslide(True,filesArray,delaysMap)
 
@@ -445,8 +445,9 @@ def updateslide(forceMode,filesArray,delaysMap):
 def emptymedia():
     subprocess.Popen("fbi -a --noverbose /home/pi/decore/src/resources/images/nomedia.jpg", shell=True)
 
-#filesMap-> [1:"picturename.jpg",2:"videoname.mp4"] (order:fileName)
-#delaysMap-> [1:10,2:15,3:0] (order:delay {0 means default delay will be used})
+
+#delaysMap-> ["a.jpg:10,"b.jpg":15,"c.mp4":0] (filename:delay {0 means default delay will be used})
+#normalde videoda delay olmayacagi icin video icin gelen delayi gormezden gel
 def newslideshow(dly,forceMode,filesArray,delaysMap):
     try:
         global HAS_MEDIA
@@ -518,7 +519,10 @@ def newslideshow(dly,forceMode,filesArray,delaysMap):
             for file in existingFilesInOrder:
                 printmessage("Now processing file: " + file)
                 printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n")
-                
+
+                currentFilesDelay=delaysMap[file]
+                printmessage("Current file's delay is: "+currentFilesDelay)
+
                 if imgCount == vidCount:                  
                     if file.endswith(IMAGE_EXT):
                         #printmessage("first media is an image, combo started...\n", 0.1)
