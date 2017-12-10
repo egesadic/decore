@@ -70,7 +70,7 @@ def newslideshow(dly,forceMode,filesArray,delaysMap):
                         printmessage("Image combo started!")
                     else:
                         printmessage("Image combo ongoing, populating image array...")
-                    imgList.append(str(file).replace(' ', "\\ ")  + " ")1
+                    imgList.append(str(file).replace(' ', "\\ ")  + " ")
                     imgCombo = True
                 elif file.endswith(VIDEO_EXT):
                     if imgCombo:
