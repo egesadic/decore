@@ -527,7 +527,7 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
                         if len(imgList)>0:
                             printmessage("Delay combo broken!")
                             combinedImg = "".join(imgList)
-                            fullscript = ''.join([fullscript, imgScript, combinedImg, '\n'])
+                            fullscript = ''.join([fullscript, imgScript, combinedImg, " >/dev/null 2>&1", '\n'])
                             imgList=[]
 
                         imgCombo = False
