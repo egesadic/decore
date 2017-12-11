@@ -481,20 +481,20 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
             isonce = ""
             for file in existingFilesInOrder:
                 if file.endswith(VIDEO_EXT):
-                    isonce = " -once "
+                    isonce = "-once "
                     break
 
             # Definition of variables used in function.
             name = "slide.dpa"
             filepath = SLIDE_PATH + name
-            delay = str(dly) + " "
+            delay = str(dly)
             imgList = []
             vidName = ""
             imgCombo = False
 
             # Script bodies that will be used while creating the slide.
             fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo\n"
-            imgScript = "clear\nfbi --noverbose -a -t " + delay + isonce
+            imgScript = "clear\nfbi --noverbose -a -t " + delay +" "+ isonce
             vidScript = "clear\nomxplayer " + MEDIA_PATH
 
             # Delay cannot be zero. 15 seconds is the default interval value.
@@ -525,10 +525,11 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
                             printmessage("Delay combo broken!")
                             combinedImg = "".join(imgList)
                             fullscript = ''.join([fullscript, imgScript, combinedImg, '\n'])
+                            imgList=[]
 
                         imgCombo = False
                         #Update imgScript
-                        imgScript = "clear\nfbi --noverbose -a -t " + currentFilesDelay + isonce
+                        imgScript = "clear\nfbi --noverbose -a -t " + delay + " " + isonce
 
                     if imgCombo:
                         printmessage("Image combo started!")
@@ -544,6 +545,8 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
                             [fullscript, imgScript, combinedImg, '\n', vidScript, str(file).replace(' ', "\\ "),
                              " >/dev/null 2>&1", '\n'])
                         imgCombo = False
+                        imgList=[]
+
                     vidName = ''.join([fullscript, vidScript, str(file).replace(' ', "\\ "), " >/dev/null 2>&1", '\n'])
                     fullscript = vidName
                 else:
