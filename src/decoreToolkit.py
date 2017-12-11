@@ -529,7 +529,7 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
 
                         imgCombo = False
                         #Update imgScript
-                        imgScript = "clear\nfbi --noverbose -a -t " + delay + " " + isonce
+                        imgScript = "clear\nfbi --noverbose -a -t " + currentFilesDelay + " " + isonce
 
                     if imgCombo:
                         printmessage("Image combo started!")
