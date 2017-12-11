@@ -504,11 +504,11 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
             else:
                 printmessage("Delay is taken as "+str(dly))
 
+            lastDelay=delay
+
             # Beginning of the slide creation.
             for file in existingFilesInOrder:
                 printmessage("Now processing file: " + file)
-
-
 
                 currentFilesDelay = delay
 
@@ -522,8 +522,8 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
                         # Check for file extentions and generate scripts according to filetypes.
                 if file.endswith(IMAGE_EXT):
 
-                    if currentFilesDelay!=delay:
-                        # Means delay is changed, generate script and start over
+                    if currentFilesDelay!=lastDelay:
+                        #delay is changed, generate script and start over
                         if len(imgList)>0:
                             printmessage("Delay combo broken!")
                             combinedImg = "".join(imgList)
@@ -532,12 +532,13 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
 
                         imgCombo = False
                         #Update imgScript
-                        imgScript = "clear\nfbi --noverbose -a -t " + currentFilesDelay + " " + isonce
+                        imgScript = "clear\nfbi --noverbose -a -t " + currentFilesDelay + " -once "
 
                     if imgCombo:
-                        printmessage("Image combo started!")
+                        printmessage("Image combo continues")
                     else:
-                        printmessage("Image combo ongoing, populating image array...")
+                        printmessage("Image combo started from scratch")
+
                     imgList.append(str(file).replace(' ', "\\ ") + " ")
                     imgCombo = True
                 elif file.endswith(VIDEO_EXT):
@@ -554,6 +555,8 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
                     fullscript = vidName
                 else:
                     printmessage("File " + file + " has an unknown (or undefined) file format.", "warning")
+
+                lastDelay=currentFilesDelay
 
             if len(imgList) > 0:
                 printmessage(
