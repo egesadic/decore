@@ -516,7 +516,7 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
                     if delaysMap[file] != None and delaysMap[file] != 0:
                         currentFilesDelay = str(delaysMap[file])
                         printmessage("Current file's delay is: " + currentFilesDelay)
-                    elif delaysMap[file] == 0:
+                    elif delaysMap[file] == 0 or delaysMap[file] == "0":
                         currentFilesDelay=str(dly)
 
                         # Check for file extentions and generate scripts according to filetypes.
