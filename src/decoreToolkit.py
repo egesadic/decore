@@ -521,13 +521,14 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
 
                     if currentFilesDelay!=delay:
                         # Means delay is changed, generate script and start over
-                        imgScript = "clear\nfbi --noverbose -a -t " + currentFilesDelay + isonce
-                        printmessage("Combo broken!")
-                        combinedImg = "".join(imgList)
-                        fullscript = ''.join(
-                            [fullscript, imgScript, combinedImg, '\n', vidScript, str(file).replace(' ', "\\ "),
-                             " >/dev/null 2>&1", '\n'])
+                        if len(imgList)>0:
+                            printmessage("Delay combo broken!")
+                            combinedImg = "".join(imgList)
+                            fullscript = ''.join([fullscript, imgScript, combinedImg, '\n'])
+
                         imgCombo = False
+                        #Update imgScript
+                        imgScript = "clear\nfbi --noverbose -a -t " + currentFilesDelay + isonce
 
                     if imgCombo:
                         printmessage("Image combo started!")
