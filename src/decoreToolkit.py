@@ -301,7 +301,7 @@ def sync():
                     printmessage ("Deleted " + str(len(tobedeleted)) + "files successfully.")
                     FILES_CHANGED = True
                 else:
-                    printmessage("No files to be deleted. Running .dpa file...")
+                    printmessage("No files to be deleted.")
 
                 if FILES_CHANGED:
                     printmessage("Media in this node has been changed! Rebuilding .dpa file...")
@@ -515,8 +515,20 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
                         currentFilesDelay = str(delaysMap[file])
                         printmessage("Current file's delay is: " + currentFilesDelay)
 
+
                         # Check for file extentions and generate scripts according to filetypes.
                 if file.endswith(IMAGE_EXT):
+
+                    if currentFilesDelay!=delay:
+                        # Means delay is changed, generate script and start over
+                        imgScript = "clear\nfbi --noverbose -a -t " + currentFilesDelay + isonce
+                        printmessage("Combo broken!")
+                        combinedImg = "".join(imgList)
+                        fullscript = ''.join(
+                            [fullscript, imgScript, combinedImg, '\n', vidScript, str(file).replace(' ', "\\ "),
+                             " >/dev/null 2>&1", '\n'])
+                        imgCombo = False
+
                     if imgCombo:
                         printmessage("Image combo started!")
                     else:
