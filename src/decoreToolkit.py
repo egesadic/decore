@@ -519,12 +519,12 @@ def newslideshow(dly,forceMode,filesArray,delaysMap):
                 printmessage("Now processing file: " + file)
                 printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n")
 
-                currentFilesDelay=delay
+                currentFileDelay=delay #Will hold delay for current file
 
                 if forceMode==True:
                     if delaysMap[file]!=None and delaysMap[file]!=0:
-                        currentFilesDelay=str(delaysMap[file])
-                        printmessage("Current file's delay is: "+currentFilesDelay)
+                        currentFileDelay=str(delaysMap[file])
+                        printmessage("Current file's delay is: "+currentFileDelay)
 
                 if imgCount == vidCount:                  
                     if file.endswith(IMAGE_EXT):
