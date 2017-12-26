@@ -10,6 +10,7 @@ import time
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import collections
+import pyowm
 from random import shuffle
 from os import listdir, path, unlink
 from os.path import isfile, join
@@ -42,6 +43,7 @@ MEDIA_PATH = "/usr/decore/media/"
 SLIDE_PATH = "/usr/decore/slides/"
 URL = "http://192.168.34.120:8082/"
 COOLDOWN = 60
+WEATHER_API = ""
 
 ##########################################################################################################
 #                                          CLASSESS START HERE                                           #
@@ -634,6 +636,29 @@ def checkdir(path):
 def checklogpath():
     if not os.path.exists(LOG_PATH):
         os.makedirs(LOG_PATH)
+
+def init_weather_service():
+    global WEATHER_API
+    WEATHER_API = pyowm.OWM('7a1e6e72e70f3c20a69d9c668aef132e')
+
+def weatherupdate():
+    # Search for current weather in Istanbul
+    observation = WEATHER_API.weather_at_place('Istanbul, TR')
+    w = observation.get_weather()
+    print(w)                      
+    # Weather details
+    w.get_wind()                  # {'speed': 4.6, 'deg': 330}
+    w.get_humidity()              # 87
+    w.get_temperature('celsius')  # {'temp_max': 10.5, 'temp': 9.7, 'temp_min': 9.0}
+
+def scrollingtext(stext):
+    #Array length for scrolling
+    count = len(stext) 
+       
+    #loop for scrolling text
+    for x in range(0, count):    
+        time.sleep(0.1) #This variable should be able to be changed from deCore UI.
+        print (str(stext[x])) #Print is the placeholder process for UI elements.  
 
 def quitdecore(msg, expect = True):
     expected = bool(expect)
