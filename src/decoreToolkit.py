@@ -125,12 +125,12 @@ def createcfgfile(url, adapter):
             printmessage("Total storage on this device is " + str(bytes2human(usage.total)))
             printmessage("Free storage on this device is " + str(bytes2human(usage.free)))
             
-            data = {
-                    "Mac": mac,
-                    "Storage": int(usage.total/1024),
-                    "RemainingStorage": int(usage.free/1024)
-            }       
-
+            #Create JSON.
+            data = JSONObject()
+            data.Mac = mac
+            data.Storage = int(usage.total/1024)
+            data.RemainingStorage = int(usage.free/1024)
+          
             #Sunucuya bağlan ve ID talep et.
             sendjson(dest, data)
             printmessage ("Connection to the DeCore server success! Reading response...")
@@ -252,15 +252,12 @@ def sync():
             
             usage = disk_usage('/')
             
+            #Create JSON.
             data = JSONObject()
             data.Id = int(device_id)
             data.OldPaths = filelist
             data.RemainingStorage = int(usage.free/1024)
-            # data = {
-            #     "Id": int(device_id), 
-            #     "OldPaths": filelist,
-            #     "RemainingStorage": int(usage.free/1024)
-            # }
+            
             printmessage("Device ID is: " + str(device_id))
             printmessage("Free storage on this device is " + str(bytes2human(usage.free)))
             
