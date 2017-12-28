@@ -67,6 +67,7 @@ def getmacadress(interface):
 def sendjson(domain, data, method='POST'):
     try:
         global RESPONSE
+
         dest = URL + domain
         printmessage("JSON created with parameters: " + str(json.dumps(data)))
         
@@ -90,6 +91,9 @@ def removemedia(fname):
 def createcfgfile(url, adapter):
     """Connect to a local DeCore server to fetch device-id and store it in a config file under specified path. Default path to config file is '/usr/decore/config'."""    
     try:
+        #Current path to device registration
+        dest = url + "v1/node/register"
+
         #Geçerli bir config dosyası olup olmadığını denetle.
         printmessage("Beginning creation of configuration file. Checking whether " + CFG_PATH + "exists.")
         if isfile(CFG_PATH) is False:
@@ -123,17 +127,11 @@ def createcfgfile(url, adapter):
             }       
 
             #Sunucuya bağlan ve ID talep et.
-            request = urllib2.Request(url, json.dumps(data))
-            printmessage("JSON encoded. Starting server connection.")
-            request.add_header('Content-Type', 'application/json')
-            printmessage("Connecting to URL: " + url)
-            tmp = urllib2.urlopen(request)
-            obj = json.loads(tmp.read())
+            sendjson(dest, data)
             printmessage ("Connection to the DeCore server success! Reading response...")
             
             #Döndürülen yanıtı oku.
-            response = obj
-            value = response['value']
+            value = RESPONSE['value']
             printmessage (str(value)+" assigned as device ID")
             if value > 0:
                 device_id = str(value)              
@@ -171,7 +169,7 @@ def orderNdelay():
     try:
         cfgfile = open(CFG_PATH, 'r')
         device_id = cfgfile.read()
-        dest = URL + "v1/node/order/"+device_id
+        dest = URL + "v1/node/order/" + device_id
 
         # Sunucuya bağlan ve dosyaları talep et
         orderNdelayResponse = urllib2.urlopen(dest).read()
@@ -181,10 +179,10 @@ def orderNdelay():
         if isfile(OND_PATH):
             alreadyOrderNDelay = open(OND_PATH, 'r').read()
             if alreadyOrderNDelay==orderNdelayResponse:
-                printmessage("they are same","critical")
+                printmessage("Nothing has changed delay-wise.","critical")
             else:
                 changed=True
-                printmessage("they are not same", "critical")
+                printmessage("Delay values have been changed for at least one file. Triggering flag...", "critical")
         else:
             changed=True
 
@@ -206,7 +204,7 @@ def orderNdelay():
                 return
 
             if len(filesArray)!=len(delaysArray):
-                printmessage("orderNdelay is fetched but their length not match","error")
+                printmessage("orderNdelay is fetched but their length does not match","error")
                 return
 
             delaysMap={}
@@ -238,6 +236,7 @@ def sync():
         global OLD_FILES
 
         FILES_CHANGED = False
+        dest = URL + "v1/node"
 
         if isfile(CFG_PATH):
             printmessage("Syncronisation started with server!")
@@ -245,6 +244,7 @@ def sync():
             device_id = cfgfile.read()            
             filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
             printmessage("Current files: "+str(filelist))
+            
             usage = disk_usage('/')
             data = {
                 "Id": int(device_id), 
@@ -254,26 +254,19 @@ def sync():
             printmessage("Device ID is: " + str(device_id))
             printmessage("Free storage on this device is " + str(bytes2human(usage.free)))
             
-            #print(json.loads(data))
-            url = URL + "v1/node"
-            
             #Sunucuya bağlan ve dosyaları talep et.
             printmessage("Attempting to connect to server...", "info")
-            request = urllib2.Request(url, json.dumps(data))
-            request.add_header('Content-Type', 'application/json')
-            request.get_method = lambda: 'PUT'
-            tmp = urllib2.urlopen(request)
+            sendjson(dest, data)
 
             #Döndürülen yanıtı oku.
             printmessage ("Connection success! Reading response...")
-            response = json.loads(tmp.read())
-            if response is not None:
-                IS_RANDOM = str(response["data"]["IsRandom"])
-                DELAY = str(response["data"]["Delay"])
+            if RESPONSE is not None:
+                IS_RANDOM = str(RESPONSE["data"]["IsRandom"])
+                DELAY = str(RESPONSE["data"]["Delay"])
                 printmessage("Random flag is " + str(IS_RANDOM), "debug")
                 printmessage("Delay is " + str(DELAY), "debug")
-                tobedeleted = response["data"]["ToBeDeleted"]
-                tobeadded = response["data"]["ToBeAdded"]               
+                tobedeleted = RESPONSE["data"]["ToBeDeleted"]
+                tobeadded = RESPONSE["data"]["ToBeAdded"]               
                 OLD_FILES = tobedeleted
                 
                 #ToBeAdded'dan gelecek dosyaları metin dosyasına yaz ve indir                
@@ -357,11 +350,13 @@ def checksum(fname, did):
         bsize = str(os.path.getsize(MEDIA_PATH + fname))        
         sendjson("v1/files/checksum", {"Deviceid":int(did),"Filename":fname,"Bytesize":bsize})
         printmessage("eCode: " + str(RESPONSE["eCode"]))
+
         if RESPONSE["eCode"] is not 0:
             printmessage("File " + fname + " failed checksum. It will be deleted.\n", "error")
             os.remove(MEDIA_PATH + fname)                
         else:
             printmessage("File " + fname + " passed checksum.\n")
+
     except urllib2.HTTPError, e:
         printmessage(e,"exception")
         removemedia(fname) 
@@ -426,9 +421,9 @@ def updateslide(forceMode,filesArray,delaysMap):
     global PROC
 
     if forceMode==True:
-        printmessage("will Update slide for orderNdelay")
-
-    printmessage("Updating slide..., current slide pid "+str(SLIDE_PID))
+        printmessage("Slide will be updated due to change in delay")
+    else:
+        printmessage("Updating slide..., current slide pid "+str(SLIDE_PID))
 
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
@@ -446,7 +441,6 @@ def updateslide(forceMode,filesArray,delaysMap):
 
 def emptymedia():
     subprocess.Popen("fbi -a --noverbose /home/pi/decore/src/resources/images/nomedia.jpg", shell=True)
-
 
 #delaysMap-> ["a.jpg:10,"b.jpg":15,"c.mp4":0] (filename:delay {0 means default delay will be used})
 #normalde videoda delay olmayacagi icin video icin gelen delayi gormezden gel
@@ -659,6 +653,16 @@ def scrollingtext(stext):
     for x in range(0, count):    
         time.sleep(0.1) #This variable should be able to be changed from deCore UI.
         print (str(stext[x])) #Print is the placeholder process for UI elements.  
+
+def resetnode(): 
+    printmessage("This deCore node has been flagged for reset! All data regarding media and configuration will be deleted!", 'warning')
+    filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
+    #Remove media from media
+    for file in filelist:
+        removemedia(file)
+    #Remove config
+    os.remove(CFG_PATH)
+    printmessage("Reset procedure complete!", 'warning')
 
 def quitdecore(msg, expect = True):
     expected = bool(expect)

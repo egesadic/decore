@@ -6,7 +6,6 @@ from os.path import isfile
 sys.setdefaultencoding('utf8')
 VER_NUM = "0.4"
 
-url = URL +"v1/node/register"
 mediaGot = False
 checklogpath()
 createlogfile()
@@ -17,7 +16,7 @@ try:
     while isfile(CFG_PATH) is False: 
         printmessage("Configuration file not found, creating new one under " + CFG_PATH)
         while mediaGot is False:         
-            createcfgfile(url,"wlan0")
+            createcfgfile(URL,"wlan0")
             if isfile(CFG_PATH):
                 mediaGot=True        
     
