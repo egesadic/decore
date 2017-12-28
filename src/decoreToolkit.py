@@ -23,32 +23,36 @@ sys.setdefaultencoding('utf8')
 #                                    GLOBAL VARIABLES START HERE                                         #
 ##########################################################################################################  
 
-LOGGER = None
-HAS_MEDIA = False
-RESPONSE = None 
-PROC = ""
-VIDEO_EXT = ('.mp4', '.h264')
-IMAGE_EXT = ('.jpg', '.jpeg', '.png', '.gif')
-SLIDE_PID = 0
-FILELIST = []
-FILES_CHANGED = "False"
-IS_RANDOM = "False"
-DELAY = 5
-LOG_PATH = "/usr/decore/log/"
-LOG_NAME = LOG_PATH + "decoreLog"
-CFG_FOLDER = "/usr/decore/config/"
-CFG_PATH = CFG_FOLDER + "cfgval.dc"
-OND_PATH = CFG_FOLDER + "orderndelay"
-MEDIA_PATH = "/usr/decore/media/"
-SLIDE_PATH = "/usr/decore/slides/"
-URL = "http://192.168.34.11:8082/"
-COOLDOWN = 60
-WEATHER_API = ""
+LOGGER                  = None
+HAS_MEDIA               = False
+RESPONSE                = None 
+PROC                    = ""
+VIDEO_EXT               = ('.mp4', '.h264')
+IMAGE_EXT               = ('.jpg', '.jpeg', '.png', '.gif')
+SLIDE_PID               = 0
+FILELIST                = []
+FILES_CHANGED           = "False"
+IS_RANDOM               = "False"
+DELAY                   = 5
+LOG_PATH                = "/usr/decore/log/"
+LOG_NAME                = LOG_PATH + "decoreLog"
+CFG_FOLDER              = "/usr/decore/config/"
+CFG_PATH                = CFG_FOLDER + "cfgval.dc"
+OND_PATH                = CFG_FOLDER + "orderndelay"
+MEDIA_PATH              = "/usr/decore/media/"
+SLIDE_PATH              = "/usr/decore/slides/"
+URL                     = "http://192.168.34.11:8082/"
+COOLDOWN                = 60
+WEATHER_API             = ""
 
 ##########################################################################################################
 #                                          CLASSESS START HERE                                           #
 ########################################################################################################## 
 
+class JSONObject:
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)
 
 
 ##########################################################################################################
@@ -120,6 +124,7 @@ def createcfgfile(url, adapter):
             usage = disk_usage('/')
             printmessage("Total storage on this device is " + str(bytes2human(usage.total)))
             printmessage("Free storage on this device is " + str(bytes2human(usage.free)))
+            
             data = {
                     "Mac": mac,
                     "Storage": int(usage.total/1024),
@@ -246,11 +251,16 @@ def sync():
             printmessage("Current files: "+str(filelist))
             
             usage = disk_usage('/')
-            data = {
-                "Id": int(device_id), 
-                "OldPaths": filelist,
-                "RemainingStorage": int(usage.free/1024)
-            }
+            
+            data = JSONObject()
+            data.Id = int(device_id)
+            data.OldPaths = filelist
+            data.RemainingStorage = int(usage.free/1024)
+            # data = {
+            #     "Id": int(device_id), 
+            #     "OldPaths": filelist,
+            #     "RemainingStorage": int(usage.free/1024)
+            # }
             printmessage("Device ID is: " + str(device_id))
             printmessage("Free storage on this device is " + str(bytes2human(usage.free)))
             
@@ -657,13 +667,13 @@ def scrollingtext(stext):
 def resetnode(): 
     printmessage("This deCore node has been flagged for reset! All data regarding media and configuration will be deleted!", 'warning')
     filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
-    #Remove media from media
-    for file in filelist:
-        removemedia(file)
-    #Remove config
-    os.remove(CFG_PATH)
+    if len(filelist)>0:
+        #Remove all media from media folder
+        for file in filelist:
+            removemedia(file)
+        #Remove config
+        os.remove(CFG_PATH)
     printmessage("Reset procedure complete!", 'warning')
-
 def quitdecore(msg, expect = True):
     expected = bool(expect)
     if expected is False:
