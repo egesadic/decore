@@ -10,19 +10,21 @@ import time
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import collections
+import pyowm
 from random import shuffle
 from os import listdir, path, unlink
 from os.path import isfile, join
 from subprocess import call
 from decoreErrors import *
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 ##########################################################################################################
 #                                    GLOBAL VARIABLES START HERE                                         #
 ##########################################################################################################  
 
 LOGGER = None
 HAS_MEDIA = False
-JSON = None
 RESPONSE = None 
 PROC = ""
 VIDEO_EXT = ('.mp4', '.h264')
@@ -36,10 +38,12 @@ LOG_PATH = "/usr/decore/log/"
 LOG_NAME = LOG_PATH + "decoreLog"
 CFG_FOLDER = "/usr/decore/config/"
 CFG_PATH = CFG_FOLDER + "cfgval.dc"
+OND_PATH = CFG_FOLDER + "orderndelay"
 MEDIA_PATH = "/usr/decore/media/"
 SLIDE_PATH = "/usr/decore/slides/"
 URL = "http://192.168.34.11:8082/"
 COOLDOWN = 60
+WEATHER_API = ""
 
 ##########################################################################################################
 #                                          CLASSESS START HERE                                           #
@@ -61,23 +65,35 @@ def getmacadress(interface):
     return mac[0:17]
 
 def sendjson(domain, data, method='POST'):
-    global RESPONSE
-    dest = URL + domain
+    try:
+        global RESPONSE
 
-    json = json.dumps(data)
-    printmessage("JSON created with parameters: " + str(json))
+        dest = URL + domain
+        printmessage("JSON created with parameters: " + str(json.dumps(data)))
+        
+        #Sunucuya bağlan ve dosyaları talep et.
+        request = urllib2.Request(dest, json.dumps(data), {'Content-Type': 'application/json'} )
+        printmessage("JSON encoded. Starting server connection.")
+        request.get_method = lambda: method
+        printmessage("Connecting to URL: " + dest)
+        tmp = urllib2.urlopen(request)
+        printmessage("Successfully connected to: " + dest)
+        RESPONSE = json.loads(tmp.read())
+        return True
+    except Exception as e:
+        printmessage(e,"exception")
+        return False
 
-    #Sunucuya bağlan ve dosyaları talep et.
-    request = urllib2.Request(dest, json, {'Content-Type': 'application/json'} )
-    printmessage("JSON encoded. Starting server connection.")
-    request.get_method = lambda: method
-    printmessage("Connecting to URL: " + url)
-    tmp = urllib2.urlopen(request)
-    RESPONSE = json.loads(tmp.read())
+def removemedia(fname):
+    if isfile(MEDIA_PATH + fname):
+        os.remove(MEDIA_PATH + fname)    
 
 def createcfgfile(url, adapter):
     """Connect to a local DeCore server to fetch device-id and store it in a config file under specified path. Default path to config file is '/usr/decore/config'."""    
     try:
+        #Current path to device registration
+        dest = url + "v1/node/register"
+
         #Geçerli bir config dosyası olup olmadığını denetle.
         printmessage("Beginning creation of configuration file. Checking whether " + CFG_PATH + "exists.")
         if isfile(CFG_PATH) is False:
@@ -111,17 +127,11 @@ def createcfgfile(url, adapter):
             }       
 
             #Sunucuya bağlan ve ID talep et.
-            request = urllib2.Request(url, json.dumps(data))
-            printmessage("JSON encoded. Starting server connection.")
-            request.add_header('Content-Type', 'application/json')
-            printmessage("Connecting to URL: " + url)
-            tmp = urllib2.urlopen(request)
-            obj = json.loads(tmp.read())
+            sendjson(dest, data)
             printmessage ("Connection to the DeCore server success! Reading response...")
             
             #Döndürülen yanıtı oku.
-            response = obj
-            value = response['value']
+            value = RESPONSE['value']
             printmessage (str(value)+" assigned as device ID")
             if value > 0:
                 device_id = str(value)              
@@ -141,18 +151,81 @@ def createcfgfile(url, adapter):
                 raise DecoreServerConnectionException('No value was returned from server. There might be problems with the server or with your connection.')
     
     except DecoreServerConnectionException as e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except urllib2.HTTPError, e:
         #todo - bir daha cfg yaratıcıyı çağır
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except urllib2.URLError, e:
         #todo - URL kontrol ettir
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except httplib.HTTPException, e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except Exception as e:
         #todo - Genel hata, yapacak bişey yok
-        printmessage(e,"critical")
+        printmessage(e,"exception")
+
+#Will get order AND delay of files
+def orderNdelay():
+    try:
+        cfgfile = open(CFG_PATH, 'r')
+        device_id = cfgfile.read()
+        dest = URL + "v1/node/order/" + device_id
+
+        # Sunucuya bağlan ve dosyaları talep et
+        orderNdelayResponse = urllib2.urlopen(dest).read()
+
+        changed=False
+
+        if isfile(OND_PATH):
+            alreadyOrderNDelay = open(OND_PATH, 'r').read()
+            if alreadyOrderNDelay==orderNdelayResponse:
+                printmessage("Nothing has changed delay-wise.","critical")
+            else:
+                changed=True
+                printmessage("Delay values have been changed for at least one file. Triggering flag...", "critical")
+        else:
+            changed=True
+
+        if changed==True:
+            #order or delay changed
+            orderNdelayConfig = open(OND_PATH, 'w')
+            orderNdelayConfig.write(orderNdelayResponse)
+
+            orderNdelayResponse=json.loads(orderNdelayResponse)
+            filesArray=orderNdelayResponse["pathsInOrder"]
+            delaysArray= orderNdelayResponse["delaysInOrder"]
+
+            #If they are None then they either has no file or something goes wrong
+            if filesArray is None:
+                printmessage("orderNdelay is none","warning")
+                return
+            if delaysArray is None:
+                printmessage("orderNdelay is none", "warning")
+                return
+
+            if len(filesArray)!=len(delaysArray):
+                printmessage("orderNdelay is fetched but their length does not match","error")
+                return
+
+            delaysMap={}
+
+            for index in range(0,len(filesArray)):
+                delaysMap[str(filesArray[index])]=delaysArray[index]
+
+            updateslide(True,filesArray,delaysMap)
+
+    except UndefinedDeviceException as u:
+        printmessage(u, "error")
+    except JSONParseException as e:
+        printmessage(e, "exception")
+    except urllib2.HTTPError, e:
+        printmessage(e, "exception")
+    except urllib2.URLError, e:
+        printmessage(e, "exception")
+    except httplib.HTTPException, e:
+        printmessage(e, "exception")
+    except Exception as e:
+        printmessage(e, "exception")
 
 def sync():
     """Initiate a synchronisation between DeCore and the server. Requires config.json to be properly setup.""" 
@@ -163,6 +236,7 @@ def sync():
         global OLD_FILES
 
         FILES_CHANGED = False
+        dest = URL + "v1/node"
 
         if isfile(CFG_PATH):
             printmessage("Syncronisation started with server!")
@@ -170,6 +244,7 @@ def sync():
             device_id = cfgfile.read()            
             filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
             printmessage("Current files: "+str(filelist))
+            
             usage = disk_usage('/')
             data = {
                 "Id": int(device_id), 
@@ -179,26 +254,19 @@ def sync():
             printmessage("Device ID is: " + str(device_id))
             printmessage("Free storage on this device is " + str(bytes2human(usage.free)))
             
-            #print(json.loads(data))
-            url = URL + "v1/node"
-            
             #Sunucuya bağlan ve dosyaları talep et.
             printmessage("Attempting to connect to server...", "info")
-            request = urllib2.Request(url, json.dumps(data))
-            request.add_header('Content-Type', 'application/json')
-            request.get_method = lambda: 'PUT'
-            tmp = urllib2.urlopen(request)
-                        
+            sendjson(dest, data)
+
             #Döndürülen yanıtı oku.
             printmessage ("Connection success! Reading response...")
-            response = json.loads(tmp.read())
-            if response is not None:
-                IS_RANDOM = str(response["data"]["IsRandom"])
-                DELAY = str(response["data"]["Delay"])
+            if RESPONSE is not None:
+                IS_RANDOM = str(RESPONSE["data"]["IsRandom"])
+                DELAY = str(RESPONSE["data"]["Delay"])
                 printmessage("Random flag is " + str(IS_RANDOM), "debug")
                 printmessage("Delay is " + str(DELAY), "debug")
-                tobedeleted = response["data"]["ToBeDeleted"]
-                tobeadded = response["data"]["ToBeAdded"]               
+                tobedeleted = RESPONSE["data"]["ToBeDeleted"]
+                tobeadded = RESPONSE["data"]["ToBeAdded"]               
                 OLD_FILES = tobedeleted
                 
                 #ToBeAdded'dan gelecek dosyaları metin dosyasına yaz ve indir                
@@ -211,7 +279,7 @@ def sync():
                         content = ''.join([content, str(the_file) ,"\n"])
                     addedFile.write(content)
                     addedFile.close()
-                    printmessage("Fetching the files from server...")
+                    printmessage("Fetching the files from server...\n")
                     fetchfiles(device_id)        
                     printmessage ("Added " + str(len(tobeadded)) + " files.")
                     FILES_CHANGED = True
@@ -228,11 +296,18 @@ def sync():
                     printmessage ("Deleted " + str(len(tobedeleted)) + "files successfully.")
                     FILES_CHANGED = True
                 else:
-                    printmessage("No files to be deleted. Running .dpa file...")
+                    printmessage("No files to be deleted.")
 
                 if FILES_CHANGED:
                     printmessage("Media in this node has been changed! Rebuilding .dpa file...")
-                    updateslide()            
+                    #Delete old orderNdelay if exist
+                    orderNdelay_path = OND_PATH
+                    if isfile(orderNdelay_path):
+                        unlink(orderNdelay_path)
+                    updateslide(False,None,None)
+                else:
+                    #No media was changed, check for orderNdelay
+                    orderNdelay()
             else:
                 raise JSONParseException("There has been a problem with the DeCore node. No changes were made.")            
         else:
@@ -244,15 +319,15 @@ def sync():
         printmessage("Retrying syncronisation with the server...")
         sync()
     except JSONParseException as e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except urllib2.HTTPError, e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except urllib2.URLError, e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except httplib.HTTPException, e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
     except Exception as e:
-        printmessage(e,"critical")
+        printmessage(e,"exception")
 
 def mediacheck():
     global HAS_MEDIA
@@ -270,9 +345,31 @@ def forcecfgcreate(url):
     else:
         createcfgfile(url)
 
+def checksum(fname, did):
+    try:
+        bsize = str(os.path.getsize(MEDIA_PATH + fname))        
+        sendjson("v1/files/checksum", {"Deviceid":int(did),"Filename":fname,"Bytesize":bsize})
+        printmessage("eCode: " + str(RESPONSE["eCode"]))
+
+        if RESPONSE["eCode"] is not 0:
+            printmessage("File " + fname + " failed checksum. It will be deleted.\n", "error")
+            os.remove(MEDIA_PATH + fname)                
+        else:
+            printmessage("File " + fname + " passed checksum.\n")
+
+    except urllib2.HTTPError, e:
+        printmessage(e,"exception")
+        removemedia(fname) 
+    except urllib2.URLError, e:
+        printmessage(e,"exception")
+        removemedia(fname) 
+    except httplib.HTTPException, e:
+        printmessage(e,"exception") 
+        removemedia(fname) 
+        
 def fetchfiles(did):
     """Fetches files from the DeCore server."""
-    x=[]
+    x=[]  
     i=0
     log = LOG_PATH + "wgetLog" + str(time.strftime("%d-%m-%Y-%H:%M:%S")) + ".log"
     f = open(CFG_FOLDER + "ToBeAdded.txt",'r')
@@ -280,18 +377,12 @@ def fetchfiles(did):
         x.extend([str(line).replace('\n',"")])  
         f.close()
     for index in range(len(x)):
-        cmd = "wget -T 60 " + URL + "v1/files/" + str(x[index]).replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + str(x[index]).replace(' ', "\\ ")
+        item = str(x[index]).encode('utf8')
+        cmd = "wget -T 60 " + URL + "v1/files/" + item.replace(' ', "\\ ") + "?id=" + str(did) + " -P " + MEDIA_PATH + " -o " + log + " -O " + MEDIA_PATH + item.replace(' ', "\\ ")
         os.system(cmd)
-        bsize = os.path.getsize(MEDIA_PATH + str(x[index])) 
-        sendjson("/v1/files/checksum", {"Deviceid":did,"Filename":str(x[index]),"Bytesize": bsize})
-        if RESPONSE["ecode"] is not 0:
-            os.remove(MEDIA_PATH + str(x[index]))
-                    
-            printmessage("File " + str(x[index] + " passed checksum"))
-        else:
-            printmessage("File " + str(x[index] + " failed checksum. It will be deleted.", "error"))
-            os.remove(MEDIA_PATH + str(x[index]))
-
+        printmessage("Current item: " + item)
+        checksum(item,did)   
+              
 def createlogfile():
     """Creates a log file each midnight."""
     global LOGGER
@@ -304,7 +395,7 @@ def createlogfile():
                                        backupCount=7)
     LOGGER.addHandler(handler)
 
-def printmessage(text, lvl="info"):
+def printmessage(text, lvl='info'): 
     """Print specified message to log file."""
     newline = ""
     errortxt = ""
@@ -315,19 +406,25 @@ def printmessage(text, lvl="info"):
         "warning" : LOGGER.warning,
         "error" : LOGGER.error,
         "critical" : LOGGER.critical,
+        "exception" : LOGGER.exception
     }
 
-    if lvl is "critical":
+    if lvl is "exception":
         newline = "\n"
         errortxt = "Problem with deCore. Problem: " 
 
     logoptions[lvl](newline + str(lvl.upper() +' (' + str(time.strftime("%H:%M:%S") + '): ' +  errortxt + msg + newline)))
 
-def updateslide():
+#If forceMode is set to True, then it will check orderNdelay
+def updateslide(forceMode,filesArray,delaysMap):
     global SLIDE_PID
-    global PROC 
+    global PROC
 
-    printmessage("Updating slide..., current slide pid "+str(SLIDE_PID))
+    if forceMode==True:
+        printmessage("Slide will be updated due to change in delay")
+    else:
+        printmessage("Updating slide..., current slide pid "+str(SLIDE_PID))
+
     if SLIDE_PID is not 0:   
         #Kill running slide and its child processes & Flush the framebuffer
         printmessage("Killing slide.dpa and related processes.", "debug")
@@ -338,134 +435,146 @@ def updateslide():
         os.system("dd if=/dev/zero of=/dev/fb0")
         printmessage("Killed all processes and flushed the framebuffer.", "debug")
     printmessage("Updating slide.dpa...", "debug")
-    newslideshow(DELAY)
+    newslideshow(DELAY,forceMode,filesArray,delaysMap)
     printmessage("Slide updated successfully. Running slide.", "debug")
     runslide()
 
 def emptymedia():
-    subprocess.Popen("fbi --noverbose /home/pi/decore/src/resources/images/nomedia.jpg", shell=True)
+    subprocess.Popen("fbi -a --noverbose /home/pi/decore/src/resources/images/nomedia.jpg", shell=True)
 
-def newslideshow(dly):
+#delaysMap-> ["a.jpg:10,"b.jpg":15,"c.mp4":0] (filename:delay {0 means default delay will be used})
+#normalde videoda delay olmayacagi icin video icin gelen delayi gormezden gel
+def newslideshow(dly, forceMode, filesArray, delaysMap):
     try:
         global HAS_MEDIA
 
-        #Create file manifest.
+        # Create file manifest.
         filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
-        printmessage ("Found " + str(len(filelist)) + " items: " + ' '.join(filelist) + " ")
-           
-        #If filelist is empty, print a message that indicates no media was found on the node.
-        if not filelist:
+        printmessage("Files in order:" + str(filesArray))
+
+        existingFilesInOrder = filelist
+        if forceMode == True and len(filelist) >= len(filesArray):
+            existingFilesInOrder = []
+            for f1 in filesArray:
+                doesExist = False
+                for f2 in filelist:
+                    if f1 == f2:
+                        doesExist = True
+                        break
+                if doesExist == True:
+                    existingFilesInOrder.append(f1)
+        printmessage("Found " + str(len(existingFilesInOrder)) + " items: " + ' '.join(existingFilesInOrder) + " ")
+
+        # If filelist is empty, print a message that indicates no media was found on the node.
+        if not existingFilesInOrder:
             HAS_MEDIA = False
             emptymedia()
         else:
             os.system("killall -9 fbi")
             HAS_MEDIA = True
-            #Check whether if there are videos in current media.
-            #Images will be played ONCE if there are any.
+            # Check whether there are videos in current media.
+            # Images will be played ONCE if there are any videos in deCore.
             isonce = ""
-            for file in filelist:
+            for file in existingFilesInOrder:
                 if file.endswith(VIDEO_EXT):
-                    isonce = " -once "
+                    isonce = "-once "
                     break
 
-            #Definition of variables used in function.
+            # Definition of variables used in function.
             name = "slide.dpa"
             filepath = SLIDE_PATH + name
-            #isRandom = bool(rnd)
-            delay = str(dly) + " "
-            imgCount = 0
+            delay = str(dly)
             imgList = []
-            vidCount = 0
-            vidName = ""            
-            temp = ""       
+            vidName = ""
+            imgCombo = False
 
-            #Script bodies that will be used while creating the slide. 
+            # Script bodies that will be used while creating the slide.
             fullscript = "#!/bin/bash\ncd " + MEDIA_PATH + "\nwhile true;\ndo\n"
-            imgScript = "clear\nfbi --noverbose -a -t " + delay + isonce
+            imgScript = "clear\nfbi --noverbose -a -t " + delay +" "+ isonce
             vidScript = "clear\nomxplayer " + MEDIA_PATH
 
-            #Delay cannot be zero. 15 seconds is the default interval value.
+            # Delay cannot be zero. 15 seconds is the default interval value.
             if str(dly) is "0":
-                    printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval")
-                    delay = str(15)
-            
-            #Files are randomized in order if the RANDOM flag was set.
-            ''' if isRandom:
-                printmessage("Random flag was on, randomizing file list...", 0.1)
-                shuffle(filelist)
-                printmessage("Randomized list: " + ''.join(filelist) + "\n") '''
+                printmessage("Invalid or unspecified delay interval, assuming a 15 seconds interval")
+                delay = str(15)
+            else:
+                printmessage("Delay is taken as "+str(dly))
 
-            #Beginning of the slide creation.                                                    
-            for file in filelist:
+            lastDelay=delay
+
+            # Beginning of the slide creation.
+            for file in existingFilesInOrder:
                 printmessage("Now processing file: " + file)
-                printmessage("current status: ImageCount=" + str(imgCount) + " VidCount=" + str(vidCount)+"\n")
-                
-                if imgCount == vidCount:                  
-                    if file.endswith(IMAGE_EXT):
-                        #printmessage("first media is an image, combo started...\n", 0.1)
-                        imgList.append(str(file).replace(' ', "\\ ")  + " ")
-                        imgCount += 1
-                        #printmessage("img's appended to list, continuing process...\n", 0.1)
-                    elif file.endswith(VIDEO_EXT):
-                        #printmessage("first media is a video, writing to bash file...\n", 0.1)
-                        vidName = ''.join([fullscript,vidScript, str(file).replace(' ', "\\ ") ," >/dev/null 2>&1" , '\n'])
-                        fullscript = vidName
-                        vidCount += 1
-                    else:
-                        printmessage("File " + file + "has an unknown (or undefined) file format.", "warning")
-                
-                #image list generator, break the combo if the next media in line isnt an
-                elif imgCount > vidCount:                            
-                    if file.endswith(IMAGE_EXT):
-                        printmessage("image combo ongoing, populating image array...")
-                        imgList.append(str(file).replace(' ', "\\ ") + " ")
-                        imgCount += 1
-                        printmessage("Current combo: " + ''.join(imgList))
-                    elif file.endswith(VIDEO_EXT):
-                        printmessage("combo broken!")
-                        imgCount = 0
-                        combinedImg = "".join(imgList)                          
-                        fullscript = ''.join([fullscript, imgScript, combinedImg, '\n', vidScript, str(file).replace(' ', "\\ "), " >/dev/null 2>&1" , '\n'])
-                        vidCount += 1                          
-                    else:						
-                        printmessage("File " + file + "has an unknown (or undefined) file format.", "warning")
 
-                elif vidCount > imgCount:
-                    if file.endswith(VIDEO_EXT):
-                        temp = ''.join([fullscript,vidScript, str(file).replace(' ', "\\ "), " >/dev/null 2>&1", '\n'])
-                        fullscript = temp
-                        vidCount += 1
-                    elif file.endswith(IMAGE_EXT):
-                        printmessage("img combo started...")
-                        vidCount = 0
-                        imgList = []
-                        imgList.append(str(file).replace(' ', "\\ ")  + " ")
-                        imgCount += 1
-                    else:						
-                        printmessage("File " + file + "has an unknown (or undefined) file format.", "warning")
-            
+                currentFilesDelay = delay
+
+                if forceMode == True:
+                    if delaysMap[file] != None and delaysMap[file] != 0:
+                        currentFilesDelay = str(delaysMap[file])
+                        printmessage("Current file's delay is: " + currentFilesDelay)
+                    elif delaysMap[file] == 0 or delaysMap[file] == "0":
+                        currentFilesDelay=str(dly)
+
+                        # Check for file extentions and generate scripts according to filetypes.
+                if file.endswith(IMAGE_EXT):
+
+                    if currentFilesDelay!=lastDelay:
+                        #delay is changed, generate script and start over
+                        if len(imgList)>0:
+                            printmessage("Delay combo broken!")
+                            combinedImg = "".join(imgList)
+                            fullscript = ''.join([fullscript, imgScript, combinedImg, " >/dev/null 2>&1", '\n'])
+                            imgList=[]
+
+                        imgCombo = False
+                        #Update imgScript
+                        imgScript = "clear\nfbi --noverbose -a -t " + currentFilesDelay + " -once "
+
+                    if imgCombo:
+                        printmessage("Image combo continues")
+                    else:
+                        printmessage("Image combo started from scratch")
+
+                    imgList.append(str(file).replace(' ', "\\ ") + " ")
+                    imgCombo = True
+                elif file.endswith(VIDEO_EXT):
+                    if imgCombo:
+                        printmessage("Combo broken!")
+                        combinedImg = "".join(imgList)
+                        fullscript = ''.join(
+                            [fullscript, imgScript, combinedImg, '\n', vidScript, str(file).replace(' ', "\\ "),
+                             " >/dev/null 2>&1", '\n'])
+                        imgCombo = False
+                        imgList=[]
+
+                    vidName = ''.join([fullscript, vidScript, str(file).replace(' ', "\\ "), " >/dev/null 2>&1", '\n'])
+                    fullscript = vidName
+                else:
+                    printmessage("File " + file + " has an unknown (or undefined) file format.", "warning")
+
+                lastDelay=currentFilesDelay
+
             if len(imgList) > 0:
-                printmessage(str(len(imgList))+" images left in array after end of operation, writing them to file...")
+                printmessage(
+                    str(len(imgList)) + " images left in array after end of operation, writing them to file...")
                 combinedImg = ''.join(imgList)
                 fullscript = ''.join([fullscript, imgScript, combinedImg, " >/dev/null 2>&1", '\n'])
                 printmessage("Done writing remainder files...\n")
-            
+
             f = open(SLIDE_PATH + name, 'w')
             f.write(fullscript + "done\nexit 0")
             f.close()
 
             os.system("chmod +x " + filepath)
-            printmessage("Success! Slideshow " + name + " has been successfully created under " + filepath + ".", "info")
+            printmessage("Success! Slideshow has been successfully created under " + filepath + ".", "info")
 
     except Exception as e:
-        printmessage("Aborted slide creation.\nReason was: " + e, "critical")
+        printmessage("Aborted slide creation.\nReason was: " + e, "exception")
         if os.path.exists(filepath):
             printmessage("Removing incomplete slide file...", "warning")
             slide.close()
             os.remove(filepath)
             printmessage("Removed file successfully.", "warning")
-    except SystemExit as ex:
-        printmessage(ex, "warning")
 
 def runslide():
     """Exectues the slide script."""
@@ -482,7 +591,7 @@ def runslide():
             SLIDE_PID = PROC.pid
         else:
             printmessage("slide.dpa was not present in directory, recreating.", "warning")
-            newslideshow(DELAY)
+            newslideshow(DELAY,False,None,None)
             os.system("dd if=/dev/zero of=/dev/fb0")
             PROC = subprocess.Popen(SLIDE_PATH + "slide.dpa", shell=False)
             SLIDE_PID = PROC.pid
@@ -521,6 +630,39 @@ def checkdir(path):
 def checklogpath():
     if not os.path.exists(LOG_PATH):
         os.makedirs(LOG_PATH)
+
+def init_weather_service():
+    global WEATHER_API
+    WEATHER_API = pyowm.OWM('7a1e6e72e70f3c20a69d9c668aef132e')
+
+def weatherupdate():
+    # Search for current weather in Istanbul
+    observation = WEATHER_API.weather_at_place('Istanbul, TR')
+    w = observation.get_weather()
+    print(w)                      
+    # Weather details
+    w.get_wind()                  # {'speed': 4.6, 'deg': 330}
+    w.get_humidity()              # 87
+    w.get_temperature('celsius')  # {'temp_max': 10.5, 'temp': 9.7, 'temp_min': 9.0}
+
+def scrollingtext(stext):
+    #Array length for scrolling
+    count = len(stext) 
+       
+    #loop for scrolling text
+    for x in range(0, count):    
+        time.sleep(0.1) #This variable should be able to be changed from deCore UI.
+        print (str(stext[x])) #Print is the placeholder process for UI elements.  
+
+def resetnode(): 
+    printmessage("This deCore node has been flagged for reset! All data regarding media and configuration will be deleted!", 'warning')
+    filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
+    #Remove media from media
+    for file in filelist:
+        removemedia(file)
+    #Remove config
+    os.remove(CFG_PATH)
+    printmessage("Reset procedure complete!", 'warning')
 
 def quitdecore(msg, expect = True):
     expected = bool(expect)

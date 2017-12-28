@@ -1,0 +1,33 @@
+---	/boot/config.txt
+
+(# ile comment'e al)
+#disable_overscan=1
+
+(sona ekle)
+#Changes made by SparkGO team starts here
+vt.global_cursor_default=0
+avoid_warnings=1
+disable_splash=1
+
+---	/boot/cmdline.txt
+
+(sona ekle)
+logo.nologo console=null quiet
+
+---	.bashrc
+(ekle)
+sudo python /home/pi/decore/src/dclient.py
+
+
+sudo apt-get update
+sudo apt-get install fbi
+sudo apt-get install omxplayer
+sudo apt-get install git
+sudo apt-get install python-pip
+sudo pip install pyowm
+git clone -b devBerk https://github.com/egesadic/decore.git
+
+
+192.168.34.138
+192.168.34.127
+192.168.34.134
