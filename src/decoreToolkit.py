@@ -24,13 +24,14 @@ sys.setdefaultencoding('utf8')
 ##########################################################################################################  
 
 LOGGER                  = None
+CONFIG                  = None
+FILELIST                = None
 HAS_MEDIA               = False
 RESPONSE                = None 
 PROC                    = ""
 VIDEO_EXT               = ('.mp4', '.h264')
 IMAGE_EXT               = ('.jpg', '.jpeg', '.png', '.gif')
 SLIDE_PID               = 0
-FILELIST                = []
 FILES_CHANGED           = "False"
 IS_RANDOM               = "False"
 DELAY                   = 5
@@ -68,6 +69,10 @@ def getmacadress(interface):
         mac = "00:00:00:00:00:00"
     return mac[0:17]
 
+def updatefilelist():
+    global FILELIST
+    FILELIST = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
+
 def sendjson(domain, data, method='POST'):
     try:
         global RESPONSE
@@ -84,6 +89,7 @@ def sendjson(domain, data, method='POST'):
         printmessage("Successfully connected to: " + dest)
         RESPONSE = json.loads(tmp.read())
         return True
+
     except Exception as e:
         printmessage(e,"exception")
         return False
@@ -172,8 +178,7 @@ def createcfgfile(url, adapter):
 #Will get order AND delay of files
 def orderNdelay():
     try:
-        cfgfile = open(CFG_PATH, 'r')
-        device_id = cfgfile.read()
+        device_id = CONFIG.read()
         dest = URL + "v1/node/order/" + device_id
 
         # Sunucuya bağlan ve dosyaları talep et
@@ -245,17 +250,15 @@ def sync():
 
         if isfile(CFG_PATH):
             printmessage("Syncronisation started with server!")
-            cfgfile = open(CFG_PATH, 'r')
-            device_id = cfgfile.read()            
-            filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
-            printmessage("Current files: "+str(filelist))
+            device_id = CONFIG.read()            
+            printmessage("Current files: "+str(FILELIST))
             
             usage = disk_usage('/')
             
             #Create JSON.
             data = JSONObject()
             data.Id = int(device_id)
-            data.OldPaths = filelist
+            data.OldPaths = FILELIST
             data.RemainingStorage = int(usage.free/1024)
             
             printmessage("Device ID is: " + str(device_id))
@@ -307,6 +310,8 @@ def sync():
 
                 if FILES_CHANGED:
                     printmessage("Media in this node has been changed! Rebuilding .dpa file...")
+                    #Update the filelist that the node currently has.
+                    updatefilelist()
                     #Delete old orderNdelay if exist
                     orderNdelay_path = OND_PATH
                     if isfile(orderNdelay_path):
@@ -456,15 +461,14 @@ def newslideshow(dly, forceMode, filesArray, delaysMap):
         global HAS_MEDIA
 
         # Create file manifest.
-        filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
         printmessage("Files in order:" + str(filesArray))
 
-        existingFilesInOrder = filelist
-        if forceMode == True and len(filelist) >= len(filesArray):
+        existingFilesInOrder = FILELIST
+        if forceMode == True and len(FILELIST) >= len(filesArray):
             existingFilesInOrder = []
             for f1 in filesArray:
                 doesExist = False
-                for f2 in filelist:
+                for f2 in FILELIST:
                     if f1 == f2:
                         doesExist = True
                         break
@@ -588,9 +592,7 @@ def runslide():
     global PROC 
     global SLIDE_PID
 
-    filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
-
-    if len(filelist) is not 0:
+    if len(FILELIST) is not 0:
         if isfile(SLIDE_PATH + "slide.dpa"):
             printmessage("slide.dpa found, running file.", "debug")
             os.system("dd if=/dev/zero of=/dev/fb0")
@@ -663,14 +665,15 @@ def scrollingtext(stext):
 
 def resetnode(): 
     printmessage("This deCore node has been flagged for reset! All data regarding media and configuration will be deleted!", 'warning')
-    filelist = [f for f in listdir(MEDIA_PATH) if isfile(join(MEDIA_PATH, f))]
-    if len(filelist)>0:
+    updatefilelist()
+    if len(FILELIST)>0:
         #Remove all media from media folder
-        for file in filelist:
+        for file in FILELIST:
             removemedia(file)
         #Remove config
         os.remove(CFG_PATH)
     printmessage("Reset procedure complete!", 'warning')
+    
 def quitdecore(msg, expect = True):
     expected = bool(expect)
     if expected is False:

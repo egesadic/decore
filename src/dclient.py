@@ -4,9 +4,11 @@ from decoreErrors import *
 from os.path import isfile
 
 sys.setdefaultencoding('utf8')
-VER_NUM = "0.4"
 
+global CONFIG
+VER_NUM = "0.4"
 mediaGot = False
+
 checklogpath()
 createlogfile()
 
@@ -18,16 +20,15 @@ try:
         while mediaGot is False:         
             createcfgfile(URL,"wlan0")
             if isfile(CFG_PATH):
-                mediaGot=True        
-    
+                mediaGot=True
+
     #Cihaz ilk çalıştığında slide.dpa'yı çalıştır.
+    CONFIG = open(CFG_PATH, 'r')  
     runslide()
     while True:
         sync()
         printmessage("Listening to server for changes. Checking for changes in " + str(COOLDOWN) + " seconds.\n")         
         time.sleep(COOLDOWN)      
 
-except DecoreServerConnectionException as ex:
-    printmessage(ex, "critical")
 except Exception as e:
-    printmessage(e, "critical")
+    printmessage(e, "exception")
