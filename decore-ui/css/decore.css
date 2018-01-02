@@ -15,21 +15,30 @@ html, body {
 
     .weatherwidget-io{
         width: 600px;
-        height: 7000px;
+        height: auto;
         box-shadow: 0px 0px 26px 1px rgba(0, 0, 0, 0.55);
     }
-
-    #weather{
-      top: 2.7%;
+    #currency{
+      top: 48%;
       left: 5%;
-      position: absolute;
+      height: 800px !important;
+      width: 600px;
+      position: fixed;
+      
+    }
+    #weather{
+      top: 4.6%;
+      left: 5%;
+      height: 600px;
+      width: 600px;
+      position: fixed;
       
     }
 #blueimp-gallery-carousel{
     max-width: 50%;
     max-height: 50%;
     position: absolute;
-    top: 1%;
+    top: 3%;
     left: 45%;
     padding-bottom: 13%;
     
