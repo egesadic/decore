@@ -13,23 +13,39 @@ html, body {
         float: unset;
     }
 
+    .weatherwidget-io{
+        width: 600px;
+        height: 7000px;
+        box-shadow: 0px 0px 26px 1px rgba(0, 0, 0, 0.55);
+    }
+
+    #weather{
+      top: 2.7%;
+      left: 5%;
+      position: absolute;
+      
+    }
 #blueimp-gallery-carousel{
     max-width: 50%;
-    max-height: 30%;
+    max-height: 50%;
     position: absolute;
     top: 1%;
     left: 45%;
     padding-bottom: 13%;
+    
 }
   .scroll-left {
-    width: 99%;
-    top: 87%;
+    width: 97%;
+    border-radius: 15px;
+    margin-left: 1%;
+    top: 85%;
+    box-shadow: 0px 0px 26px 1px rgba(0,0,0,0.55);
     height:120px;
     overflow: hidden;
     position: absolute;
     background: rgb(0, 140, 255);
     color: rgb(255, 255, 255);
-    border: 1px solid rgb(0, 102, 255);
+    border: 1px solid rgb(71, 145, 255);
   }
   .scroll-left p {
     position: absolute;
