@@ -110,10 +110,9 @@ def createcfgfile(url, adapter):
             printmessage("Configuration file does NOT exist. Assuming this is the first time the node boots up.", "debug")
             count = 0
             printmessage("Checking whether essential directories exist or not...")
-            checkdir(CFG_FOLDER)
-            checkdir(MEDIA_PATH)
-            checkdir(SLIDE_PATH)
-            checkdir(LOG_PATH)            
+            edirs = [CFG_FOLDER, MEDIA_PATH, SLIDE_PATH, LOG_PATH]
+            for stuff in edirs
+                checkdir(item)                    
             while count < 4:
                 mac = getmacadress(adapter)
                 if count is 3:

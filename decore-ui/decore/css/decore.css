@@ -1,0 +1,60 @@
+@charset "UTF-8";
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden
+}
+    #wrapper {
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: fixed;
+    }
+
+#blueimp-gallery-carousel{
+    max-width: 50%;
+    max-height: 30%;
+    position: absolute;
+    top: 1%;
+    left: 45%;
+    padding-bottom: 13%;
+}
+  .scroll-left {
+    width: 99%;
+    top: 82%;
+    height:170px;
+    overflow: hidden;
+    position: absolute;
+    background: yellow;
+    color: orange;
+    border: 1px solid orange;
+  }
+  .scroll-left p {
+    position: absolute;
+    width: auto;
+    height: 100%;
+    font-size: 150px;
+    line-height: 170px;
+    margin: 0px;
+    text-align: center;
+    white-space: nowrap;
+    transform: translateX(100%);
+    animation: scroll-left 15s linear infinite;
+  }
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }

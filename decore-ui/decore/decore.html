@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  
+<head>
+  <meta charset="utf-8">
+  <title>deCore</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="css/blueimp-gallery.min.css">
+  <link rel="stylesheet" href="css/decore.css">
+</head>
+<body>
+  <div id="wrapper">
+  
+  <div id="blueimp-gallery-carousel" class="blueimp-gallery blueimp-gallery-carousel">
+    <div class="slides"></div>
+      <h3 class="title"></h3>
+      <a class="prev">‹</a>
+      <a class="next">›</a>
+      <a class="play-pause"></a>
+      <ol class="indicator"></ol>
+  </div>
+    <div id="links">
+      <a href="images/noweb.jpg" title="the image">
+        <img source="images/noweb.jpg">
+      </a>
+      <a href="images/lpo.mp4" title="DeCore 2.0">
+        <video source="images/lpo.mp4">
+      </a>
+    </div>
+  </div>
+  <div class="scroll-left">
+    <p>sdjfakilsdhjfşılasdhfşlkajsdhfşkljasdhfkşjlashdfkjpash</p>
+  </div>
+  <script src="js/blueimp-gallery.min.js"></script>
+  <script>
+    document.getElementById('links').onclick = function(event) {
+      event = event || window.event;
+      var target = event.target || event.srcElement,
+        link = target.src ? target.parentNode : target,
+        options = {
+          index: link,
+          event: event
+        },
+        links = this.getElementsByTagName('a');
+      blueimp.Gallery(links, options);
+    };
+  </script>
+  <script>
+    blueimp.Gallery([
+    {
+      title: 'decore TEST',
+      href: 'images/lpo.mp4',
+      type: 'video/mp4',
+      poster: 'https://i.imgur.com/MUSw4Zu.jpg'
+    },
+    {
+      title: 'another test',
+      href: 'images/splash.jpg',
+      type: 'image/jpeg',     
+    }
+  ], {
+    container: '#blueimp-gallery-carousel',
+    carousel: true
+  })
+  </script>
+</body>
+
+</html>
