@@ -10,6 +10,7 @@ html, body {
         left: 0;
         right: 0;
         position: fixed;
+        float: unset;
     }
 
 #blueimp-gallery-carousel{
