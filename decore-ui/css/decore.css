@@ -23,20 +23,21 @@ html, body {
 }
   .scroll-left {
     width: 99%;
-    top: 82%;
-    height:170px;
+    top: 87%;
+    height:120px;
     overflow: hidden;
     position: absolute;
-    background: yellow;
-    color: orange;
-    border: 1px solid orange;
+    background: rgb(0, 140, 255);
+    color: rgb(255, 255, 255);
+    border: 1px solid rgb(0, 102, 255);
   }
   .scroll-left p {
     position: absolute;
     width: auto;
+    font-family: 'Raleway', sans-serif;
     height: 100%;
-    font-size: 150px;
-    line-height: 170px;
+    font-size: 75px;
+    line-height: 120px;
     margin: 0px;
     text-align: center;
     white-space: nowrap;
